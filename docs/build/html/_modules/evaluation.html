@@ -1,0 +1,1273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>evaluation &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>evaluation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for evaluation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">knowledgebases</span><span class="o">,</span> <span class="nn">benchutils</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">matplots</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib_venn</span> <span class="k">import</span> <span class="n">venn2</span>
+<span class="kn">from</span> <span class="nn">matplotlib_venn</span> <span class="k">import</span> <span class="n">venn3</span>
+
+
+<div class="viewcode-block" id="AttributeRemover"><a class="viewcode-back" href="../comprior.html#evaluation.AttributeRemover">[docs]</a><span class="k">class</span> <span class="nc">AttributeRemover</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Prepares the input data set for subsequent classification by removing lowly-ranked features and only keeping the top k features.</span>
+<span class="sd">       Creates one &quot;reduced&quot; file for every ranking and from one to k (so if k is 50, we will end up with 50 files having one and up to 50 features.</span>
+
+<span class="sd">       :param dataDir: absolute path to the directory that contains the input data set whose features to reduce.</span>
+<span class="sd">       :type dataDir: str</span>
+<span class="sd">       :param rankingsDir: absolute path to the directory that contains the rankings.</span>
+<span class="sd">       :type rankingsDir: str</span>
+<span class="sd">       :param topK: maximum numbers of features to select.</span>
+<span class="sd">       :type topK: str</span>
+<span class="sd">       :param outputDir: absolute path to the directory where the reduced files will be stored.</span>
+<span class="sd">       :type outputDir: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataDir</span> <span class="o">=</span> <span class="n">dataDir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">=</span> <span class="n">rankingsDir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topK</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">topK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputDir</span> <span class="o">=</span> <span class="n">outputDir</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AttributeRemover.loadTopKRankings"><a class="viewcode-back" href="../comprior.html#evaluation.AttributeRemover.loadTopKRankings">[docs]</a>    <span class="k">def</span> <span class="nf">loadTopKRankings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads all available rankings from files.</span>
+
+<span class="sd">           :return: Dictionary with selection methods as keys and  a ranked list of the (column) names of the top k features.</span>
+<span class="sd">           :rtype: dict</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="c1">#dictionary: topK genes per method</span>
+        <span class="n">rankings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span><span class="p">,</span> <span class="n">file</span><span class="p">)):</span>
+                <span class="n">selectionMethod</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#get method name from filename without ending</span>
+                <span class="n">ranking</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">loadRanking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+
+                <span class="c1"># geneRankings has the format attributeName, score</span>
+                <span class="c1"># we need the feature name column</span>
+                <span class="n">featureNameCol</span> <span class="o">=</span> <span class="n">ranking</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># feature names</span>
+                <span class="n">featureNames</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[</span><span class="n">featureNameCol</span><span class="p">]</span>
+
+                <span class="c1"># take feature names of top k features</span>
+                <span class="c1">#if topK is larger than the actual size (=number of features), the whole list is returned without</span>
+                <span class="c1">#throwing an error</span>
+                <span class="n">rankings</span><span class="p">[</span><span class="n">selectionMethod</span><span class="p">]</span> <span class="o">=</span> <span class="n">featureNames</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">topK</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">rankings</span></div>
+
+<div class="viewcode-block" id="AttributeRemover.removeAttributesFromDataset"><a class="viewcode-back" href="../comprior.html#evaluation.AttributeRemover.removeAttributesFromDataset">[docs]</a>    <span class="k">def</span> <span class="nf">removeAttributesFromDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">ranking</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates reduced data sets from dataset for the given method&#39;s ranking that only contain the top x features.</span>
+<span class="sd">           Creates multiple reduced data sets from topKmin to topKmax specified in the config.</span>
+
+<span class="sd">           :param method: selection method applied for the ranking.</span>
+<span class="sd">           :type method: str</span>
+<span class="sd">           :param ranking: (ranked) list of feature names from the top k features.</span>
+<span class="sd">           :type ranking: :class:`List` of str</span>
+<span class="sd">           :param dataset: original input data set</span>
+<span class="sd">           :type dataset: :class:`pandas.DataFrame`</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1"># create new subdirectory</span>
+        <span class="n">methodDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputDir</span> <span class="o">+</span> <span class="n">method</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">methodDir</span><span class="p">)</span>
+
+        <span class="n">topKmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;topKmin&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">topKmin</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># write reduced data set to files</span>
+            <span class="n">featuresNames</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">featuresToUse</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">featuresNames</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+            <span class="n">colnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">colnames</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">featuresToUse</span><span class="p">)</span>
+            <span class="n">reducedSet</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">colnames</span><span class="p">]</span>
+            <span class="c1"># reduce i by one because ranking also contains the id column, which is not a gene</span>
+            <span class="n">outputFilename</span> <span class="o">=</span> <span class="n">methodDir</span> <span class="o">+</span> <span class="s2">&quot;top&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;features_&quot;</span> <span class="o">+</span> <span class="n">method</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+            <span class="n">reducedSet</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFilename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AttributeRemover.removeUnusedAttributes"><a class="viewcode-back" href="../comprior.html#evaluation.AttributeRemover.removeUnusedAttributes">[docs]</a>    <span class="k">def</span> <span class="nf">removeUnusedAttributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;For every method and its corresponding ranking, create reduced files with only the top x features.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1">#read in gene rankings and original data set</span>
+        <span class="n">geneRankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadTopKRankings</span><span class="p">()</span>
+
+        <span class="n">methods</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geneRankings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">datafiles</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataDir</span><span class="p">)</span>
+        <span class="c1">#sort input files by name length: the longer files having had a feature mapping first, the original file with only the prefix to be last</span>
+        <span class="n">datafiles</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datafiles</span><span class="p">:</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataDir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">dataset</span><span class="p">)</span>
+            <span class="c1">#match the method in the dataset name to the corresponding ranking</span>
+            <span class="c1">#check if any of the available methods is a substring of the filename</span>
+            <span class="n">method_matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">method</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">method_matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1">#if we have a match, this file must contain a new feature space</span>
+                <span class="c1">#we assume there is only one match possible, otherwise there would be two input data sets for the same method</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">method_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1">#remove method from list of methods as we cannot apply this ranking to the original data set</span>
+                <span class="n">methods</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+                <span class="c1">#do the attributeremoval</span>
+                <span class="n">ranking</span> <span class="o">=</span> <span class="n">geneRankings</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">removeAttributesFromDataset</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">ranking</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1">#if not matchable, we have the original dataset</span>
+                <span class="c1">#use the remaining rankings on the dataset</span>
+                <span class="c1">#ASSUMPTION: we only have one file with the original prefix</span>
+                <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+                    <span class="n">ranking</span> <span class="o">=</span> <span class="n">geneRankings</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">removeAttributesFromDataset</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">ranking</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="Evaluator"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator">[docs]</a><span class="k">class</span> <span class="nc">Evaluator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Abstract super class.</span>
+<span class="sd">       Every evaluation class has to inherit from this class and implement its :meth:`evaluate()` method.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the input data is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to save results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: dictionary containing a color string for every selection method.</span>
+<span class="sd">       :type methodColors: dict of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">javaConfig</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;Java&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rConfig</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classificationConfig</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span> <span class="o">=</span> <span class="n">methodColors</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Evaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Abstract.</span>
+<span class="sd">           Must be implemented by inheriting class as this method is invoked by :class:`framework.Framework` to run the evaluation.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Evaluator.loadRankings"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator.loadRankings">[docs]</a>    <span class="k">def</span> <span class="nf">loadRankings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">maxRank</span><span class="p">,</span> <span class="n">keepOrder</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads all rankings from a specified input directory.</span>
+<span class="sd">           If only the top k features shall be in the ranking, set maxRank accordingly, set it to 0 if otherwise (so to load all features).</span>
+<span class="sd">           If feature order is important in the returned rankings, set keepOrder to true; if you are only interested in what features are among the top maxRank, set it to false.</span>
+
+<span class="sd">           :param inputDir: absolute path to directory where all rankings are located.</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param maxRank: maximum number of features to have in ranking.</span>
+<span class="sd">           :type maxRank: int</span>
+<span class="sd">           :param keepOrder: whether the order of the features in the ranking is important or not.</span>
+<span class="sd">           :type keepOrder: bool</span>
+<span class="sd">           :return: Dictionary of rankings per method, either as ordered list or set (depending on keepOrder attribute)</span>
+<span class="sd">           :rtype: dict</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">rankings</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">inputDir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">file</span><span class="p">)):</span>
+                <span class="n">selectionMethod</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># get method name from filename without ending</span>
+                <span class="n">ranking</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">loadRanking</span><span class="p">(</span><span class="n">inputDir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+                <span class="n">genesColumn</span> <span class="o">=</span> <span class="n">ranking</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">genes</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[</span><span class="n">genesColumn</span><span class="p">]</span>
+                <span class="c1"># 0 is code number for using all items</span>
+                <span class="k">if</span> <span class="n">maxRank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">maxRank</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+                <span class="c1"># add 1 for header column</span>
+                <span class="k">if</span> <span class="n">keepOrder</span><span class="p">:</span>
+                    <span class="n">rankings</span><span class="p">[</span><span class="n">selectionMethod</span><span class="p">]</span> <span class="o">=</span> <span class="n">genes</span><span class="p">[:</span><span class="n">maxRank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rankings</span><span class="p">[</span><span class="n">selectionMethod</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">genes</span><span class="p">[:</span><span class="n">maxRank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">rankings</span></div>
+
+<div class="viewcode-block" id="Evaluator.computeKendallsW"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator.computeKendallsW">[docs]</a>    <span class="k">def</span> <span class="nf">computeKendallsW</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rankings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes Kendall&#39;s W from two rankings.</span>
+<span class="sd">           Note: measure does not make much sense if the two rankings are highly disjunct, which can happen especially for traditional approaches.</span>
+
+<span class="sd">           :param rankings: matrix containing two rankings for which to compute Kendall&#39;s W.</span>
+<span class="sd">           :type rankings: matrix</span>
+<span class="sd">           :return: Kendall&#39;s W score.</span>
+<span class="sd">           :rtype: float</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">rankings</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="s1">&#39;ratings matrix must be 2-dimensional&#39;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">rankings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># raters</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">rankings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># items rated</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">m</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">rating_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">rating_sums</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">S</span> <span class="o">/</span> <span class="n">denom</span></div>
+
+<div class="viewcode-block" id="Evaluator.drawLinePlot"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator.drawLinePlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawLinePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Draws a line plot for a given metric, using all files containing evaluation results for that metric in inputDir.</span>
+<span class="sd">           In the end, the plot will have one line per feature selection approach for which classification results are available.</span>
+
+<span class="sd">           :param inputDir: absolute path to directory containing all input files (from which to draw the graph).</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param outputDir: absolute path to the output directory where the the graph will be saved.</span>
+<span class="sd">           :type outputDir: str</span>
+<span class="sd">           :param topK: maximum x axis value</span>
+<span class="sd">           :type topK: int</span>
+<span class="sd">           :param metric: metric name for which to draw the graph.</span>
+<span class="sd">           :type metric: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="n">inputFiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># load data from files:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">inputDir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span> <span class="ow">and</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">):</span>
+                <span class="n">inputFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">evalResults</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">metric_threshold</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">metricScales</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+        <span class="n">miny</span> <span class="o">=</span> <span class="n">metric_threshold</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">maxy</span> <span class="o">=</span> <span class="n">metric_threshold</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">inputFiles</span><span class="p">:</span>
+
+            <span class="n">ranking</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputDir</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">methodName</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="c1">#uncommend if methodNames should be shortened</span>
+            <span class="c1">#shortened_methodName = methodName</span>
+            <span class="c1">#if len(methodName) &gt; 20:</span>
+            <span class="c1">#    shortened_methodName = methodName.replace(&quot;_&quot;, &quot;_\n&quot;)</span>
+            <span class="n">evalResults</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ranking</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">x_axis</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;#ofAttributes&quot;</span><span class="p">]</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_axis</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;#ofAttributes&quot;</span><span class="p">],</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">methodName</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">methodName</span><span class="p">])</span>
+            <span class="c1"># adapt the lower bound of y axis to the respective</span>
+            <span class="k">if</span> <span class="n">ranking</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="c1">#no evaluation results for this approach</span>
+                <span class="n">local_miny</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">local_miny</span> <span class="o">=</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">local_miny</span> <span class="o">&lt;</span> <span class="n">miny</span><span class="p">:</span>
+                <span class="n">miny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">local_miny</span><span class="p">)</span>
+            <span class="n">tickdist</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">topK</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tickdist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tickdist</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">tickdist</span><span class="p">))</span> <span class="c1">#scale x axis to have ticks every 5 features</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">miny</span><span class="p">,</span> <span class="n">maxy</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Number of features selected&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Average &#39;</span> <span class="o">+</span> <span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; (%)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; for Approaches&#39;</span><span class="p">)</span>
+        <span class="c1"># plt.show()</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputDir</span> <span class="o">+</span> <span class="n">metric</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="ClassificationEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator">[docs]</a><span class="k">class</span> <span class="nc">ClassificationEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.</span>
+<span class="sd">       Uses :class:`AttributeRemover` to create reduced datasets containing only the top k features, which are then used for subsequent classification.</span>
+<span class="sd">       Currently, classification and subsequent evaluation is wrapped here and is actually carried out by java jars using WEKA.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the input data for classification is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param rankingsDir: absolute path to the directory where the rankings are located.</span>
+<span class="sd">       :type rankingsDir: str</span>
+<span class="sd">       :param intermediateDir: absolute path to the directory where the reduced datasets (containing only the top k features) are written to.</span>
+<span class="sd">       :type intermediateDir: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to save results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: dictionary containing a color string for every selection method.</span>
+<span class="sd">       :type methodColors: dict of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">intermediateDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">=</span> <span class="n">rankingsDir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intermediateDir</span> <span class="o">=</span> <span class="n">intermediateDir</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClassificationEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Triggers classification and evaluation in Java and creates corresponding plots for every metric that was selected in the config.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="c1"># reduce data set for crossEvaluation to selected genes</span>
+        <span class="n">attributeRemover</span> <span class="o">=</span> <span class="n">AttributeRemover</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediateDir</span><span class="p">)</span>
+        <span class="n">attributeRemover</span><span class="o">.</span><span class="n">removeUnusedAttributes</span><span class="p">()</span>
+
+        <span class="n">classifiers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classificationConfig</span><span class="p">[</span><span class="s2">&quot;classifiers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classificationConfig</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediateDir</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmin&quot;</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;kfold&quot;</span><span class="p">])</span> <span class="p">]</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classifiers</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">runJavaCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaConfig</span><span class="p">,</span> <span class="s2">&quot;/WEKA_Evaluator.jar&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawLinePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">],</span> <span class="n">metric</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="RankingsEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator">[docs]</a><span class="k">class</span> <span class="nc">RankingsEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluates the rankings themselves by generating overlaps and comparing fold change differences.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the input data is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to save results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: dictionary containing a color string for every selection method.</span>
+<span class="sd">       :type methodColors: dict of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       :param dataset: absolute file path to the input data set (from which features were selected).</span>
+<span class="sd">       :type dataset: str</span>
+<span class="sd">       :param metrics: list of metrics to apply to ranking evaluation (as specified in the config file).</span>
+<span class="sd">       :type metrics: :class:`List` of str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">outputPath</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">outputPath</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RankingsEvaluator.generateOverlaps"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.generateOverlaps">[docs]</a>    <span class="k">def</span> <span class="nf">generateOverlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates overlap plots for the available rankings (set during creating to self.input).</span>
+<span class="sd">           For up to two rankings, use Python&#39;s matplotlib to create Venn diagrams.</span>
+<span class="sd">           For three rankings and above, create UpsetR (https://github.com/hms-dbmi/UpSetR) diagrams via R.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">inputFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">):</span>
+            <span class="n">inputFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">sizeOfSets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sizeOfSets</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot compute overlaps as we do not have enough valid files.&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1">#if we have only 2 sets for intersection</span>
+            <span class="n">rankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadRankings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]),</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methodNames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ranking</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">ranking</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">ranking</span> <span class="o">=</span> <span class="n">ranking</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">methodNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span>
+            <span class="n">venn2</span><span class="p">(</span><span class="n">rankings</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">set_labels</span> <span class="o">=</span> <span class="n">methodNames</span><span class="p">,</span> <span class="n">set_colors</span> <span class="o">=</span> <span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;geneSignatureOverlaps.pdf&quot;</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1">#if we have only 2 sets for intersection</span>
+            <span class="n">rankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadRankings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]),</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methodNames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ranking</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">ranking</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">ranking</span> <span class="o">=</span> <span class="n">ranking</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">methodNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ranking</span><span class="p">)</span>
+            <span class="n">venn3</span><span class="p">(</span><span class="n">rankings</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>  <span class="n">set_labels</span> <span class="o">=</span> <span class="n">methodNames</span><span class="p">,</span> <span class="n">set_colors</span> <span class="o">=</span> <span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;geneSignatureOverlaps.pdf&quot;</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#for more sets use UpSets package</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;geneSignatureOverlaps.pdf&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">]</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">inputFiles</span><span class="p">:</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># get method name from filename without ending (format: top5_APPROACH_annotation.txt)</span>
+                <span class="n">colors</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">runRCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rConfig</span><span class="p">,</span> <span class="s2">&quot;UpsetDiagramCreation.R&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RankingsEvaluator.loadGeneRanks"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.loadGeneRanks">[docs]</a>    <span class="k">def</span> <span class="nf">loadGeneRanks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used for computing Kendall&#39;s W.</span>
+<span class="sd">           Loads rankings and creates a table (approach x features) containing individual ranks per feature per approach, e.g.</span>
+<span class="sd">           #approach   G1  G2  G3</span>
+<span class="sd">           #Ranker1    1   2   3</span>
+<span class="sd">           #Ranker 2   3   1   2</span>
+
+<span class="sd">           :param inputDir: absolute path to the directory containing all ranking files.</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param topK: maximum number of features to use (=length of the rankings).</span>
+<span class="sd">           :type topK: int</span>
+<span class="sd">           :return: Ranking table containing every assigned rank for every feature per ranking approach.</span>
+<span class="sd">           :rtype: :class:`numpy.array`</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">finalRankMatrix</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadRankings</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># first, fill matrix column with all genes that occur in the rankings</span>
+        <span class="n">matrix_column</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">matrix_column</span> <span class="o">=</span> <span class="n">matrix_column</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rankings</span><span class="p">[</span><span class="n">method</span><span class="p">]))</span>
+        <span class="n">matrix_column</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">matrix_column</span><span class="p">)</span>
+
+        <span class="c1">#second, fill matrix approach by approach</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1">#initialize list with default 0 values (0 = not part of actual ranking)</span>
+            <span class="n">ranks</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix_column</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix_column</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">rankings</span><span class="p">[</span><span class="n">method</span><span class="p">]:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">matrix_index</span> <span class="o">=</span> <span class="n">matrix_column</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">gene</span><span class="p">)</span>
+                <span class="n">ranks</span><span class="p">[</span><span class="n">matrix_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+            <span class="n">finalRankMatrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">finalRankMatrix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RankingsEvaluator.computePValue"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.computePValue">[docs]</a>    <span class="k">def</span> <span class="nf">computePValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the p-value for a given Kendall&#39;s W score via a simple permutation (1000 times) test.</span>
+
+<span class="sd">           :param W: Kendall&#39;s W score.</span>
+<span class="sd">           :type W: float</span>
+<span class="sd">           :param m: number of approaches/rankings to compare.</span>
+<span class="sd">           :type m: int</span>
+<span class="sd">           :param n: number of features in each ranking.</span>
+<span class="sd">           :type n: int</span>
+<span class="sd">           :return: p-value of Kendall&#39;s W score.</span>
+<span class="sd">           :rtype: float</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1"># do permutation test</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">permutationSize</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">permutationSize</span><span class="p">):</span>
+            <span class="n">perm_trial</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">perm_trial</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">n</span><span class="p">))))</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeKendallsW</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">perm_trial</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">W</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="c1"># compute p-value</span>
+        <span class="n">pVal</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">permutationSize</span>
+        <span class="k">return</span> <span class="n">pVal</span></div>
+
+<div class="viewcode-block" id="RankingsEvaluator.computeKendallsWScores"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.computeKendallsWScores">[docs]</a>    <span class="k">def</span> <span class="nf">computeKendallsWScores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes Kendall&#39;s correlation coefficients (W) and its corresponding p-value for the top 50, 500, 5,000 and all (code: 0) ranked features of existing rankings.</span>
+<span class="sd">           Conducts a permutation test for all scores to receive p-value.</span>
+<span class="sd">           Writes output to a file containing the correlation coefficients and their corresponding p-value for different length of rankings.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">ranking_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;kendallsW.csv&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;top n,Kendalls W, p-value</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ranksize</span> <span class="ow">in</span> <span class="n">ranking_sizes</span><span class="p">:</span>
+
+                <span class="n">rankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadGeneRanks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">ranksize</span><span class="p">)</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">rankings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">rankings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">W</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeKendallsW</span><span class="p">(</span><span class="n">rankings</span><span class="p">)</span>
+                <span class="n">pVal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computePValue</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+                <span class="c1">#write line</span>
+                <span class="k">if</span> <span class="n">ranksize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rankings</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ranksize</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="n">line</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">W</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pVal</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RankingsEvaluator.drawBoxPlot"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.drawBoxPlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawBoxPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Draws a box plot from the given data with the given labels on the x axis and the given prefix in the headlines.</span>
+
+<span class="sd">           :param data: Data to plot; a list containing lists of values.</span>
+<span class="sd">           :type data: :class:`List` of lists of floats</span>
+<span class="sd">           :param labels: List of method names.</span>
+<span class="sd">           :type labels: :class:`List` of str</span>
+<span class="sd">           :param prefix: Prefix to use for file name and title.</span>
+<span class="sd">           :type prefix: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span>  <span class="s1">&#39; Fold Changes in Gene Signatures&#39;</span><span class="p">)</span>
+        <span class="n">final_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">final_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">final_labels</span><span class="p">,</span> <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+        <span class="c1">#set the colors</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">patch</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s1">&#39;boxes&#39;</span><span class="p">],</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39; gene fold change across all samples&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;FoldChanges.pdf&quot;</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RankingsEvaluator.computeFoldChangeDiffs"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.computeFoldChangeDiffs">[docs]</a>    <span class="k">def</span> <span class="nf">computeFoldChangeDiffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes median and mean fold changes for all selected features per approach.</span>
+<span class="sd">           Writes fold changes to file and creates corresponding box plots.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">rankings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadRankings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]),</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c1">#collect all top k ranked genes</span>
+        <span class="n">rankedGenes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">rankedGenes</span> <span class="o">=</span> <span class="n">rankedGenes</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rankings</span><span class="p">[</span><span class="n">method</span><span class="p">]))</span>
+        <span class="n">rankedGenes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rankedGenes</span><span class="p">)</span>
+
+        <span class="c1">#compute the average fold change for every feature</span>
+        <span class="n">medianFoldChanges</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">averageFoldChanges</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">rankedGenes</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">avgFoldChange</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span>
+                <span class="n">medianFoldChange</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span>
+                <span class="n">medianFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="o">=</span> <span class="n">medianFoldChange</span>
+                <span class="n">averageFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="o">=</span> <span class="n">avgFoldChange</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="c1">#we have extracted features for which no average fold change can be computed</span>
+                <span class="k">continue</span>
+
+        <span class="c1">#create boxplots for all methods for average and median fold change</span>
+        <span class="n">methodsAvg</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">methodsMedians</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rankings</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">genes</span> <span class="o">=</span> <span class="n">rankings</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+
+            <span class="c1">#write fold changes to one file per method</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;foldChanges_&quot;</span> <span class="o">+</span> <span class="n">method</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;gene,average fold change, median fold change</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+                <span class="n">avgFoldChange</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">medianFoldChange</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">avgFoldChange</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">averageFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span>
+                        <span class="n">medianFoldChange</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">medianFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span>
+                        <span class="c1">#write data to file</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">gene</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">averageFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">medianFoldChanges</span><span class="p">[</span><span class="n">gene</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="c1"># we have extracted features for which no average fold change can be computed</span>
+                        <span class="k">continue</span>
+
+            <span class="n">methodsAvg</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">avgFoldChange</span>
+            <span class="n">methodsMedians</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">medianFoldChange</span>
+
+        <span class="c1">#create Boxplot for average and median gene fold changes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span> <span class="nb">list</span><span class="p">(</span><span class="n">methodsAvg</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">methodsAvg</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s2">&quot;Average&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">methodsMedians</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">methodsMedians</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s2">&quot;Median&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RankingsEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs evaluations on feature rankings based on what is specified in the config file.</span>
+<span class="sd">           Currently, can compute feature overlaps, Kendall&#39;s correlation coefficient (W), and box plots for mean and median fold changes of selected features.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;top_k_overlap&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generateOverlaps</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;kendall_w&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">computeKendallsWScores</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;average_foldchange&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">computeFoldChangeDiffs</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="CrossEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.CrossEvaluator">[docs]</a><span class="k">class</span> <span class="nc">CrossEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the evaluation across a second data set.</span>
+<span class="sd">       Takes the top k ranked features, removes all other features from that second data set.</span>
+<span class="sd">       Runs a :class:`ClassificationEvaluator` on that second data set with the selected features.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the second data set for cross-validation is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param rankingsDir: absolute path to the directory containing all rankings.</span>
+<span class="sd">       :type rankingsDir: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to write all classification results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: Dictionary that assigns every (ranking) method a unique color (used for drawing subsequent plots).</span>
+<span class="sd">       :type methodColors: dict</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">=</span> <span class="n">rankingsDir</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CrossEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.CrossEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs crossClassification = takes the features selected on the original data set and uses them to classify a second (cross-validation) data set.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="c1"># reduce data set for crossEvaluation to selected genes</span>
+        <span class="n">reducedDatasetLocation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;reducedDataset/&quot;</span>
+        <span class="n">attributeRemover</span> <span class="o">=</span> <span class="n">AttributeRemover</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span><span class="p">,</span>
+                                            <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;topKmax&quot;</span><span class="p">),</span> <span class="n">reducedDatasetLocation</span><span class="p">)</span>
+        <span class="n">attributeRemover</span><span class="o">.</span><span class="n">removeUnusedAttributes</span><span class="p">()</span>
+
+        <span class="c1"># run evaluation</span>
+        <span class="n">evaluator</span> <span class="o">=</span> <span class="n">ClassificationEvaluator</span><span class="p">(</span><span class="n">reducedDatasetLocation</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;classifications/&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">)</span>
+        <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="AnnotationEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.AnnotationEvaluator">[docs]</a><span class="k">class</span> <span class="nc">AnnotationEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Annotates and enriches feature rankings with EnrichR (https://maayanlab.cloud/Enrichr/).</span>
+<span class="sd">       What library to be used for annotation must be specified in the config file.</span>
+<span class="sd">       Can compute annotation and enrichment overlaps for different feature rankings.</span>
+<span class="sd">       Annotation = annotate features with terms/information</span>
+<span class="sd">       Enrichment = check what terms are enriched in a feature ranking and are related to multiple features.</span>
+<span class="sd">       Overlaps then can show a) if feature rankings represent the same underlying processes via annotation (maybe although having selected different features), or b) if the underlying processes are equally strongly represented by checking the enrichment (maybe altough having seleced different features).</span>
+
+<span class="sd">       :param input: absolute path to the directory where the second data set for cross-validation is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to write all classification results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: dictionary that assigns every (ranking) method a unique color (used for drawing subsequent plots).</span>
+<span class="sd">       :type methodColors: dict</span>
+<span class="sd">       :param metrics: list of metrics to compute, to be configured in config.</span>
+<span class="sd">       :type metrics: :class:`List` of str</span>
+<span class="sd">       :param dataConfig: config parameters for the input dataset.</span>
+<span class="sd">       :type dataConfig: dict</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataConfig</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AnnotationEvaluator.countAnnotationPercentages"><a class="viewcode-back" href="../comprior.html#evaluation.AnnotationEvaluator.countAnnotationPercentages">[docs]</a>    <span class="k">def</span> <span class="nf">countAnnotationPercentages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">featureLists</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Count the number of features (=number of lines in annotation file) that have been annotated and compute percentages.</span>
+<span class="sd">           Write output to a file &quot;annotationsPercentages.csv&quot; in self.outputDir.</span>
+
+<span class="sd">           :param featureLists: dictionary of lists of features per selection method.</span>
+<span class="sd">           :type featureLists: dict</span>
+<span class="sd">           :param inputDir: absolute path to directory containing annotation files.</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">annotatedGenes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">approach</span> <span class="ow">in</span> <span class="n">featureLists</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">inputDir</span> <span class="o">+</span> <span class="n">approach</span> <span class="o">+</span> <span class="s2">&quot;_annotatedGenes.txt&quot;</span>
+            <span class="n">numAnnotatedGenes</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">numAnnotatedGenes</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">annotatedGenes</span><span class="p">[</span><span class="n">approach</span><span class="p">]</span> <span class="o">=</span> <span class="n">numAnnotatedGenes</span>
+
+        <span class="c1"># write file with annotation percentage</span>
+        <span class="n">annotationComparison</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;annotationPercentages.csv&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotationComparison</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;gene</span><span class="se">\t</span><span class="si">% o</span><span class="s2">f genes annotated</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">approach</span><span class="p">,</span> <span class="n">numAnnotated</span> <span class="ow">in</span> <span class="n">annotatedGenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">annotatedPercentage</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">numAnnotated</span><span class="p">)</span> <span class="o">/</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">])</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">approach</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">annotatedPercentage</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AnnotationEvaluator.loadAnnotationFiles"><a class="viewcode-back" href="../comprior.html#evaluation.AnnotationEvaluator.loadAnnotationFiles">[docs]</a>    <span class="k">def</span> <span class="nf">loadAnnotationFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span><span class="n">inputFiles</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads files with feature annotations.</span>
+
+<span class="sd">           :param inputDir: absolute path to directory containing annotation files.</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param inputFiles: list of annotation file names to load.</span>
+<span class="sd">           :type inputFiles: :class:`List` of str</span>
+<span class="sd">           :return: dictionary of annotation sets per selection method.</span>
+<span class="sd">           :rtype: dict</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="n">featureLists</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">inputFiles</span><span class="p">:</span>
+            <span class="n">selectionMethod</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># get method name from filename without ending (format: top5_APPROACH_annotation.txt)</span>
+            <span class="n">fileContent</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputDir</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">itemsColumn</span> <span class="o">=</span> <span class="n">fileContent</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">fileContent</span><span class="p">[</span><span class="n">itemsColumn</span><span class="p">]</span>
+            <span class="n">featureLists</span><span class="p">[</span><span class="n">selectionMethod</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">featureLists</span></div>
+
+<div class="viewcode-block" id="AnnotationEvaluator.computeOverlap"><a class="viewcode-back" href="../comprior.html#evaluation.AnnotationEvaluator.computeOverlap">[docs]</a>    <span class="k">def</span> <span class="nf">computeOverlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">fileSuffix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates overlap plots for the available annotations/enrichments.</span>
+<span class="sd">           For up to two rankings, use Python&#39;s matplotlib to create Venn diagrams.</span>
+<span class="sd">           For three rankings and above, create UpsetR (https://github.com/hms-dbmi/UpSetR) diagrams via R.</span>
+
+<span class="sd">           :param inputDir: absolute path to directory containing files for which to compute overlap.</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param fileSuffix: suffix in filename to recognize the right files.</span>
+<span class="sd">           :type fileSuffix: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">inputFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">inputDir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">fileSuffix</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">):</span>
+                <span class="c1">#check if file contains more than header line to add it</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputDir</span> <span class="o">+</span> <span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">inputFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">sizeOfSets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong - you do not have enough files to compute overlap from!&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>  <span class="c1"># if we have only 2 sets for intersection</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadAnnotationFiles</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">inputFiles</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methodNames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">methodNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="n">venn2</span><span class="p">(</span><span class="n">methods</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>  <span class="n">set_labels</span> <span class="o">=</span> <span class="n">methodNames</span><span class="p">,</span> <span class="n">set_colors</span> <span class="o">=</span> <span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;overlaps&quot;</span> <span class="o">+</span> <span class="n">fileSuffix</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">sizeOfSets</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>  <span class="c1"># if we have only 3 sets for intersection</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadAnnotationFiles</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">inputFiles</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methodNames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">method</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">methodNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="n">venn3</span><span class="p">(</span><span class="n">methods</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">set_labels</span> <span class="o">=</span> <span class="n">methodNames</span><span class="p">,</span> <span class="n">set_colors</span> <span class="o">=</span> <span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;overlaps&quot;</span> <span class="o">+</span> <span class="n">fileSuffix</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
+            <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># for more sets use UpSets package</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;overlaps&quot;</span> <span class="o">+</span> <span class="n">fileSuffix</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">],</span> <span class="n">inputDir</span><span class="p">]</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">inputFiles</span><span class="p">:</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># get method name from filename without ending (format: top5_APPROACH_annotation.txt)</span>
+                <span class="n">colors</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;COLORS: &quot;</span> <span class="o">+</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">runRCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rConfig</span><span class="p">,</span> <span class="s2">&quot;UpsetDiagramCreation.R&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnnotationEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.AnnotationEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs the annotation/enrichment evaluation on the rankings.</span>
+<span class="sd">           Depending on what was specified in the config file, annotate and/or enrich feature rankings and compute overlaps or percentages.</span>
+<span class="sd">           Overlaps then can show a) if feature rankings represent the same underlying processes via annotation (maybe although having selected different features), or b) if the underlying processes are equally strongly represented by checking the enrichment (maybe altough having seleced different features).</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">geneLists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadRankings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]),</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">outputPath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;top&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">evalConfig</span><span class="p">[</span><span class="s2">&quot;topKmax&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
+
+        <span class="n">enrichr</span> <span class="o">=</span> <span class="n">knowledgebases</span><span class="o">.</span><span class="n">Enrichr</span><span class="p">()</span>
+
+        <span class="c1">#if there is any measure mentioned related to annotation</span>
+        <span class="k">if</span> <span class="s2">&quot;annotation&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="c1"># for every top k gene ranking, do enrichment analysis</span>
+            <span class="k">for</span> <span class="n">approach</span><span class="p">,</span> <span class="n">geneList</span> <span class="ow">in</span> <span class="n">geneLists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">outputFile</span> <span class="o">=</span> <span class="n">outputPath</span> <span class="o">+</span> <span class="n">approach</span>
+                <span class="n">enrichr</span><span class="o">.</span><span class="n">annotateGenes</span><span class="p">(</span><span class="n">geneList</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;annotation_overlap&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="c1"># compute overlap of annotated genes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">computeOverlap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;_annotatedGenes&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;annotation_percentage&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">countAnnotationPercentages</span><span class="p">(</span><span class="n">geneLists</span><span class="p">,</span> <span class="n">outputPath</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;enrichment_overlap&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="c1"># for every top k gene ranking, do enrichment analysis</span>
+            <span class="k">for</span> <span class="n">approach</span><span class="p">,</span> <span class="n">geneList</span> <span class="ow">in</span> <span class="n">geneLists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geneList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">outputFile</span> <span class="o">=</span> <span class="n">outputPath</span> <span class="o">+</span> <span class="n">approach</span>
+                    <span class="n">enrichr</span><span class="o">.</span><span class="n">enrichGeneset</span><span class="p">(</span><span class="n">geneList</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">)</span>
+
+            <span class="c1"># compute overlap of annotated terms</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">computeOverlap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;_enrichedTerms&quot;</span><span class="p">)</span></div></div>
+
+
+
+<span class="c1">####### Creates density plots for input data set (if available, also for crossvalidation data set) #######</span>
+<div class="viewcode-block" id="DatasetEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.DatasetEvaluator">[docs]</a><span class="k">class</span> <span class="nc">DatasetEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates plots regarding data set quality, currently: MDS, density, and box plots.</span>
+<span class="sd">       Wrapper class because the actual evaluation and plot creation is done in an R script.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the input data set is located (for which to create the plots).</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to save plots.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param separator: separator character in data set to read it correctly.</span>
+<span class="sd">       :type separator: str</span>
+<span class="sd">       :param options: what plots to create, a list of method names that must be specified in the config file.</span>
+<span class="sd">       :type options: list of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+        <span class="c1">#options must be a list of strings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="n">separator</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DatasetEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.DatasetEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Triggers the actual evaluation/plot generation in R.</span>
+<span class="sd">           If a second data set for cross-validation was provided, also run the corresponding R script on that data set.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">]</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">runRCommand</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">),</span> <span class="s2">&quot;DataCharacteristicsPlotting.R&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableCrossEvaluation&quot;</span><span class="p">)):</span>
+            <span class="n">crossValidationFile</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationData&quot;</span><span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">crossValidationFile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">]</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">runRCommand</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">),</span> <span class="s2">&quot;DataCharacteristicsPlotting.R&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator">[docs]</a><span class="k">class</span> <span class="nc">KnowledgeBaseEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates plots to evaluate knowledge base coverage.</span>
+<span class="sd">       Queries the knowledge bases with the given search terms and checks how many genes or pathways are found.</span>
+
+<span class="sd">       :param output: absolute path to the directory to which to save plots.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param knowledgebases: a list of knowledgebases to test.</span>
+<span class="sd">       :type knowledgebases: list of str</span>
+<span class="sd">       :param searchterms: list of search terms for which to check knowledge base coverage.</span>
+<span class="sd">       :type searchterms: list of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">knowledgebases</span><span class="p">,</span> <span class="n">searchterms</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">knowledgebases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createKnowledgeBases</span><span class="p">(</span><span class="n">knowledgebases</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span> <span class="o">=</span> <span class="n">searchterms</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.drawBoxPlot"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.drawBoxPlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawBoxPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">colIndex</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates box plot from a data set.</span>
+
+<span class="sd">           :param stats: statistics to plot.</span>
+<span class="sd">           :type stats: :class:`pandas.DataFrame`</span>
+<span class="sd">           :param colIndex: column index to use as column.</span>
+<span class="sd">           :type colIndex: int</span>
+<span class="sd">           :param filename: filename for the plot.</span>
+<span class="sd">           :type filename: str</span>
+<span class="sd">           :param title: title for the plot.</span>
+<span class="sd">           :type title: str</span>
+<span class="sd">           :param ylabel: label of y axis.</span>
+<span class="sd">           :type ylabel: str</span>
+<span class="sd">           :param colors: List of colors to use for the different search terms.</span>
+<span class="sd">           :type colors: :class:`List` of str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">colIndex</span><span class="p">],</span> <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_type</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+                           <span class="n">boxprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">medianprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span><span class="n">whiskerprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">capprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">flierprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">))</span>  <span class="c1"># fill with color</span>
+        <span class="n">bplot</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">patch</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bplot</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;boxes&#39;</span><span class="p">],</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+
+
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.drawBarPlot"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.drawBarPlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawBarPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a bar plot from a given data set.</span>
+
+<span class="sd">           :param stats: DataFrame from which to draw the bar plot.</span>
+<span class="sd">           :type stats: :class:`DataFrame`</span>
+<span class="sd">           :param filename: filename for the plot.</span>
+<span class="sd">           :type filename: str</span>
+<span class="sd">           :param title: title for the plot.</span>
+<span class="sd">           :type title: str</span>
+<span class="sd">           :param ylabel: label of y axis.</span>
+<span class="sd">           :type ylabel: str</span>
+<span class="sd">           :param colors: List of colors to use.</span>
+<span class="sd">           :type colors: :class:`List` of str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+
+
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.createKnowledgeBases"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.createKnowledgeBases">[docs]</a>    <span class="k">def</span> <span class="nf">createKnowledgeBases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledgebaseList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates knowledge base objects from a given list.</span>
+
+<span class="sd">           :param knowledgeBaseList: List of knowledge base names to create.</span>
+<span class="sd">           :type knowledgeBaseList: :class:`List` of str.</span>
+<span class="sd">           :return: List of knowledge base objects</span>
+<span class="sd">           :rtype: :class:`List` of :class:`KnowledgeBase` or inheriting classes</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="n">kbfactory</span> <span class="o">=</span> <span class="n">knowledgebases</span><span class="o">.</span><span class="n">KnowledgeBaseFactory</span><span class="p">()</span>
+        <span class="n">kbs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">kb</span> <span class="ow">in</span> <span class="n">knowledgebaseList</span><span class="p">:</span>
+            <span class="n">kbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kbfactory</span><span class="o">.</span><span class="n">createKnowledgeBase</span><span class="p">(</span><span class="n">kb</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">kbs</span></div>
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks the coverage for a given knowledge base and creates corresponding plots.</span>
+
+<span class="sd">           :param kb: knowledge base object for which to check coverage.</span>
+<span class="sd">           :type kb: :class:`knowledgebases.KnowledgeBase` or inheriting class</span>
+<span class="sd">           :param colors: List of colors to use for plots.</span>
+<span class="sd">           :type colors: :class:`List` of str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">:</span>
+            <span class="c1"># query knowledge base</span>
+            <span class="n">geneSet</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getGeneScores</span><span class="p">([</span><span class="n">term</span><span class="p">])</span>
+            <span class="n">geneSet</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">geneSet</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stats</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">geneSet</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geneSet</span><span class="p">)</span>
+
+        <span class="n">stats</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
+        <span class="c1"># write to file</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_GeneStats.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">boxplotfile</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_GeneScores.pdf&quot;</span>
+        <span class="n">barplotfile</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_NumberOfGenes.pdf&quot;</span>
+        <span class="n">df_statscounts</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stats</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">boxplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Gene association scores&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;association scores&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBarPlot</span><span class="p">(</span><span class="n">df_statscounts</span><span class="p">,</span> <span class="n">barplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Number of genes per search term&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;number of genes&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkPathwayCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkPathwayCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks the pathway coverage for a given knowledge base and creates corresponding plots.</span>
+
+<span class="sd">           :param kb: knowledge base object for which to check pathway coverage.</span>
+<span class="sd">           :type kb: :class:`knowledgebases.KnowledgeBase` or inheriting class</span>
+<span class="sd">           :param colors: List of colors to use for plots.</span>
+<span class="sd">           :type colors: :class:`List` of str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">:</span>
+            <span class="c1">#query knowledge base</span>
+            <span class="n">pathways</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getRelevantPathways</span><span class="p">([</span><span class="n">term</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">pathwayName</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pathways</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1">#numGenes = len(pathway.getNodes())</span>
+                <span class="n">numGenes</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">vcount</span>
+                <span class="c1">#pathwayName = pathway.name</span>
+                <span class="c1">#evtl. score attribut?</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">term</span><span class="p">,</span> <span class="n">pathwayName</span><span class="p">,</span> <span class="n">numGenes</span><span class="p">))</span>
+
+        <span class="c1">#make dataframe from list</span>
+        <span class="n">df_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="s2">&quot;pathway&quot;</span><span class="p">,</span> <span class="s2">&quot;#genes&quot;</span><span class="p">])</span>
+        <span class="c1">#write to file</span>
+        <span class="n">df_stats</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_PathwayStats.csv&quot;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">boxplotfile</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_PathwaySizes.pdf&quot;</span>
+        <span class="n">barplotfile</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_NumberOfPathways.pdf&quot;</span>
+        <span class="n">df_statscounts</span> <span class="o">=</span> <span class="n">df_stats</span><span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">df_stats</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span><span class="n">df_stats</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">boxplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Pathway sizes per search term&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;number of genes in pathway&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBarPlot</span><span class="p">(</span><span class="n">df_statscounts</span><span class="p">,</span> <span class="n">barplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Number of pathways per search term&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;number of pathways&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates every given knowledge base and checks how many genes and pathways (and how large they are) are in there for the given search terms.</span>
+<span class="sd">           Creates corresponding plots.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1">#set colors for every search term</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1">#if we have more than 12 search terms we need a color map with more colors</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="n">colorPalette</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;Paired&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">colors</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#create color palette with as many colors as search terms from a cyclic colormap</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;hsv&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">))</span>
+            <span class="n">colorPalette</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">)):</span>
+                <span class="n">colorPalette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmap</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">:</span>
+            <span class="n">labelColor</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">colorPalette</span><span class="p">)</span>
+            <span class="n">colorPalette</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">labelColor</span><span class="p">)</span>
+            <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labelColor</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">kb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">knowledgebases</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Draw plots for &quot;</span> <span class="o">+</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kb</span><span class="o">.</span><span class="n">hasPathways</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkPathwayCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">kb</span><span class="o">.</span><span class="n">hasGenes</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;...finished.&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

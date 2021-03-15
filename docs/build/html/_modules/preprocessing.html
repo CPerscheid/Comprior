@@ -1,0 +1,477 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>preprocessing &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>preprocessing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">benchutils</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="Preprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.Preprocessor">[docs]</a><span class="k">class</span> <span class="nc">Preprocessor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Super class of all preprocessor implementations.</span>
+<span class="sd">       Inherit from this class and implement :meth:`preprocessing.Preprocessor.preprocess()` if you want to add a new preprocessor class.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param metadata: absolute path to the metadata file.</span>
+<span class="sd">       :type metadata: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Preprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.Preprocessor.preprocess">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Abstract method.</span>
+<span class="sd">           Interface method that is invoked externally to trigger preprocessing.</span>
+
+<span class="sd">           :return: absolute path to the preprocessed output file.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+<div class="viewcode-block" id="MappingPreprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.MappingPreprocessor">[docs]</a><span class="k">class</span> <span class="nc">MappingPreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Maps the input data set to a desired format.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param currentFormat: current identifier format.</span>
+<span class="sd">       :type currentFormat: str</span>
+<span class="sd">       :param desiredFormat: desired identifier format.</span>
+<span class="sd">       :type desiredFormat: str</span>
+<span class="sd">       :param labeled: boolean value if the input data is labeled.</span>
+<span class="sd">       :type labeled: bool</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">currentFormat</span><span class="p">,</span> <span class="n">desiredFormat</span><span class="p">,</span> <span class="n">labeled</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentFormat</span> <span class="o">=</span> <span class="n">currentFormat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desiredFormat</span> <span class="o">=</span> <span class="n">desiredFormat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labeled</span> <span class="o">=</span> <span class="n">labeled</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MappingPreprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.MappingPreprocessor.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Maps the identifiers in the input dataset to the desired format that was specified when constructing the preprocessor.</span>
+
+<span class="sd">           :return: absolute path to the mapped file.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">inputMatrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">original_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mapped_filename</span> <span class="o">=</span> <span class="s2">&quot;mapped_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredFormat</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">original_filename</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span>
+        <span class="n">output_filepath</span> <span class="o">=</span>  <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1">#as the DataFormatter always transposes the data before any further processing, we can expect all genes to be in the columns</span>
+        <span class="n">genesInColumn</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+        <span class="c1">#only map genes if the current format is not the desired format</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentFormat</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredFormat</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output_filepath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">mapped_filename</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">mapDataMatrix</span><span class="p">(</span><span class="n">inputMatrix</span><span class="p">,</span> <span class="n">genesInColumn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentFormat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredFormat</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labeled</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+<div class="viewcode-block" id="FilterPreprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.FilterPreprocessor">[docs]</a><span class="k">class</span> <span class="nc">FilterPreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filters features or samples above a user-defined threshold of missing values.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param metadata: absolute path to the metadata file.</span>
+<span class="sd">       :type metadata: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param config: configuration parameter for preprocessing as specified in the config file.</span>
+<span class="sd">       :type config: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;Preprocessing&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FilterPreprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.FilterPreprocessor.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Depending on what is specified in the config file, filter samples and/or features.</span>
+<span class="sd">           Remove all samples/features that have missing values above the threshold specified in the config.</span>
+
+<span class="sd">           :return: absolute path to the filtered output file.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;filterMissingsInGenes&quot;</span><span class="p">):</span>
+            <span class="c1"># first filter out the genes that have more missings than threshold</span>
+            <span class="n">filtered_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterMissings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span> <span class="n">filtered_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;filterMissingsInSamples&quot;</span><span class="p">):</span>
+            <span class="c1"># second transpose matrix and filter out samples that have more missings than threshold</span>
+            <span class="n">filtered_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterMissings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filtered_samples</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># transpose back into original orientation and save</span>
+        <span class="n">filePrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span>  <span class="c1"># split path by / to receive filename, split filename by . to receive filename without ending</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filePrefix</span> <span class="o">+</span> <span class="s2">&quot;_filtered.csv&quot;</span>
+        <span class="n">filtered_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+<div class="viewcode-block" id="FilterPreprocessor.filterMissings"><a class="viewcode-back" href="../comprior.html#preprocessing.FilterPreprocessor.filterMissings">[docs]</a>    <span class="k">def</span> <span class="nf">filterMissings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filter the data for entries that have missing information above the given threshold.</span>
+
+<span class="sd">           :param threshold: maximum percentage of allowed missing items as string.</span>
+<span class="sd">           :type threshold: str</span>
+<span class="sd">           :param data: a DataFrame to be filtered</span>
+<span class="sd">           :type data: :class:`pandas.DataFrame`</span>
+<span class="sd">           :return: filtered DataFrame.</span>
+<span class="sd">           :rtype: :class:`pandas.DataFrame`</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="c1">#replace NAs by 0 for counting</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">filtered_columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+
+
+        <span class="c1">#find out threshold, i.e. minimum number of non-zero in real numbers</span>
+        <span class="n">rowNumber</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">min_nonZeros</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rowNumber</span> <span class="o">-</span> <span class="p">((</span><span class="n">rowNumber</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">threshold</span><span class="p">))</span><span class="o">/</span><span class="mi">100</span><span class="p">))</span>
+
+        <span class="n">zero_counts</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">columnID</span><span class="p">,</span> <span class="n">nonZeros</span> <span class="ow">in</span> <span class="n">zero_counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">nonZeros</span> <span class="o">&lt;=</span> <span class="n">min_nonZeros</span><span class="p">:</span>
+                <span class="n">filtered_columns</span> <span class="o">=</span> <span class="n">filtered_columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columnID</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">filtered_columns</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="DataTransformationPreprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.DataTransformationPreprocessor">[docs]</a><span class="k">class</span> <span class="nc">DataTransformationPreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform the input data to have features in the columns for subsequent processing.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param metadata: absolute path to the metadata file.</span>
+<span class="sd">       :type metadata: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param dataSeparator: delimiter to use when parsing the input file.</span>
+<span class="sd">       :type dataSeparator: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">dataSeparator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transposeMatrix</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;genesInColumns&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataSeparator</span> <span class="o">=</span> <span class="n">dataSeparator</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataTransformationPreprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.DataTransformationPreprocessor.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If not already so, transpose the input data to have the features in the columns.</span>
+
+<span class="sd">           :return: absolute path to the correctly formatted output file.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataSeparator</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1">#ATTENTION: this processing assumes that the data is formatted in a way that header and index are automatically recognized. remove trailing commas/separators at first line of the file for this to be achieved</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transposeMatrix</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">filePrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span>  <span class="c1"># split path by / to receive filename, split filename by . to receive filename without ending</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filePrefix</span> <span class="o">+</span> <span class="s2">&quot;_transposed.csv&quot;</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span></div></div>
+
+<div class="viewcode-block" id="MetaDataPreprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.MetaDataPreprocessor">[docs]</a><span class="k">class</span> <span class="nc">MetaDataPreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add labels to input data.</span>
+<span class="sd">       Get labels from meta data attribute that was specified in the user config.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param metadata: absolute path to the metadata file.</span>
+<span class="sd">       :type metadata: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param dataSeparator: delimiter to use when parsing the input and metadata file.</span>
+<span class="sd">       :type dataSeparator: str</span>
+<span class="sd">       :param diseaseColumn: column name of the class labels.</span>
+<span class="sd">       :type diseaseColumn: str</span>
+<span class="sd">       :param transposeMetadataMatrix: boolean value if the identifier names are located in the columns, as specified in the config file.</span>
+<span class="sd">       :type transposeMetadataMatrix: bool</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">separator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diseaseColumn</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;classLabelName&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transposeMetadataMatrix</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metadataIDsInColumns&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="n">separator</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MetaDataPreprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.MetaDataPreprocessor.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Labels all samples of a data set.</span>
+<span class="sd">           Labels are taken from the corresponding metadata file and the metadata attribute that was specified in the config file.</span>
+<span class="sd">           Samples without metadata information well be assigned to class &quot;NotAvailable&quot;.</span>
+
+<span class="sd">           :return: absolute path to the labeled data set.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">diseaseCodes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">quotechar</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+
+        <span class="n">diseaseColumn</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transposeMetadataMatrix</span><span class="p">:</span>
+            <span class="n">diseaseCodes</span> <span class="o">=</span> <span class="n">diseaseCodes</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1">#iterate through all sample IDs and select the corresponding disease/annotation from the metadata for it</span>
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">diseaseCode</span> <span class="o">=</span> <span class="n">diseaseCodes</span><span class="p">[</span><span class="n">sample</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">diseaseColumn</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">diseaseCode</span> <span class="o">=</span> <span class="s2">&quot;NotAvailable&quot;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No classLabel code found for sample &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;. Assign class NotAvailable.&quot;</span><span class="p">)</span>
+            <span class="n">diseaseColumn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diseaseCode</span><span class="p">)</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;classLabel&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">diseaseColumn</span><span class="p">)</span>
+
+        <span class="n">df_without_missings</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;classLabel&#39;</span><span class="p">])</span>
+        <span class="n">filePrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span>  <span class="c1"># split path by / to receive filename, split filename by . to receive filename without ending</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filePrefix</span> <span class="o">+</span> <span class="s2">&quot;_withClassLabels.csv&quot;</span>
+        <span class="n">df_without_missings</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span></div></div>
+
+<span class="c1">####### PREPROCESSOR: moves a dataset into its respective folder #######</span>
+<div class="viewcode-block" id="DataMovePreprocessor"><a class="viewcode-back" href="../comprior.html#preprocessing.DataMovePreprocessor">[docs]</a><span class="k">class</span> <span class="nc">DataMovePreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Moves the input data set to the specified location.</span>
+
+<span class="sd">       :param input: absolute path to the input file.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param output: absolute path to the output directory.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataMovePreprocessor.preprocess"><a class="viewcode-back" href="../comprior.html#preprocessing.DataMovePreprocessor.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Moves a file (self.input) to another location (self.output).</span>
+<span class="sd">           Typically used at the end of preprocessing, when the final data set is moved to a new location for the actual analysis.</span>
+
+<span class="sd">           :return: absolute path to the new file location.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;cp &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

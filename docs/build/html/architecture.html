@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>System Architecture &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Java Code Documentation" href="java-doc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#components-architecture">Components Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing-class-diagram">preprocessing Class Diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#featureselection-class-diagram">featureselection Class Diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#knowledgebases-class-diagram">knowledgebases Class Diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation-class-diagram">evaluation Class Diagram</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>System Architecture</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/architecture.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="system-architecture">
+<h1>System Architecture<a class="headerlink" href="#system-architecture" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="components-architecture">
+<h2>Components Architecture<a class="headerlink" href="#components-architecture" title="Permalink to this headline">¶</a></h2>
+<p>The image below describes the system components and their interaction points.
+The interfaces correspond to concrete methods (see the actual components’ class diagrams).</p>
+<a class="reference internal image-reference" href="_images/Components_Architecture.png"><img alt="_images/Components_Architecture.png" src="_images/Components_Architecture.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="preprocessing-class-diagram">
+<h2>preprocessing Class Diagram<a class="headerlink" href="#preprocessing-class-diagram" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all classes related to preprocessing.
+Every preprocessing functionality is encapsulated in its own class, which must inherit from the abstract <a class="reference internal" href="comprior.html#preprocessing.Preprocessor" title="preprocessing.Preprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">preprocessing.Preprocessor</span></code></a> class (here marked in grey) and implement its <a class="reference internal" href="comprior.html#preprocessing.Preprocessor.preprocess" title="preprocessing.Preprocessor.preprocess"><code class="xref py py-meth docutils literal notranslate"><span class="pre">preprocessing.Preprocessor.preprocess()</span></code></a> method</p>
+<a class="reference internal image-reference" href="_images/Classes_Preprocessing.png"><img alt="_images/Classes_Preprocessing.png" src="_images/Classes_Preprocessing.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="featureselection-class-diagram">
+<h2>featureselection Class Diagram<a class="headerlink" href="#featureselection-class-diagram" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all classes related to feature selection.
+Every feature selector is encapsulated in its own class, which must inherit from the abstract <a class="reference internal" href="comprior.html#featureselection.FeatureSelector" title="featureselection.FeatureSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.FeatureSelector</span></code></a> class or similar (abstract classes are marked in grey) and implement its <a class="reference internal" href="comprior.html#featureselection.FeatureSelector.selectFeatures" title="featureselection.FeatureSelector.selectFeatures"><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.FeatureSelector.selectFeatures()</span></code></a> method.</p>
+<a class="reference internal image-reference" href="_images/Classes_FeatureSelection.png"><img alt="_images/Classes_FeatureSelection.png" src="_images/Classes_FeatureSelection.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="knowledgebases-class-diagram">
+<h2>knowledgebases Class Diagram<a class="headerlink" href="#knowledgebases-class-diagram" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all classes related to external knowledge retrieval.
+Every knowledge base is encapsulated in two classes, which must inherit from the abstract <a class="reference internal" href="comprior.html#knowledgebases.KnowledgeBase" title="knowledgebases.KnowledgeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBase</span></code></a> class (the interface to the other components) and bioservices’ REST class (the interface to the online web service). Abstract classes are marked in grey.</p>
+<a class="reference internal image-reference" href="_images/Classes_KnowledgeBases.png"><img alt="_images/Classes_KnowledgeBases.png" src="_images/Classes_KnowledgeBases.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="evaluation-class-diagram">
+<h2>evaluation Class Diagram<a class="headerlink" href="#evaluation-class-diagram" title="Permalink to this headline">¶</a></h2>
+<p>This module contains all classes related to evaluation functionality.
+Every evaluation functionality is encapsulated in its own class, which must inherit from the abstract <a class="reference internal" href="comprior.html#evaluation.Evaluator" title="evaluation.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">evaluation.Evaluator</span></code></a> class (abstract classes are marked in grey) and implement its <a class="reference internal" href="comprior.html#evaluation.Evaluator.evaluate" title="evaluation.Evaluator.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluation.Evaluator.evaluate()</span></code></a> method.</p>
+<a class="reference internal image-reference" href="_images/Classes_Evaluation.png"><img alt="_images/Classes_Evaluation.png" src="_images/Classes_Evaluation.png" style="width: 600px;" /></a>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="java-doc.html" class="btn btn-neutral float-left" title="Java Code Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

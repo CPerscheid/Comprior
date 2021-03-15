@@ -1,0 +1,1078 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Java Code Documentation &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="System Architecture" href="architecture.html" />
+    <link rel="prev" title="R Code Documentation" href="r-doc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Java Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#package-de.hpi.bmg">Feature Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Java Code Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/java-doc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="java-code-documentation">
+<h1>Java Code Documentation<a class="headerlink" href="#java-code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="package-de.hpi.bmg">
+<span id="feature-selection"></span><h2>Feature Selection<a class="headerlink" href="#package-de.hpi.bmg" title="Permalink to this headline">¶</a></h2>
+<dl class="type">
+<dt id="de.hpi.bmg.WEKA_FeatureSelector">
+public class <code class="descname">WEKA_FeatureSelector</code><a class="headerlink" href="#de.hpi.bmg.WEKA_FeatureSelector" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span>package de.hpi.bmg<span class="p">;</span>
+
+import weka.core.Instances<span class="p">;</span>
+
+import java.util.ArrayList<span class="p">;</span>
+import java.util.List<span class="p">;</span>
+
+<span class="o">/**</span>
+ <span class="o">*</span> Entry point class <span class="kr">for</span> running a feature selector on a data set.
+ <span class="o">*</span> Invoke the jar of this java file to carry out feature selection procedure <span class="p">(</span>see an example <span class="kr">in</span> <span class="o">:</span><span class="kp">class</span><span class="o">:</span><span class="sb">`featureselection.InfoGainSelector`</span> how to do that<span class="p">)</span><span class="m">.</span>
+ <span class="o">*/</span>
+public class WEKA_FeatureSelector <span class="p">{</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Loads the input data set and creates selector objects based on the provided <span class="kt">list</span> of feature selector names.
+     <span class="o">*</span> Invokes feature selection procedures <span class="kr">for</span> all selectors and writes the results to the output directory<span class="p">,</span> one file per selector.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param args the parameters provided when invoking the jar. Provide the following parameters<span class="o">:</span>
+     <span class="o">*</span>             <span class="o">-</span> absolute path to the input data set.
+     <span class="o">*</span>             <span class="o">-</span> absolute path to the output directory <span class="p">(</span>where to write the feature rankings<span class="p">)</span><span class="m">.</span>
+     <span class="o">*</span>             <span class="o">-</span> a string of feature selectors<span class="p">,</span> separated by a comma <span class="p">(</span>e.g. <span class="s">&quot;InfoGain,ReliefF&quot;</span><span class="p">)</span><span class="m">.</span>
+     <span class="o">*/</span>
+    public static void main<span class="p">(</span>String<span class="p">[]</span> <span class="kp">args</span><span class="p">)</span> <span class="p">{</span>
+
+        DataLoader dl <span class="o">=</span> new DataLoader<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">0</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">);</span>
+
+        Instances data <span class="o">=</span> dl.getData<span class="p">();</span>
+
+        <span class="o">//</span>delete sample column
+        data.deleteAttributeAt<span class="p">(</span><span class="m">0</span><span class="p">);</span>
+        <span class="o">//</span>System.out.print<span class="p">(</span>data<span class="p">);</span>
+        <span class="o">//</span>set classLabel column to classIndex column
+        data.setClassIndex<span class="p">(</span><span class="m">0</span><span class="p">);</span>
+        <span class="o">//</span>System.out.print<span class="p">(</span>data.classAttribute<span class="p">());</span>
+
+        List<span class="o">&lt;</span>String<span class="o">&gt;</span> attributeSelectionMethods <span class="o">=</span> new ArrayList<span class="o">&lt;</span>String<span class="o">&gt;</span><span class="p">();</span>
+
+        <span class="kr">for</span> <span class="p">(</span>int i<span class="o">=</span><span class="m">2</span><span class="p">;</span> i <span class="o">&lt;</span> args.length<span class="p">;</span> i<span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            attributeSelectionMethods.add<span class="p">(</span><span class="kp">args</span><span class="p">[</span>i<span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="kr">for</span> <span class="p">(</span>String asMethod <span class="o">:</span> attributeSelectionMethods<span class="p">)</span> <span class="p">{</span>
+
+            AttributeSelector as <span class="o">=</span> new AttributeSelector<span class="p">(</span>data<span class="p">,</span> asMethod<span class="p">);</span>
+
+            as.selectAttributes<span class="p">();</span>
+            <span class="o">//</span>System.out.print<span class="p">(</span>asMethod<span class="p">);</span>
+
+            as.saveSelectedAttributes<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">1</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Entry point class for running a feature selector on a data set.
+Invoke the jar of this java file to carry out feature selection procedure.
+Is invoked by during feature selection by <a class="reference internal" href="comprior.html#featureselection.InfoGainSelector" title="featureselection.InfoGainSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.InfoGainSelector</span></code></a>.</p>
+</div></blockquote>
+<dl class="method">
+<dt id="de.hpi.bmg.WEKA_FeatureSelector.main(String[])">
+public static void <code class="descname">main</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>[]<em> args</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.WEKA_FeatureSelector.main(String[])" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the input data set and creates selector objects based on the provided list of feature selector names.
+Invokes feature selection procedures for all selectors and writes the results to the output directory, one file per selector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> – The parameters provided when invoking the jar. Provide the following parameters: a) the absolute path to the input data set, b) the absolute path to the output directory (where to write the feature rankings), and c) a string of feature selectors to run, separated by a comma (e.g. “InfoGain,ReliefF”).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="de.hpi.bmg.DataLoader">
+public class <code class="descname">DataLoader</code><a class="headerlink" href="#de.hpi.bmg.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span>package de.hpi.bmg<span class="p">;</span>
+
+import weka.core.Instances<span class="p">;</span>
+import weka.core.converters.CSVLoader<span class="p">;</span>
+
+import java.io.File<span class="p">;</span>
+import java.io.IOException<span class="p">;</span>
+
+<span class="o">/**</span>
+ <span class="o">*</span> Class <span class="kr">for</span> loading a data set from a file.
+ <span class="o">*</span> Used by classes WEKA_Evaluator and WEKA_FeatureSelector.
+ <span class="o">*/</span>
+public class DataLoader <span class="p">{</span>
+
+
+    String sourceFile<span class="p">;</span>
+
+    Instances data<span class="p">;</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Constructor method.
+     <span class="o">*</span> Loads the data from the specified <span class="kn">source</span> file and stores it <span class="kr">in</span> the data class attribute.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param sourceFile absolute path of the input file from which to load the data.
+     <span class="o">*</span> <span class="o">@</span>param separator  separator to use <span class="kr">for</span> file reading<span class="p">,</span> e.g a comma.
+     <span class="o">*/</span>
+    public DataLoader<span class="p">(</span>String sourceFile<span class="p">,</span> String separator<span class="p">)</span> <span class="p">{</span>
+        this.sourceFile <span class="o">=</span> sourceFile<span class="p">;</span>
+        loadData<span class="p">(</span>separator<span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Returns the loaded data set.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span><span class="kr">return</span> the data set.
+     <span class="o">*/</span>
+    public Instances getData<span class="p">()</span> <span class="p">{</span>
+        <span class="kr">return</span> data<span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Carries out the actual data loading.
+     <span class="o">*</span> Stores the loaded data set <span class="kr">in</span> the data class attribute.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param separator separator to use <span class="kr">for</span> file reading<span class="p">,</span> e.g. a comma.
+     <span class="o">*/</span>
+    private void loadData<span class="p">(</span>String separator<span class="p">)</span> <span class="p">{</span>
+
+        CSVLoader loader <span class="o">=</span> new CSVLoader<span class="p">();</span>
+        loader.setFieldSeparator<span class="p">(</span>separator<span class="p">);</span>
+        try <span class="p">{</span>
+            loader.setSource<span class="p">(</span>new File<span class="p">(</span>this.sourceFile<span class="p">));</span>
+            this.data <span class="o">=</span> loader.getDataSet<span class="p">();</span>
+        <span class="p">}</span> catch <span class="p">(</span>IOException e<span class="p">)</span> <span class="p">{</span>
+            e.printStackTrace<span class="p">();</span>
+            <span class="o">//</span> see https<span class="o">://</span>opensource.apple.com<span class="o">/</span><span class="kn">source</span><span class="o">/</span>Libc<span class="o">/</span>Libc<span class="m">-320</span><span class="o">/</span>include<span class="o">/</span>sysexits.h
+            System.exit<span class="p">(</span><span class="m">66</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Class for loading a data set from a file.
+Used by classes <a class="reference internal" href="#de.hpi.bmg.WEKA_FeatureSelector" title="de.hpi.bmg.WEKA_FeatureSelector"><code class="xref java java-type docutils literal notranslate"><span class="pre">WEKA_FeatureSelector</span></code></a> and <a class="reference internal" href="#de.hpi.bmg.WEKA_Evaluator" title="de.hpi.bmg.WEKA_Evaluator"><code class="xref java java-type docutils literal notranslate"><span class="pre">WEKA_Evaluator</span></code></a>.</p>
+<dl class="field">
+<dt id="de.hpi.bmg.DataLoader.data">
+ Instances <code class="descname">data</code><a class="headerlink" href="#de.hpi.bmg.DataLoader.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="field">
+<dt id="de.hpi.bmg.DataLoader.sourceFile">
+ <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a> <code class="descname">sourceFile</code><a class="headerlink" href="#de.hpi.bmg.DataLoader.sourceFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="constructor">
+<dt id="de.hpi.bmg.DataLoader.DataLoader(String, String)">
+public <code class="descname">DataLoader</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> sourceFile</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> separator</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.DataLoader.DataLoader(String, String)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.
+Loads the data from the specified source file and stores it in the data class attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sourceFile</strong> – absolute path of the input file from which to load the data.</li>
+<li><strong>separator</strong> – separator to use for file reading, e.g a comma.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.DataLoader.getData()">
+public Instances <code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.DataLoader.getData()" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaded data set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the data set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.DataLoader.loadData(String)">
+private void <code class="descname">loadData</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> separator</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.DataLoader.loadData(String)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carries out the actual data loading.
+Stores the loaded data set in the data class attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>separator</strong> – separator to use for file reading, e.g. a comma.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="de.hpi.bmg.AttributeSelector">
+public class <code class="descname">AttributeSelector</code><a class="headerlink" href="#de.hpi.bmg.AttributeSelector" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span>package de.hpi.bmg<span class="p">;</span>
+
+import com.opencsv.CSVWriter<span class="p">;</span>
+import weka.attributeSelection.<span class="o">*</span><span class="p">;</span>
+import weka.core.Instances<span class="p">;</span>
+
+import java.io.<span class="o">*</span><span class="p">;</span>
+import java.util.logging.Logger<span class="p">;</span>
+
+<span class="o">/**</span>
+ <span class="o">*</span> Selector class that carries out the actual feature selection procedure.
+ <span class="o">*</span> Invoked <span class="kp">by</span>
+ <span class="o">*/</span>
+public class AttributeSelector <span class="p">{</span>
+
+    private final static Logger LOGGER <span class="o">=</span> Logger.getLogger<span class="p">(</span>AttributeSelector.class.getName<span class="p">());</span>
+
+    private String selectionMethod<span class="p">;</span>
+    private Instances data<span class="p">;</span>
+    private AttributeSelection attributeSelection<span class="p">;</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Constructor method.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param data the input data set from which to select the features.
+     <span class="o">*</span> <span class="o">@</span>param selectionMethod name of the feature selector to apply.
+     <span class="o">*/</span>
+    public AttributeSelector<span class="p">(</span>Instances data<span class="p">,</span> String selectionMethod<span class="p">){</span>
+
+        this.data <span class="o">=</span> data<span class="p">;</span>
+        this.selectionMethod <span class="o">=</span> selectionMethod<span class="p">;</span>
+
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Do the actual feature selection.
+     <span class="o">*</span> Based on the selector name<span class="p">,</span> create corresponding instances of classes provided by WEKA and generate a feature ranking.
+     <span class="o">*/</span>
+    public void selectAttributes<span class="p">()</span> <span class="p">{</span>
+        ASEvaluation <span class="kp">eval</span><span class="p">;</span>
+
+        <span class="kr">switch</span> <span class="p">(</span>this.selectionMethod<span class="p">)</span> <span class="p">{</span>
+            case <span class="s">&quot;SVMpRFE&quot;</span><span class="o">:</span>
+                <span class="o">//</span>the default kernel <span class="kr">for</span> WEKAs SVMAttributeEval is a poly kernel <span class="p">(</span>as defined <span class="kr">in</span> class SMO<span class="p">)</span>
+                eval <span class="o">=</span> new SVMAttributeEval<span class="p">();</span>
+
+                <span class="p">((</span>SVMAttributeEval<span class="p">)</span> <span class="kp">eval</span><span class="p">)</span><span class="m">.</span>setPercentThreshold<span class="p">(</span><span class="m">10</span><span class="p">);</span>
+
+                <span class="p">((</span>SVMAttributeEval<span class="p">)</span> <span class="kp">eval</span><span class="p">)</span><span class="m">.</span>setPercentToEliminatePerIteration<span class="p">(</span><span class="m">10</span><span class="p">);</span>
+
+                <span class="kr">break</span><span class="p">;</span>
+
+            case <span class="s">&quot;GainRatio&quot;</span><span class="o">:</span>
+
+                eval <span class="o">=</span> new GainRatioAttributeEval<span class="p">();</span>
+
+                <span class="kr">break</span><span class="p">;</span>
+
+            case <span class="s">&quot;ReliefF&quot;</span><span class="o">:</span>
+
+                eval <span class="o">=</span> new ReliefFAttributeEval<span class="p">();</span>
+
+                <span class="kr">break</span><span class="p">;</span>
+
+            default<span class="o">:</span>
+
+                eval <span class="o">=</span> new InfoGainAttributeEval<span class="p">();</span>
+
+        <span class="p">}</span>
+
+        Ranker ranker <span class="o">=</span> new Ranker<span class="p">();</span>
+
+        this.attributeSelection <span class="o">=</span> new AttributeSelection<span class="p">();</span>
+
+        this.attributeSelection.setEvaluator<span class="p">(</span><span class="kp">eval</span><span class="p">);</span>
+        this.attributeSelection.setSearch<span class="p">(</span>ranker<span class="p">);</span>
+
+        <span class="o">//</span> perform attribute selection
+
+        long begin <span class="o">=</span> System.currentTimeMillis<span class="p">();</span>
+
+        try <span class="p">{</span>
+            this.attributeSelection.SelectAttributes<span class="p">(</span>data<span class="p">);</span>
+        <span class="p">}</span> catch <span class="p">(</span>Exception e<span class="p">)</span> <span class="p">{</span>
+            e.printStackTrace<span class="p">();</span>
+        <span class="p">}</span>
+
+        long end <span class="o">=</span> System.currentTimeMillis<span class="p">();</span>
+
+        long dt <span class="o">=</span> end <span class="o">-</span> begin<span class="p">;</span>
+
+        LOGGER.info<span class="p">(</span><span class="s">&quot;&quot;</span> <span class="o">+</span> dt <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> this.selectionMethod<span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Creates a feature ranking <span class="kt">list</span> and stores it <span class="kr">in</span> the specified file.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param saveLocation absolute path to the output file <span class="kr">in</span> which to store the ranking.
+     <span class="o">*/</span>
+    public void saveSelectedAttributes<span class="p">(</span>String saveLocation<span class="p">)</span> <span class="p">{</span>
+
+        try <span class="p">{</span>
+
+
+            CSVWriter writer <span class="o">=</span> new CSVWriter<span class="p">(</span>new FileWriter<span class="p">(</span>saveLocation <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> this.selectionMethod <span class="o">+</span> <span class="s">&quot;.csv&quot;</span><span class="p">),</span> <span class="s">&#39;\t&#39;</span><span class="p">);</span>
+
+            String<span class="p">[]</span> header <span class="o">=</span> <span class="p">{</span><span class="s">&quot;attributeName&quot;</span><span class="p">,</span><span class="s">&quot;score&quot;</span><span class="p">};</span>
+
+            writer.writeNext<span class="p">(</span>header<span class="p">);</span>
+
+            <span class="kt">double</span><span class="p">[][]</span> rankedAttributes <span class="o">=</span> this.attributeSelection.rankedAttributes<span class="p">();</span>
+
+            <span class="kr">for</span> <span class="p">(</span>int i <span class="o">=</span> <span class="m">0</span><span class="p">;</span> i <span class="o">&lt;</span> rankedAttributes.length<span class="p">;</span> i<span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+                String attributeName <span class="o">=</span> data.attribute<span class="p">((</span>int<span class="p">)</span> rankedAttributes<span class="p">[</span>i<span class="p">][</span><span class="m">0</span><span class="p">])</span><span class="m">.</span>name<span class="p">();</span>
+
+                String score <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="o">+</span> rankedAttributes<span class="p">[</span>i<span class="p">][</span><span class="m">1</span><span class="p">];</span>
+
+                String<span class="p">[]</span> entry <span class="o">=</span> <span class="p">{</span>attributeName<span class="p">,</span> score<span class="p">};</span>
+
+                writer.writeNext<span class="p">(</span>entry<span class="p">);</span>
+            <span class="p">}</span>
+
+            writer.close<span class="p">();</span>
+
+        <span class="p">}</span> catch <span class="p">(</span>Exception e<span class="p">)</span> <span class="p">{</span>
+            e.printStackTrace<span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Selector class that carries out the actual feature selection procedure.
+Used by <a class="reference internal" href="#de.hpi.bmg.WEKA_FeatureSelector" title="de.hpi.bmg.WEKA_FeatureSelector"><code class="xref java java-type docutils literal notranslate"><span class="pre">WEKA_FeatureSelector</span></code></a>.</p>
+<dl class="constructor">
+<dt id="de.hpi.bmg.AttributeSelector.AttributeSelector(Instances, String)">
+public <code class="descname">AttributeSelector</code><span class="sig-paren">(</span>Instances<em> data</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> selectionMethod</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.AttributeSelector.AttributeSelector(Instances, String)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – the input data set from which to select the features.</li>
+<li><strong>selectionMethod</strong> – name of the feature selector to apply.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.AttributeSelector.saveSelectedAttributes(String)">
+public void <code class="descname">saveSelectedAttributes</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> saveLocation</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.AttributeSelector.saveSelectedAttributes(String)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a feature ranking list and stores it in the specified file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>saveLocation</strong> – absolute path to the output file in which to store the ranking</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.AttributeSelector.selectAttributes()">
+public void <code class="descname">selectAttributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.AttributeSelector.selectAttributes()" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the actual feature selection.
+Based on the selector name, create corresponding instances of classes provided by WEKA and generate a feature ranking.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<dl class="type">
+<dt id="de.hpi.bmg.WEKA_Evaluator">
+public class <code class="descname">WEKA_Evaluator</code><a class="headerlink" href="#de.hpi.bmg.WEKA_Evaluator" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span>package de.hpi.bmg<span class="p">;</span>
+
+import com.opencsv.CSVWriter<span class="p">;</span>
+import org.apache.commons.lang3.ArrayUtils<span class="p">;</span>
+import weka.classifiers.AbstractClassifier<span class="p">;</span>
+import weka.classifiers.bayes.NaiveBayes<span class="p">;</span>
+import weka.classifiers.functions.Logistic<span class="p">;</span>
+import weka.classifiers.functions.SMO<span class="p">;</span>
+import weka.classifiers.lazy.IBk<span class="p">;</span>
+import weka.classifiers.trees.J48<span class="p">;</span>
+import weka.classifiers.trees.RandomForest<span class="p">;</span>
+import weka.core.Instances<span class="p">;</span>
+
+import java.lang.reflect.Array<span class="p">;</span>
+import java.util.Arrays<span class="p">;</span>
+import java.util.HashMap<span class="p">;</span>
+import java.io.File<span class="p">;</span>
+import java.io.FileWriter<span class="p">;</span>
+import java.io.IOException<span class="p">;</span>
+import java.util.logging.Logger<span class="p">;</span>
+import java.nio.file.Files<span class="p">;</span>
+import java.nio.file.Path<span class="p">;</span>
+import java.nio.file.Paths<span class="p">;</span>
+
+<span class="o">/**</span>
+ <span class="o">*</span> Entry point class <span class="kr">for</span> running classification on a data set using only the top <span class="m">1</span> up to k features <span class="p">(</span>one classification round per k<span class="p">)</span><span class="m">.</span>
+ <span class="o">*</span> Invoke the jar of this java file to start the classification procedure <span class="p">(</span>see an example <span class="kr">in</span> <span class="o">:</span><span class="kp">class</span><span class="o">:</span><span class="sb">`evaluation.ClassificationEvaluator`</span> how to do that<span class="p">)</span><span class="m">.</span>
+ <span class="o">*</span> Uses <span class="kp">class</span><span class="o">:</span><span class="sb">`DataLoader`</span> to load input data set and <span class="kp">class</span><span class="o">:</span><span class="sb">`Analyzer`</span> to run the actual classification procedure <span class="p">(</span>and compute evaluation metrics<span class="p">)</span><span class="m">.</span>
+ <span class="o">*</span> Summarizes results from all classifiers and all input data sets <span class="p">(</span>depending on how many features were used<span class="p">)</span> and writes them into output files.
+ <span class="o">*/</span>
+public class WEKA_Evaluator <span class="p">{</span>
+
+    private final static Logger LOGGER <span class="o">=</span> Logger.getLogger<span class="p">(</span>WEKA_Evaluator.class.getName<span class="p">());</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Process some of the command line parameters <span class="p">(</span><span class="kr">for</span> classifiers<span class="p">,</span> metrics<span class="p">,</span> and input data set locations<span class="p">)</span><span class="m">.</span>
+     <span class="o">*</span> Invokes classification procedure <span class="kr">for</span> every subdirectory <span class="p">(</span><span class="o">=</span>selection method<span class="p">)</span> that is contained <span class="kr">in</span> the input directory.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param args the parameters provided when invoking the jar. Provide the following parameters<span class="o">:</span>
+     <span class="o">*</span>             <span class="o">-</span> absolute path of the directory containing the reduced input data set files <span class="p">(</span>one subdirectory per selection approach<span class="p">)</span><span class="m">.</span>
+     <span class="o">*</span>             <span class="o">-</span> absolute path of the output directory <span class="p">(</span>where to write all evaluation results<span class="p">)</span><span class="m">.</span>
+     <span class="o">*</span>             <span class="o">-</span> minimum number of features to use <span class="kr">for</span> classification.
+     <span class="o">*</span>             <span class="o">-</span> maximum number of features to use <span class="kr">for</span> classification.
+     <span class="o">*</span>             <span class="o">-</span> k param <span class="kr">for</span> k<span class="o">-</span>fold cross validation.
+     <span class="o">*</span>             <span class="o">-</span> a string of classifiers<span class="p">,</span> separated by a comma <span class="p">(</span>e.g. <span class="s">&quot;SVM,KNN3,KNN5&quot;</span><span class="p">)</span><span class="m">.</span>
+     <span class="o">*</span>             <span class="o">-</span> a string of metrics to compute<span class="p">,</span> separated by a comma <span class="p">(</span>e.g. <span class="s">&quot;accuracy,specificity,precision&quot;</span><span class="p">)</span><span class="m">.</span>
+     <span class="o">*/</span>
+    public static void main<span class="p">(</span>String<span class="p">[]</span> <span class="kp">args</span><span class="p">)</span> <span class="p">{</span>
+
+        System.out.println<span class="p">(</span><span class="s">&quot;In WEKA-Evaluator&quot;</span><span class="p">);</span>
+
+        <span class="o">//</span>get reduced data set locations
+        File folder <span class="o">=</span> new File<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span>
+        <span class="o">//</span>the input path should only contain directories <span class="o">-</span> one <span class="kr">for</span> each method
+        File<span class="p">[]</span> listOfDirs <span class="o">=</span> folder.listFiles<span class="p">();</span>
+
+        <span class="o">//</span>get classifiers from input
+        String classifierParams <span class="o">=</span> <span class="kp">args</span><span class="p">[</span><span class="m">5</span><span class="p">];</span>
+        String<span class="p">[]</span> classifiers <span class="o">=</span> classifierParams.split<span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+        <span class="o">//</span>get metrics to use from input
+        String metricParams <span class="o">=</span> <span class="kp">args</span><span class="p">[</span><span class="m">6</span><span class="p">];</span>
+        String<span class="p">[]</span> metrics <span class="o">=</span> metricParams.split<span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+
+        <span class="kr">for</span> <span class="p">(</span>File methodDir <span class="o">:</span> listOfDirs<span class="p">)</span> <span class="p">{</span>
+            System.out.print<span class="p">(</span>methodDir.getAbsolutePath<span class="p">());</span>
+
+            classifyAndEvaluate<span class="p">(</span>methodDir.getName<span class="p">(),</span> methodDir.getAbsolutePath<span class="p">(),</span> new File<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">1</span><span class="p">],</span> methodDir.getName<span class="p">())</span><span class="m">.</span>getAbsolutePath<span class="p">(),</span>
+                        Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">2</span><span class="p">]),</span> Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">3</span><span class="p">]),</span>  Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">4</span><span class="p">]),</span> classifiers<span class="p">,</span> metrics<span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Runs the overall classification procedure <span class="kr">for</span> all feature set sizes of a particular selection approach.
+     <span class="o">*</span> Creates the specified classifier objects and filewriters <span class="kr">for</span> the results.
+     <span class="o">*</span> For every feature set size from topKmin to topKmax<span class="p">,</span> invoke an instance of <span class="o">:</span><span class="kp">class</span><span class="o">:</span><span class="sb">`Analyzer`</span>to carry out the actual classification and compute the metrics.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param selectionMethod the name of the feature selection method that generated the feature sets to evaluate.
+     <span class="o">*</span> <span class="o">@</span>param reducedDatasetLocation absolute path to the directory containing the reduced input files <span class="p">(</span>with increasing feature set sizes<span class="p">)</span> <span class="kr">for</span> classification.
+     <span class="o">*</span> <span class="o">@</span>param resultLocation absolute path to the output file to which to write the classification results.
+     <span class="o">*</span> <span class="o">@</span>param topKmin minimum number of features to use.
+     <span class="o">*</span> <span class="o">@</span>param topKmax maximum number of features to use.
+     <span class="o">*</span> <span class="o">@</span>param numFolds k parameter <span class="kr">for</span> k<span class="o">-</span>fold cross validation.
+     <span class="o">*</span> <span class="o">@</span>param classifiers a <span class="kt">list</span> of classifier names to use <span class="kr">for</span> classification.
+     <span class="o">*</span> <span class="o">@</span>param evalMetrics a <span class="kt">list</span> of metric names compute <span class="kr">for</span> the classification results.
+     <span class="o">*/</span>
+    private static void classifyAndEvaluate<span class="p">(</span>String selectionMethod<span class="p">,</span> String reducedDatasetLocation<span class="p">,</span> String resultLocation<span class="p">,</span> int topKmin<span class="p">,</span> int topKmax<span class="p">,</span> int numFolds<span class="p">,</span> String<span class="p">[]</span> classifiers<span class="p">,</span> String<span class="p">[]</span> evalMetrics<span class="p">)</span> <span class="p">{</span>
+        LOGGER.info<span class="p">(</span>Integer.toString<span class="p">(</span>Array.getLength<span class="p">(</span>evalMetrics<span class="p">)));</span>
+        LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        LOGGER.info<span class="p">(</span>selectionMethod<span class="p">);</span>
+        LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        LOGGER.info<span class="p">(</span>resultLocation<span class="p">);</span>
+
+        HashMap<span class="o">&lt;</span>String<span class="p">,</span> CSVWriter<span class="o">&gt;</span> writers <span class="o">=</span> new HashMap<span class="o">&lt;</span>String<span class="p">,</span> CSVWriter<span class="o">&gt;</span><span class="p">();</span>
+        try <span class="p">{</span>
+            AbstractClassifier<span class="p">[]</span> classifierObjects <span class="o">=</span> null<span class="p">;</span>
+            AbstractClassifier analyzer <span class="o">=</span> null<span class="p">;</span>
+            String<span class="p">[]</span> classifierNames <span class="o">=</span> null<span class="p">;</span>
+            <span class="o">//</span>create desired classifiers
+            <span class="kr">for</span> <span class="p">(</span>String method <span class="o">:</span> classifiers<span class="p">)</span> <span class="p">{</span>
+                <span class="kr">switch</span> <span class="p">(</span>method<span class="p">)</span> <span class="p">{</span>
+                    case <span class="s">&quot;SMO&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new SMO<span class="p">();</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;SMO&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;LR&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new Logistic<span class="p">();</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;LR&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;KNN3&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new IBk<span class="p">();</span>
+                        <span class="p">((</span>IBk<span class="p">)</span> analyzer<span class="p">)</span><span class="m">.</span>setKNN<span class="p">(</span><span class="m">3</span><span class="p">);</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;KNN3&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;KNN5&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new IBk<span class="p">();</span>
+                        <span class="p">((</span>IBk<span class="p">)</span> analyzer<span class="p">)</span><span class="m">.</span>setKNN<span class="p">(</span><span class="m">5</span><span class="p">);</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;KNN5&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;NB&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new NaiveBayes<span class="p">();</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;NB&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;C4.5&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new J48<span class="p">();</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;C4.5&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    case <span class="s">&quot;RF&quot;</span><span class="o">:</span>
+                        analyzer <span class="o">=</span> new RandomForest<span class="p">();</span>
+                        classifierObjects <span class="o">=</span> <span class="p">(</span>AbstractClassifier<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierObjects<span class="p">,</span> analyzer<span class="p">);</span>
+                        classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;RF&quot;</span><span class="p">);</span>
+                        <span class="kr">break</span><span class="p">;</span>
+                    default<span class="o">:</span>
+                        LOGGER.info<span class="p">(</span>method <span class="o">+</span> <span class="s">&quot; is no valid classifier/analysis module. Do nothing.&quot;</span><span class="p">);</span>
+                        continue<span class="p">;</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+
+            <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> evalMetrics<span class="p">){</span>
+                String filePath <span class="o">=</span> resultLocation <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> metric <span class="o">+</span> <span class="s">&quot;.csv&quot;</span><span class="p">;</span>
+                writers.put<span class="p">(</span>metric<span class="p">,</span> new CSVWriter<span class="p">(</span>new FileWriter<span class="p">(</span>filePath<span class="p">),</span> <span class="s">&#39;\t&#39;</span><span class="p">,</span> CSVWriter.NO_QUOTE_CHARACTER<span class="p">,</span>
+                                    CSVWriter.DEFAULT_ESCAPE_CHARACTER<span class="p">,</span>
+                                    CSVWriter.DEFAULT_LINE_END<span class="p">));</span>
+
+                String <span class="p">[]</span> attributes <span class="o">=</span> <span class="p">{</span><span class="s">&quot;#ofAttributes&quot;</span><span class="p">};</span>
+                String <span class="p">[]</span> average <span class="o">=</span> <span class="p">{</span><span class="s">&quot;average&quot;</span><span class="p">};</span>
+                String<span class="p">[]</span> headerstart <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span><span class="kp">attributes</span><span class="p">,</span> classifierNames<span class="p">);</span>
+                String<span class="p">[]</span> header <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>headerstart<span class="p">,</span> average<span class="p">);</span>
+                writers.get<span class="p">(</span>metric<span class="p">)</span><span class="m">.</span>writeNext<span class="p">(</span>header<span class="p">);</span>
+            <span class="p">}</span>
+
+            File folder <span class="o">=</span> new File<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+            File<span class="p">[]</span> listOfDirs <span class="o">=</span> folder.listFiles<span class="p">();</span>
+
+            <span class="kr">for</span> <span class="p">(</span>int k <span class="o">=</span> topKmin<span class="p">;</span> k <span class="o">&lt;=</span> topKmax<span class="p">;</span> k<span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                String datasetFile <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+                <span class="o">//</span>get the file with k <span class="kr">in</span> its name and load its content
+                datasetFile <span class="o">=</span> reducedDatasetLocation <span class="o">+</span> <span class="s">&quot;/top&quot;</span> <span class="o">+</span> String.valueOf<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;features_&quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.csv&quot;</span><span class="p">;</span>
+                LOGGER.info<span class="p">(</span><span class="s">&quot;###################################&quot;</span><span class="p">);</span>
+                LOGGER.info<span class="p">(</span>datasetFile<span class="p">);</span>
+                <span class="kr">if</span> <span class="p">(</span>new File<span class="p">(</span>datasetFile<span class="p">)</span><span class="m">.i</span>sFile<span class="p">()){</span>
+                    DataLoader dl <span class="o">=</span> new DataLoader<span class="p">(</span>datasetFile<span class="p">,</span> <span class="s">&quot;\t&quot;</span><span class="p">);</span>
+                    Instances data <span class="o">=</span> dl.getData<span class="p">();</span>
+                    data.deleteAttributeAt<span class="p">(</span><span class="m">0</span><span class="p">);</span>
+                    data.setClassIndex<span class="p">(</span><span class="m">0</span><span class="p">);</span>
+                    Analyzer ce <span class="o">=</span> new Analyzer<span class="p">(</span>data<span class="p">);</span>
+
+
+                    LOGGER.info<span class="p">(</span><span class="s">&quot;: Starting classification evaluation with models &quot;</span> <span class="o">+</span> Arrays.toString<span class="p">(</span>classifierNames<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
+
+                    HashMap<span class="o">&lt;</span>String<span class="p">,</span> String<span class="o">&gt;</span> results <span class="o">=</span> ce.trainAndEvaluateWithTopKAttributes<span class="p">(</span>k<span class="p">,</span> numFolds<span class="p">,</span> classifierObjects<span class="p">,</span> evalMetrics<span class="p">);</span>
+                    <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> writers.keySet<span class="p">())</span> <span class="p">{</span>
+                        CSVWriter writer <span class="o">=</span> writers.get<span class="p">(</span>metric<span class="p">);</span>
+                        String resultLine <span class="o">=</span> results.get<span class="p">(</span>metric<span class="p">);</span>
+                        String<span class="p">[]</span> line <span class="o">=</span> resultLine.split<span class="p">(</span><span class="s">&quot;\t&quot;</span><span class="p">);</span>
+                        writer.writeNext<span class="p">(</span>line<span class="p">);</span>
+                        <span class="o">//</span>writer.flush<span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="kr">else</span> <span class="p">{</span>
+                    LOGGER.info<span class="p">(</span><span class="s">&quot;No rankings found for k = &quot;</span> <span class="o">+</span> Integer.toString<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;. Stop classification for &quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">);</span>
+                    <span class="kr">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                LOGGER.info<span class="p">(</span><span class="s">&quot;: Finished classification evaluation with models &quot;</span> <span class="o">+</span>  Arrays.toString<span class="p">(</span>classifiers<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="o">//</span>close all open file writers
+            <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> evalMetrics<span class="p">)</span> <span class="p">{</span>
+                writers.get<span class="p">(</span>metric<span class="p">)</span><span class="m">.</span><span class="kp">close</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span> catch <span class="p">(</span>IOException e<span class="p">)</span> <span class="p">{</span>
+            e.printStackTrace<span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Entry point class for running classification on a data set using only the top 1 up to k features (one classification round per k).
+Is invoked by <a class="reference internal" href="comprior.html#evaluation.ClassificationEvaluator" title="evaluation.ClassificationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">evaluation.ClassificationEvaluator</span></code></a> to start the classification procedure.
+Uses <a class="reference internal" href="#de.hpi.bmg.DataLoader" title="de.hpi.bmg.DataLoader"><code class="xref java java-type docutils literal notranslate"><span class="pre">DataLoader</span></code></a> to load input data set and <a class="reference internal" href="#de.hpi.bmg.Analyzer" title="de.hpi.bmg.Analyzer"><code class="xref java java-type docutils literal notranslate"><span class="pre">Analyzer</span></code></a> to run the actual classification procedure (and compute evaluation metrics).
+Summarizes results from all classifiers and all input data sets (depending on how many features were used) and writes them into output files.</p>
+<dl class="method">
+<dt id="de.hpi.bmg.WEKA_Evaluator.main(String[])">
+public static void <code class="descname">main</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>[]<em> args</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.WEKA_Evaluator.main(String[])" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process some of the command line parameters (for classifiers, metrics, and input data set locations).
+Invokes classification procedure for every subdirectory (=selection method) that is contained in the input directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> – the parameters provided when invoking the jar. Provide the following parameters: a) the absolute path of the directory containing the reduced input data set files (one subdirectory per selection approach), b) the absolute path of the output directory (where to write all evaluation results), c) the minimum number of features to use for classification, d) the maximum number of features to use for classification, e) number of folds for cross validation, f) a string of classifiers, separated by a comma (e.g. “SVM,KNN3,KNN5”), and g) a string of metrics to compute, separated by a comma (e.g. “accuracy,specificity,precision”).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.WEKA_Evaluator.classifyAndEvaluate(String, String, String, int, int, int, String[], String[])">
+private static void <code class="descname">classifyAndEvaluate</code><span class="sig-paren">(</span><a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> selectionMethod</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> reducedDatasetLocation</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a><em> resultLocation</em>, int<em> topKmin</em>, int<em> topKmax</em>, int<em> numFolds</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>[]<em> classifiers</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>[]<em> evalMetrics</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.WEKA_Evaluator.classifyAndEvaluate(String, String, String, int, int, int, String[], String[])" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the overall classification procedure for all feature set sizes of a particular selection approach.
+Creates the specified classifier objects and filewriters for the results.
+For every feature set size from topKmin to topKmax, invoke an instance of <a class="reference internal" href="#de.hpi.bmg.Analyzer" title="de.hpi.bmg.Analyzer"><code class="xref java java-type docutils literal notranslate"><span class="pre">Analyzer</span></code></a> to carry out the actual classification and compute the metrics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selectionMethod</strong> – the name of the feature selection method that generated the feature sets to evaluate.</li>
+<li><strong>reducedDatasetLocation</strong> – absolute path to the directory containing the reduced input files (with increasing feature set sizes) for classification.</li>
+<li><strong>resultLocation</strong> – absolute path to the output file to which to write the classification results.</li>
+<li><strong>topKmin</strong> – minimum number of features to use.</li>
+<li><strong>topKmax</strong> – maximum number of features to use.</li>
+<li><strong>numFolds</strong> – k parameter for k-fold cross validation.</li>
+<li><strong>classifiers</strong> – a list of classifier names to use for classification.</li>
+<li><strong>evalMetrics</strong> – a list of metric names compute for the classification results.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="de.hpi.bmg.Analyzer">
+public class <code class="descname">Analyzer</code><a class="headerlink" href="#de.hpi.bmg.Analyzer" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span>package de.hpi.bmg<span class="p">;</span>
+
+import weka.classifiers.Evaluation<span class="p">;</span>
+import weka.classifiers.trees.J48<span class="p">;</span>
+import weka.classifiers.bayes.NaiveBayes<span class="p">;</span>
+import weka.classifiers.functions.Logistic<span class="p">;</span>
+import weka.classifiers.functions.SMO<span class="p">;</span>
+import weka.classifiers.lazy.IBk<span class="p">;</span>
+import weka.classifiers.trees.RandomForest<span class="p">;</span>
+import weka.core.Instances<span class="p">;</span>
+import java.io.IOException<span class="p">;</span>
+import java.util.logging.Logger<span class="p">;</span>
+import weka.classifiers.AbstractClassifier<span class="p">;</span>
+import java.util.HashMap<span class="p">;</span>
+
+import java.util.Random<span class="p">;</span>
+
+<span class="o">/**</span>
+ <span class="o">*</span> Carries out the actual k<span class="o">-</span>fold cross validation on the specified classifiers.
+ <span class="o">*</span> Computes the desired evaluation metrics.
+ <span class="o">*</span> Uses WEKA.
+ <span class="o">*/</span>
+public class Analyzer <span class="p">{</span>
+    private Instances data<span class="p">;</span>
+
+    private final static Logger LOGGER <span class="o">=</span> Logger.getLogger<span class="p">(</span>Analyzer.class.getName<span class="p">());</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Constructor method.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param data the data set to use <span class="kr">for</span> classification.
+     <span class="o">*</span> <span class="o">@</span><span class="kr">return</span> An instance of Analyzer.
+     <span class="o">*/</span>
+    public Analyzer<span class="p">(</span>Instances data<span class="p">)</span> <span class="p">{</span>
+        this.data <span class="o">=</span> data<span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="o">/**</span>
+     <span class="o">*</span> Runs the actual classification procedure.
+     <span class="o">*</span> Uses WEKA to run multiple classifiers <span class="p">(</span>originally specified <span class="kr">in</span> config <span class="kp">file</span><span class="p">)</span> <span class="kr">in</span> a k<span class="o">-</span>fold cross validation manner.
+     <span class="o">*</span> Computes standard evaluation metrics as required afterwards.
+     <span class="o">*</span>
+     <span class="o">*</span> <span class="o">@</span>param numberOfAttributesRetained the data set to use <span class="kr">for</span> classification.
+     <span class="o">*</span> <span class="o">@</span>param numFolds number of folds <span class="kr">for</span> cross validation.
+     <span class="o">*</span> <span class="o">@</span>param classifiers a <span class="kt">list</span> of classifier objects to use <span class="kr">for</span> classification.
+     <span class="o">*</span> <span class="o">@</span>param metrics a <span class="kt">list</span> of names of evaluation metrics to compute <span class="kr">for</span> the results.
+     <span class="o">*</span> <span class="o">@</span><span class="kr">return</span> the evaluation results as <span class="kp">class</span><span class="o">:</span>HashMap with the metric name as identifier and metric results <span class="p">(</span>across classifiers and average<span class="p">)</span> as values.
+     <span class="o">*/</span>
+    public  HashMap<span class="o">&lt;</span>String<span class="p">,</span> String<span class="o">&gt;</span> trainAndEvaluateWithTopKAttributes<span class="p">(</span>int numberOfAttributesRetained<span class="p">,</span> int numFolds<span class="p">,</span> AbstractClassifier<span class="p">[]</span> classifiers<span class="p">,</span> String<span class="p">[]</span> metrics<span class="p">)</span> <span class="p">{</span>
+
+
+        HashMap<span class="o">&lt;</span>String<span class="p">,</span> String<span class="o">&gt;</span> returnStrings <span class="o">=</span> new HashMap<span class="o">&lt;</span>String<span class="p">,</span> String<span class="o">&gt;</span><span class="p">();</span>
+        HashMap<span class="o">&lt;</span>String<span class="p">,</span> Double<span class="o">&gt;</span> sums <span class="o">=</span> new HashMap<span class="o">&lt;</span>String<span class="p">,</span> Double<span class="o">&gt;</span><span class="p">();</span>
+        Evaluation eval <span class="o">=</span> null<span class="p">;</span>
+
+        <span class="o">//</span>initialize maps <span class="kr">for</span> <span class="kr">return</span> strings and average computations
+        <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> metrics<span class="p">){</span>
+            String startString <span class="o">=</span> Integer.toString<span class="p">(</span>numberOfAttributesRetained<span class="p">);</span>
+            returnStrings.put<span class="p">(</span>metric<span class="p">,</span> startString<span class="p">);</span>
+            sums.put<span class="p">(</span>metric<span class="p">,</span> <span class="m">0.0</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        try <span class="p">{</span>
+            eval <span class="o">=</span> new Evaluation<span class="p">(</span>this.data<span class="p">);</span>
+
+            <span class="kt">double</span> sum <span class="o">=</span> <span class="m">0.0</span>d<span class="p">;</span>
+
+            <span class="o">//</span>AbstractClassifier analyzer <span class="o">=</span> null<span class="p">;</span>
+
+            <span class="kr">for</span> <span class="p">(</span>AbstractClassifier analyzer <span class="o">:</span> classifiers<span class="p">){</span>
+
+                <span class="o">//</span>run the analysis
+                eval.crossValidateModel<span class="p">(</span>analyzer<span class="p">,</span> this.data<span class="p">,</span> numFolds<span class="p">,</span> new Random<span class="p">(</span><span class="m">1</span><span class="p">));</span>
+                <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> metrics<span class="p">)</span> <span class="p">{</span>
+                    String returnString <span class="o">=</span> returnStrings.get<span class="p">(</span>metric<span class="p">);</span>
+                    <span class="kt">double</span> metricVal <span class="o">=</span> <span class="m">0.0</span><span class="p">;</span>
+                    <span class="kr">switch</span> <span class="p">(</span>metric<span class="p">)</span> <span class="p">{</span>
+                        case <span class="s">&quot;accuracy&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.pctCorrect<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;kappa&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.kappa<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;AUROC&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedAreaUnderROC<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;sensitivity&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedTruePositiveRate<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;specificity&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedTrueNegativeRate<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;F1&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedFMeasure<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;matthewcoef&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedMatthewsCorrelation<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                        case <span class="s">&quot;precision&quot;</span><span class="o">:</span>
+                            metricVal <span class="o">=</span> eval.weightedPrecision<span class="p">();</span>
+                            <span class="kr">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    returnString <span class="o">+=</span> <span class="s">&quot;\t&quot;</span> <span class="o">+</span> String.valueOf<span class="p">(</span>metricVal<span class="p">);</span>
+                    returnStrings.put<span class="p">(</span>metric<span class="p">,</span> returnString<span class="p">);</span>
+                    <span class="o">//</span>update overall sum <span class="kr">for</span> average computation
+                    sum <span class="o">=</span> sums.get<span class="p">(</span>metric<span class="p">);</span>
+                    sums.put<span class="p">(</span>metric<span class="p">,</span> sum <span class="o">+</span> metricVal<span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> metrics<span class="p">){</span>
+                String returnString <span class="o">=</span> returnStrings.get<span class="p">(</span>metric<span class="p">);</span>
+                returnString <span class="o">+=</span> <span class="s">&quot;\t&quot;</span> <span class="o">+</span> <span class="p">(</span>sums.get<span class="p">(</span>metric<span class="p">)</span> <span class="o">/</span> classifiers.length<span class="p">);</span>
+                returnStrings.put<span class="p">(</span>metric<span class="p">,</span> returnString<span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="o">//</span>System.out.println<span class="p">(</span>eval.toSummaryString<span class="p">(</span>true<span class="p">));</span>
+
+        <span class="p">}</span> catch <span class="p">(</span>Exception e<span class="p">)</span> <span class="p">{</span>
+            e.printStackTrace<span class="p">();</span>
+        <span class="p">}</span>
+        <span class="kr">return</span> returnStrings<span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Carries out the actual k-fold cross validation on the specified classifiers.
+Computes the desired evaluation metrics.
+Uses WEKA.
+Invoked by <a class="reference internal" href="#de.hpi.bmg.WEKA_Evaluator" title="de.hpi.bmg.WEKA_Evaluator"><code class="xref java java-type docutils literal notranslate"><span class="pre">WEKA_Evaluator</span></code></a>.</p>
+<blockquote>
+<div><dl class="constructor">
+<dt id="de.hpi.bmg.Analyzer.Analyzer(Instances)">
+public <code class="descname">Analyzer</code><span class="sig-paren">(</span>Instances<em> data</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.Analyzer.Analyzer(Instances)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – the data set to use for classification.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">An instance of <a class="reference internal" href="#de.hpi.bmg.Analyzer" title="de.hpi.bmg.Analyzer"><code class="xref java java-type docutils literal notranslate"><span class="pre">Analyzer</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="de.hpi.bmg.Analyzer.trainAndEvaluateWithTopKAttributes(int, int, AbstractClassifier[], String[])">
+public HashMap&lt;<a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>&gt; <code class="descname">trainAndEvaluateWithTopKAttributes</code><span class="sig-paren">(</span>int<em> numberOfAttributesRetained</em>, int<em> numFolds</em>, AbstractClassifier[]<em> classifiers</em>, <a class="reference external" href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="java.lang.String">String</a>[]<em> metrics</em><span class="sig-paren">)</span><a class="headerlink" href="#de.hpi.bmg.Analyzer.trainAndEvaluateWithTopKAttributes(int, int, AbstractClassifier[], String[])" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the actual classification procedure.
+Uses WEKA to run multiple classifiers (originally specified in config file) in a k-fold cross validation manner.
+Computes standard evaluation metrics as required afterwards.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>numberOfAttributesRetained</strong> – the data set to use for classification.</li>
+<li><strong>numFolds</strong> – number of folds for cross validation.</li>
+<li><strong>classifiers</strong> – a list of classifier objects to use for classification.</li>
+<li><strong>metrics</strong> – a list of names of evaluation metrics to compute for the results.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the evaluation results as HashMap with the metric name as identifier and metric results (across classifiers and average) as values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="architecture.html" class="btn btn-neutral float-right" title="System Architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="r-doc.html" class="btn btn-neutral float-left" title="R Code Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

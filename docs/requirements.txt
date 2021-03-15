@@ -1,0 +1,19 @@
+pandas >= 1.1.0
+numpy
+sklearn #for feature selection
+mlxtend #for feature selection
+
+bioservices >= 1.7.11 #for querying knowledge bases
+opentargets #for querying OpenTargets
+#pypath-omnipath #interal pathway representation
+
+
+lxml #for reading xml from knowledge bases
+matplotlib #for visualization
+matplotlib_venn #for visualization of ranking overlaps
+
+multiprocess
+
+sphinx == 1.7.9
+javasphinx #for documentation purposes with readthedocs
+docutils == 0.15.2

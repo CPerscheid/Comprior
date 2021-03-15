@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Input Data Sets &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration Parameters" href="configparams.html" />
+    <link rel="prev" title="Installation and Usage" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Input Data Sets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gene-expression-data">Gene Expression Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#metadata">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-for-cross-validation">Data for Cross-Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Input Data Sets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/inputdata.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="input-data-sets">
+<h1>Input Data Sets<a class="headerlink" href="#input-data-sets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="gene-expression-data">
+<h2>Gene Expression Data<a class="headerlink" href="#gene-expression-data" title="Permalink to this headline">¶</a></h2>
+<p>The gene expression dataset must be provided in table format.
+Genes/features can be located either in columns or rows, however make sure to set the <em>genesInColumns</em> parameter accordingly in your config file.
+Data separators can be chosen arbitrarily, however make sure to set the <em>dataSeparator</em> parameter accordingly.
+<strong>Make sure to always leave the first column of the header empty as shown here</strong>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">,ERBB2,TP53,DVL1,BRCA1,BRCA2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Sample1</strong>,12.02,4.12,11.25,9.87,10.02</td>
+</tr>
+<tr class="row-odd"><td><strong>Sample2</strong>,10.32,4.76,10.73,10.94,8.72</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="metadata">
+<h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
+<p>Metadata must always be provided for an input data set.
+It must have the same separator as the gene expression data (pay attention: here you do not have to leave a blank column).
+Whether samples or metadata type is located in the columns can be specified with the <em>metadataIDsInColumns</em> parameter.
+Specify the class labels by selecting a corresponding metadata type with the <em>classLabelName</em> parameter (e.g. if we want to have subtypes as class labels, specify <em>subtype</em>).
+If the metadata provides further information on the disease that you want to provide as search terms for the knowledge bases, specify it with the <em>diseaseLabelName</em> parameter (e.g. by setting it to <em>primary_diagnosis</em>).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Sample1,Sample2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>project_id</strong>,BRCA,BRCA</td>
+</tr>
+<tr class="row-odd"><td><strong>subtype</strong>,LumA,LumB</td>
+</tr>
+<tr class="row-even"><td><strong>gender</strong>,female,female</td>
+</tr>
+<tr class="row-odd"><td><strong>primary_diagnosis</strong>,”Infiltrating duct carcinoma, NOS”,”Lobular carcinoma, NOS”</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-for-cross-validation">
+<h2>Data for Cross-Validation<a class="headerlink" href="#data-for-cross-validation" title="Permalink to this headline">¶</a></h2>
+<p>Preprocessing for data sets for cross-validation is currently not supported (except for identifier mapping), so the data must be provided with a) genes in columns and b) the corresponding class labels.
+Make sure to set the name of the class label column in the config file with the <em>crossEvaluationClassLabel</em> parameter (in the example, it would be <em>diseaseCode</em>).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">diseaseCode,SampleName,ERBB2,TP53,DVL1,BRCA1,BRCA2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>LumA,Sample1</strong>,12.02,4.12,11.25,9.87,10.02</td>
+</tr>
+<tr class="row-odd"><td><strong>LumB,Sample2</strong>,10.32,4.76,10.73,10.94,8.72</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="configparams.html" class="btn btn-neutral float-right" title="Configuration Parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation and Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

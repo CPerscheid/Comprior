@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>R Code Documentation &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Java Code Documentation" href="java-doc.html" />
+    <link rel="prev" title="Python Code Documentation" href="comprior.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">R Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#feature-selection">Feature Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility">Utility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>R Code Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/r-doc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="r-code-documentation">
+<h1>R Code Documentation<a class="headerlink" href="#r-code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="feature-selection">
+<h2>Feature Selection<a class="headerlink" href="#feature-selection" title="Permalink to this headline">¶</a></h2>
+<dl class="directive">
+<dt id="directive-FS_mRMR.R">
+<code class="descname">.. FS_mRMR.R::</code><a class="headerlink" href="#directive-FS_mRMR.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Runs mRMR feature selection in parallel as implemented in the mRMRe package: De Jay, N. et al. &quot;mRMRe: an R package for parallelized mRMR ensemble feature selection.&quot; Bioinformatics (2013).</span>
+<span class="c1">#Although run in parallel, the performance is still not very good for high-dimensional data sets (&gt;20.000 features).</span>
+<span class="c1">#The resulting scores sometimes seem to not be sorted.</span>
+<span class="c1">#However, these scores are the individual features&#39; scores and feature combinations can result in a different overall ranking.</span>
+<span class="c1">#Invoked by python&#39;s featureselection.MRMRSelector class.</span>
+<span class="c1">#</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - absolute path to the input data set file.</span>
+<span class="c1">#         - absolute path to the output file where the ranking will be stored.</span>
+<span class="c1">#         - maximum number of features to select.</span>
+
+<span class="kn">library</span><span class="p">(</span>mRMRe<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+inputFile <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+outputLocation <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+maxFeatures <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+
+
+<span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span><span class="kp">args</span><span class="p">)</span><span class="o">&lt;</span><span class="m">3</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;Please supply three arguments: inputFile (data set), outputLocation (feature ranking), and maxFeatures (number of features to select)&quot;</span><span class="p">,</span> call.<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="p">}</span>
+
+rawData <span class="o">&lt;-</span> read.csv<span class="p">(</span>inputFile<span class="p">,</span> check.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> stringsAsFactors <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="c1">#check.names= FALSE necessary because R introducing X for column names beginning with numbers</span>
+geneExpressionMatrix <span class="o">&lt;-</span> rawData<span class="p">[</span><span class="o">-</span><span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">)]</span>
+geneExpressionMatrix<span class="p">[,</span><span class="m">1</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="kp">as.numeric</span><span class="p">(</span>geneExpressionMatrix<span class="p">[,</span><span class="m">1</span><span class="p">])</span>
+
+<span class="c1">#do feature selection here</span>
+dd <span class="o">&lt;-</span> mRMR.data<span class="p">(</span>data <span class="o">=</span> geneExpressionMatrix<span class="p">)</span>
+features <span class="o">&lt;-</span> mRMR.classic<span class="p">(</span>data <span class="o">=</span> dd<span class="p">,</span> target_indices <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">),</span> feature_count <span class="o">=</span> maxFeatures<span class="p">)</span>
+
+ranking <span class="o">&lt;-</span> solutions<span class="p">(</span>features<span class="p">)</span>
+scores <span class="o">&lt;-</span> features<span class="o">@</span>scores<span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+
+colNames <span class="o">&lt;-</span> <span class="kp">names</span><span class="p">(</span>geneExpressionMatrix<span class="p">)</span>
+featureNames <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>colNames<span class="p">[</span><span class="kp">unlist</span><span class="p">(</span>ranking<span class="p">)])</span>
+
+outputData <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>featureNames<span class="p">,</span>scores<span class="p">)</span>
+
+fileOutput <span class="o">&lt;-</span> <span class="kp">as.data.frame</span><span class="p">(</span>outputData<span class="p">)</span>
+
+<span class="kp">colnames</span><span class="p">(</span>fileOutput<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;attributeName&quot;</span><span class="p">,</span> <span class="s">&quot;score&quot;</span><span class="p">)</span>
+
+write.csv<span class="p">(</span>fileOutput<span class="p">,</span> file <span class="o">=</span> outputLocation<span class="p">,</span> row.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;\t&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><p>Runs mRMR feature selection in parallel as implemented in the mRMRe package: De Jay, N. et al. “mRMRe: an R package for parallelized mRMR ensemble feature selection.” Bioinformatics (2013).
+Although run in parallel, the performance is still not very good for high-dimensional data sets (&gt;20.000    features).
+The resulting scores sometimes seem to not be sorted.
+However, these scores are the individual features’ scores and feature combinations can result in a different overall ranking.
+Invoked by <a class="reference internal" href="comprior.html#featureselection.MRMRSelector" title="featureselection.MRMRSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.MRMRSelector</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param args:</th><td class="field-body">the input parameters parsed from the command line, consisting of a) the absolute path to the input data set file, b) the absolute path to the output file where the ranking will be stored, and c)the maximum number of features to select.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="directive">
+<dt id="directive-FS_LassoPenalty.R">
+<code class="descname">.. FS_LassoPenalty.R::</code><a class="headerlink" href="#directive-FS_LassoPenalty.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Runs Lasso feature selection with individual penalty scores for each feature as implemented in the xtune package:</span>
+<span class="c1">#Zeng, C. et al.: &quot;Incorporating prior knowledge into regularized regression&quot;, Bioinformatics (2020), https://doi.org/10.1093/bioinformatics/btaa776</span>
+<span class="c1">#Invoked by python&#39;s featureselection.LassoPenaltySelector class.</span>
+<span class="c1"># #</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - absolute path to the input data set file.</span>
+<span class="c1">#         - absolute path to the output file where the ranking will be stored.</span>
+<span class="c1">#         - absolute path to the input ranking file (where the external rankings that will serve as penalty scores are stored).</span>
+
+<span class="kn">library</span><span class="p">(</span>xtune<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+input.filename <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+output.filename <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+external.filename <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+
+<span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span><span class="kp">args</span><span class="p">)</span><span class="o">&lt;</span><span class="m">3</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;Please supply three arguments: inputFile (gene expression data), outputLocation (feature ranking), and filename for external scores&quot;</span><span class="p">,</span> call.<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="p">}</span>
+
+expression.matrix <span class="o">&lt;-</span> read.csv<span class="p">(</span>input.filename<span class="p">,</span> check.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> row.names <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+external.scores <span class="o">&lt;-</span> read.csv<span class="p">(</span>external.filename<span class="p">,</span> check.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> row.names <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+<span class="c1">#check.names= FALSE necessary because R introducing X for column names beginning with numbers</span>
+
+expression.levels  <span class="o">&lt;-</span> expression.matrix<span class="p">[</span><span class="o">-</span><span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">)]</span>
+
+<span class="c1">#we want to predict the labels = classes</span>
+labels <span class="o">&lt;-</span> expression.matrix<span class="p">[</span><span class="m">1</span><span class="p">]</span>
+<span class="c1">#make labels numeric</span>
+label.types <span class="o">=</span> <span class="kp">unique</span><span class="p">(</span><span class="kp">labels</span><span class="p">[,</span><span class="m">1</span><span class="p">])</span>
+
+labels <span class="o">&lt;-</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">factor</span><span class="p">(</span><span class="kp">labels</span><span class="p">[,</span><span class="m">1</span><span class="p">],</span> label.types<span class="p">,</span> labels <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>label.types<span class="p">)</span> <span class="p">))</span>
+
+<span class="c1">#train the model</span>
+prior.knowledge.model <span class="o">&lt;-</span> xtune<span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>expression.levels<span class="p">),</span> <span class="kp">labels</span><span class="p">,</span> external.scores<span class="p">)</span>
+
+coefs <span class="o">&lt;-</span> coef<span class="p">(</span>prior.knowledge.model<span class="p">)</span>
+final.scores <span class="o">&lt;-</span> <span class="kp">as.data.frame</span><span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>coefs<span class="p">))</span>
+<span class="c1">#rename score column</span>
+<span class="kp">colnames</span><span class="p">(</span>final.scores<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;score&quot;</span><span class="p">)</span>
+<span class="c1">#remove intercept element (drop param keeps row names)</span>
+final.scores <span class="o">&lt;-</span> final.scores<span class="p">[</span><span class="o">-</span><span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">),,</span> drop<span class="o">=</span><span class="kc">FALSE</span><span class="p">]</span>
+feature.indexes <span class="o">&lt;-</span> <span class="kp">order</span><span class="p">(</span>final.scores<span class="o">$</span>score<span class="p">,</span>decreasing <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+final.scores <span class="o">&lt;-</span> final.scores<span class="p">[</span>feature.indexes<span class="p">,,</span> drop <span class="o">=</span> <span class="kc">FALSE</span><span class="p">]</span> <span class="c1">#drop retains row names</span>
+final.scores <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>attributeName <span class="o">=</span> <span class="kp">rownames</span><span class="p">(</span>final.scores<span class="p">),</span> final.scores<span class="p">)</span>
+
+<span class="c1">#write dataframe</span>
+write.table<span class="p">(</span>final.scores<span class="p">,</span> output.filename<span class="p">,</span> row.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;\t&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><p>Runs Lasso feature selection with individual penalty scores for each feature as implemented in the xtune package: Zeng, C. et al.: “Incorporating prior knowledge into regularized regression”, Bioinformatics (2020), <a class="reference external" href="https://doi.org/10.1093/bioinformatics/btaa776">https://doi.org/10.1093/bioinformatics/btaa776</a>
+Invoked by <code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.LassoPenaltySelector</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param args:</th><td class="field-body">the input parameters parsed from the command line, consisting of a) the absolute path to the input data set file, b) the absolute path to the output file where the ranking will be stored, and c) the absolute path to the input ranking file (where the external rankings that will serve as penalty scores are stored).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="directive">
+<dt id="directive-FS_Variance.R">
+<code class="descname">.. FS_Variance.R::</code><a class="headerlink" href="#directive-FS_Variance.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Runs variance-based feature selection as implemented in the genefilter package.</span>
+<span class="c1">#For every feature, computes its variance across all samples.</span>
+<span class="c1">#Features are then ranked in descending order - highly variant features are more likely to separate samples into classes and seem to be the most interesting ones.</span>
+<span class="c1">#Invoked by python&#39;s featureselection.VarianceSelector class.</span>
+<span class="c1">#</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - absolute path to the input data set file.</span>
+<span class="c1">#         - absolute path to the output file where the ranking will be stored.</span>
+
+<span class="kn">library</span><span class="p">(</span>genefilter<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+<span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span><span class="kp">args</span><span class="p">)</span><span class="o">&lt;</span><span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;Please supply two arguments: inputFile (gene expression data) and outputLocation (feature ranking)&quot;</span><span class="p">,</span> call.<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="p">}</span>
+
+rawData <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">1</span><span class="p">],</span> check.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="c1">#check.names= FALSE necessary because R introducing X for column names beginning with numbers</span>
+
+geneExpressionMatrix <span class="o">&lt;-</span> rawData<span class="p">[</span><span class="o">-</span><span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">)]</span>
+
+rV <span class="o">&lt;-</span> rowVars<span class="p">(</span><span class="kp">t</span><span class="p">(</span>geneExpressionMatrix<span class="p">))</span>
+
+ordered <span class="o">&lt;-</span> rV<span class="p">[</span><span class="kp">order</span><span class="p">(</span><span class="o">-</span>rV<span class="p">)</span> <span class="p">,</span> drop <span class="o">=</span> <span class="kc">FALSE</span><span class="p">]</span>
+
+orderedNameList <span class="o">&lt;-</span>  <span class="kp">names</span><span class="p">(</span><span class="kp">ordered</span><span class="p">)</span>
+
+orderedNameValueList <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>orderedNameList<span class="p">,</span><span class="kt">data.frame</span><span class="p">(</span><span class="kp">ordered</span><span class="p">)[,</span><span class="m">1</span><span class="p">])</span>
+
+orderedNameValueMatrix <span class="o">&lt;-</span> <span class="kt">matrix</span><span class="p">(</span>orderedNameValueList<span class="p">,</span>ncol<span class="o">=</span><span class="m">2</span><span class="p">)</span>
+
+<span class="kp">colnames</span><span class="p">(</span>orderedNameValueMatrix<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;attributeName&quot;</span><span class="p">,</span> <span class="s">&quot;score&quot;</span><span class="p">)</span>
+
+write.table<span class="p">(</span>orderedNameValueMatrix<span class="p">,</span> file <span class="o">=</span> <span class="kp">args</span><span class="p">[</span><span class="m">2</span><span class="p">],</span> row.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;\t&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><p>Runs variance-based feature selection as implemented in the genefilter package.
+For every feature, computes its variance across all samples.
+Features are then ranked in descending order - highly variant features are more likely to separate samples into classes and seem to be the most interesting ones.
+Invoked by <a class="reference internal" href="comprior.html#featureselection.VarianceSelector" title="featureselection.VarianceSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.VarianceSelector</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param args:</th><td class="field-body">the input parameters parsed from the command line, consisting of ab) the absolute path to the input data set file and b) the absolute path to the output file where the ranking will be stored.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="utility">
+<h2>Utility<a class="headerlink" href="#utility" title="Permalink to this headline">¶</a></h2>
+<dl class="directive">
+<dt id="directive-DataCharacteristicsPlotting.R">
+<code class="descname">.. DataCharacteristicsPlotting.R::</code><a class="headerlink" href="#directive-DataCharacteristicsPlotting.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Creates plots to show some characteristics of a given expression data set and its class labels.</span>
+<span class="c1">#Currently supported plots that can be selected:</span>
+<span class="c1"># - density plots (density)</span>
+<span class="c1"># - box plot (box)</span>
+<span class="c1"># - mds plot (mds)</span>
+<span class="c1">#Invoked by python&#39;s evaluation.DatasetEvaluator class.</span>
+<span class="c1">#</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - absolute path to the input expression file.</span>
+<span class="c1">#         - absolute path to the output directory where the plots will be stored.</span>
+<span class="c1">#         - separator to use for reading the input expression file.</span>
+<span class="c1">#         - a boolean value whether the input expression data is labeled or not.</span>
+<span class="c1">#         - a list of option names that define what plots are created. Currently supported: density (density plot), box (boxplot of expression values), mds).</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tidyr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tools<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+input.filename <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+output.dir <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+separator <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+labeledData <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+options <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[</span><span class="m">5</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span><span class="kp">args</span><span class="p">)]</span>
+
+<span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span><span class="kp">options</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span><span class="p">){</span>
+  <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;No data characteristics were selected in config file&quot;</span><span class="p">,</span> call.<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+
+<span class="p">}</span>
+rownamescol <span class="o">&lt;-</span> <span class="m">1</span>
+
+data <span class="o">&lt;-</span> read.table<span class="p">(</span>input.filename<span class="p">,</span> sep<span class="o">=</span> separator<span class="p">,</span> header<span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> row.names <span class="o">=</span> rownamescol<span class="p">,</span> check.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> stringsAsFactors <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="kr">if</span> <span class="p">(</span>labeledData <span class="o">==</span> <span class="s">&quot;TRUE&quot;</span><span class="p">){</span>
+  unlabeleddata <span class="o">&lt;-</span> data<span class="p">[</span><span class="m">-1</span><span class="p">]</span>   <span class="c1">#remove label column</span>
+  labelCol <span class="o">&lt;-</span> <span class="kp">colnames</span><span class="p">(</span>data<span class="p">)[</span><span class="m">1</span><span class="p">]</span> 
+<span class="p">}</span>
+filename <span class="o">=</span> file_path_sans_ext<span class="p">(</span><span class="kp">basename</span><span class="p">(</span>input.filename<span class="p">))</span>
+
+<span class="c1">#################### PLOT DENSITIES ####################</span>
+<span class="kr">if</span> <span class="p">(</span><span class="s">&quot;density&quot;</span> <span class="o">%in%</span> <span class="kp">options</span><span class="p">){</span>
+  output.filename <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>output.dir<span class="p">,</span> <span class="s">&quot;density_&quot;</span><span class="p">,</span> filename<span class="p">,</span> <span class="s">&quot;.pdf&quot;</span><span class="p">)</span>
+  pl2 <span class="o">&lt;-</span> data <span class="o">%&gt;%</span> gather<span class="p">(</span>key <span class="o">=</span> <span class="s">&quot;Gene&quot;</span><span class="p">,</span> value <span class="o">=</span> <span class="s">&quot;Expression&quot;</span><span class="p">,</span> <span class="m">-1</span><span class="p">)</span> <span class="o">%&gt;%</span> ggplot<span class="p">(</span><span class="m">.</span><span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>Expression<span class="p">,</span> color <span class="o">=</span> <span class="kp">get</span><span class="p">(</span>labelCol<span class="p">)))</span> <span class="o">+</span> geom_density<span class="p">()</span>
+  pdf<span class="p">(</span>output.filename<span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>pl2<span class="p">)</span>
+  dev.off<span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">#################### PLOT DISTRIBUTION ####################</span>
+<span class="kr">if</span> <span class="p">(</span><span class="s">&quot;box&quot;</span> <span class="o">%in%</span> <span class="kp">options</span><span class="p">){</span>
+  output.filename <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>output.dir<span class="p">,</span> <span class="s">&quot;distribution_&quot;</span><span class="p">,</span> filename<span class="p">,</span> <span class="s">&quot;.pdf&quot;</span><span class="p">)</span>
+  boxpl <span class="o">&lt;-</span> data <span class="o">%&gt;%</span> gather<span class="p">(</span>key <span class="o">=</span> <span class="s">&quot;Gene&quot;</span><span class="p">,</span> value <span class="o">=</span> <span class="s">&quot;Expression&quot;</span><span class="p">,</span> <span class="m">-1</span><span class="p">)</span> <span class="o">%&gt;%</span> ggplot<span class="p">(</span><span class="m">.</span><span class="p">,</span> aes<span class="p">(</span><span class="kp">get</span><span class="p">(</span>labelCol<span class="p">),</span> Expression<span class="p">,</span> color <span class="o">=</span> <span class="kp">get</span><span class="p">(</span>labelCol<span class="p">)))</span> <span class="o">+</span> geom_boxplot<span class="p">()</span>
+  pdf<span class="p">(</span>output.filename<span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>boxpl<span class="p">)</span>
+  dev.off<span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">#################### PLOT MDS ####################</span>
+<span class="kr">if</span> <span class="p">(</span><span class="s">&quot;mds&quot;</span> <span class="o">%in%</span> <span class="kp">options</span><span class="p">){</span>
+  output.filename <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>output.dir<span class="p">,</span> <span class="s">&quot;mds_&quot;</span><span class="p">,</span> filename<span class="p">,</span> <span class="s">&quot;.pdf&quot;</span><span class="p">)</span>
+  <span class="c1">#compute euclidean distance matrix (euclidean distance is used in the limma package)</span>
+  dist.eu <span class="o">&lt;-</span> <span class="kp">as.matrix</span><span class="p">(</span>dist<span class="p">(</span>unlabeleddata<span class="p">,</span> method <span class="o">=</span> <span class="s">&quot;euclidean&quot;</span><span class="p">))</span>
+  mds.eu <span class="o">&lt;-</span> <span class="kp">as.data.frame</span><span class="p">(</span>cmdscale<span class="p">(</span>dist.eu<span class="p">))</span>
+  mds.eu <span class="o">&lt;-</span> <span class="kp">merge</span><span class="p">(</span>mds.eu<span class="p">,</span> data<span class="p">[</span><span class="m">1</span><span class="p">],</span> by<span class="o">=</span><span class="s">&quot;row.names&quot;</span><span class="p">,</span> all<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+  mdspl <span class="o">&lt;-</span> ggplot<span class="p">(</span>mds.eu<span class="p">,</span> aes<span class="p">(</span>V1<span class="p">,</span> V2<span class="p">,</span> label <span class="o">=</span> classLabel<span class="p">,</span> color <span class="o">=</span> classLabel<span class="p">))</span> <span class="o">+</span> 
+    geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> 
+    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;MDS by Euclidean&quot;</span><span class="p">)</span> <span class="o">+</span> theme_bw<span class="p">()</span>
+
+  pdf<span class="p">(</span>output.filename<span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>mdspl<span class="p">)</span>
+  dev.off<span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details><p>Creates plots to show some characteristics of a given expression data set and its class labels.
+Currently supported plots that can be selected: density plots (density), box plot (box), and mds plot (mds).
+Invoked by <a class="reference internal" href="comprior.html#evaluation.DatasetEvaluator" title="evaluation.DatasetEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">evaluation.DatasetEvaluator</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param args:</th><td class="field-body">the input parameters parsed from the command line, consisting of a) the absolute path to the input expression file, b) the absolute path to the output directory where the plots will be stored, c) the separator to use for reading the input expression file, d) a boolean value whether the input expression data is labeled or not, and e) a list of option names that define what plots are created. Currently supported: density (density plot), box (boxplot of expression values), mds).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="directive">
+<dt id="directive-UpsetDiagramCreation.R">
+<code class="descname">.. UpsetDiagramCreation.R::</code><a class="headerlink" href="#directive-UpsetDiagramCreation.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Uses the UpSetR package to create an upset diagram for a given set of features.</span>
+<span class="c1">#Invoked by python&#39;s evaluation.RankingsEvaluator and evaluation.AnnotationEvaluator classes.</span>
+<span class="c1">#</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - absolute path to the output file where to store the created plot.</span>
+<span class="c1">#         - number of top k features for which to compute the feature set overlaps.</span>
+<span class="c1">#         - absolute path to the input directory containing the input files.</span>
+<span class="c1">#         - string of color ids separated by &quot;_&quot;, used for giving every feature ranking a unique color.</span>
+<span class="c1">#         - list of input files containing the rankings. their order corresponds to the order of colors.</span>
+<span class="kn">library</span><span class="p">(</span>UpSetR<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>stringr<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+
+outputFile <span class="o">=</span> <span class="kp">args</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+
+topK <span class="o">=</span> <span class="kp">strtoi</span><span class="p">(</span><span class="kp">args</span><span class="p">[[</span><span class="m">2</span><span class="p">]])</span>
+
+inputPath <span class="o">=</span> <span class="kp">args</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+
+<span class="c1">#remove training _</span>
+colorstring <span class="o">=</span> <span class="kp">substring</span><span class="p">(</span><span class="kp">args</span><span class="p">[[</span><span class="m">4</span><span class="p">]],</span> <span class="m">2</span><span class="p">)</span>
+
+<span class="c1">#split by _</span>
+colors <span class="o">=</span> str_split<span class="p">(</span>colorstring<span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span>
+rankings <span class="o">=</span> <span class="kt">list</span><span class="p">()</span>
+setCount <span class="o">=</span> <span class="m">0</span>
+
+<span class="kr">for</span> <span class="p">(</span>filename <span class="kr">in</span> <span class="kp">args</span><span class="p">[</span><span class="m">5</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span><span class="kp">args</span><span class="p">)])</span> <span class="p">{</span>
+  approach.topK <span class="o">=</span> topK
+  topGenes <span class="o">=</span> <span class="kt">list</span><span class="p">()</span>
+  <span class="c1">#find fileending</span>
+  parts <span class="o">=</span> <span class="kp">gregexpr</span><span class="p">(</span>pattern <span class="o">=</span><span class="s">&#39;\\.&#39;</span><span class="p">,</span> filename<span class="p">)[[</span><span class="m">1</span><span class="p">]]</span>
+  method <span class="o">=</span> <span class="kp">substr</span><span class="p">(</span>filename<span class="p">,</span> <span class="m">1</span><span class="p">,</span> parts<span class="p">[</span><span class="kp">length</span><span class="p">(</span>parts<span class="p">)]</span> <span class="o">-</span> <span class="m">1</span><span class="p">)</span>
+  file <span class="o">=</span> <span class="kp">paste</span><span class="p">(</span>inputPath<span class="p">,</span> filename<span class="p">,</span> sep<span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+  ranking <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="kp">file</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;\t&quot;</span><span class="p">,</span> stringsAsFactors <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+  <span class="c1">#get top n genes for the overlap and adapt topK if we have fewer genes</span>
+  numRows <span class="o">=</span> <span class="kp">nrow</span><span class="p">(</span>ranking<span class="p">)</span>
+  <span class="kr">if</span> <span class="p">(</span>numRows <span class="o">&gt;</span> <span class="m">0</span><span class="p">){</span>
+    <span class="kr">if</span> <span class="p">(</span>numRows <span class="o">&lt;</span> approach.topK<span class="p">){</span>
+      approach.topK <span class="o">=</span> numRows
+    <span class="p">}</span>
+    genes <span class="o">=</span> <span class="kp">head</span><span class="p">(</span>ranking<span class="p">,</span> n <span class="o">=</span> approach.topK<span class="p">)[[</span><span class="m">1</span><span class="p">]]</span>
+    <span class="c1">#as the genes in the columns are by default detected as factors, we just get the levels (=distinct names)</span>
+    topGenes <span class="o">=</span> genes
+    
+  <span class="p">}</span>
+    
+  <span class="c1">#only add approach results if they are not empty</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span>topGenes<span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">){</span>
+    <span class="c1">#make a list out of topGenes otherwise we have a format issue</span>
+    rankings<span class="p">[</span>method<span class="p">]</span> <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>topGenes<span class="p">)</span>
+    setCount <span class="o">=</span> setCount <span class="o">+</span> <span class="m">1</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kp">print</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="s">&quot;UPSETR SETCOUNT &quot;</span><span class="p">,</span> <span class="kp">toString</span><span class="p">(</span>setCount<span class="p">)))</span>
+<span class="kp">print</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="s">&quot;UPSETR COLORCOUNT &quot;</span><span class="p">,</span> <span class="kp">toString</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>colors<span class="p">))))</span>
+pdf<span class="p">(</span>file<span class="o">=</span>outputFile<span class="p">,</span> onefile<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+upset<span class="p">(</span>fromList<span class="p">(</span>rankings<span class="p">),</span> nsets <span class="o">=</span> setCount<span class="p">,</span> order.by <span class="o">=</span> <span class="s">&quot;freq&quot;</span><span class="p">,</span> sets.bar.color <span class="o">=</span> <span class="kp">unlist</span><span class="p">(</span>colors<span class="p">,</span> use.names<span class="o">=</span><span class="kc">FALSE</span><span class="p">))</span>
+
+dev.off<span class="p">()</span>
+</pre></div>
+</div>
+</details>
+
+Uses the UpSetR package to create an upset diagram for a given set of features.
+Invoked by :class:`evaluation.RankingsEvaluator` and :class:`evaluation.AnnotationEvaluator`.
+
+:param args: the input parameters parsed from the command line, consisting of a) the absolute path to the output file where to store the created plot, b) the number of top k features for which to compute the feature set overlaps, c) absolute path to the input directory containing the input files, d) a string of color ids separated by "_", used for giving every feature ranking a unique color, and e) a list of input files containing the rankings, where the rankings order corresponds to the order of colors.</dd></dl>
+
+<dl class="directive">
+<dt id="directive-IdentifierMapping.R">
+<code class="descname">.. IdentifierMapping.R::</code><a class="headerlink" href="#directive-IdentifierMapping.R" title="Permalink to this definition">¶</a></dt>
+<dd><details>
+<summary style="color:green;"><font size="-1">[sources]</font></summary><div class="highlight-R notranslate"><div class="highlight"><pre><span></span><span class="c1">#Maps a set of identifiers to a desired format by using the biomaRt package.</span>
+<span class="c1">#Currently, usage of this functionality is not enabled as biomaRt showed to be very unstable for returning queries in parallel</span>
+<span class="c1">#(the server is not reachable, the connection is blocked, ...).</span>
+<span class="c1">#The current implementation sends the identifiers for mapping in chunks of 10.000 identifiers</span>
+<span class="c1">#(that was one desperate try to improve biomaRt stability, but it probably did not help...).</span>
+<span class="c1"># Invoked by python&#39;s knowledgebases.BioMART class.</span>
+<span class="c1">#</span>
+<span class="c1">#@param args the input parameters parsed from the command line, consisting of</span>
+<span class="c1">#         - original ID format (corresponding to biomaRt identifiers), e.g. ensembl_gene_id</span>
+<span class="c1">#         - desired ID format (corresponding to biomaRt identifiers), e.g. hgnc_symbol</span>
+<span class="c1">#         - absolute path to the input file, which contains one identifier per line</span>
+<span class="c1">#         - absolute path to the output file where the mapping will be stored.</span>
+
+<span class="kn">library</span><span class="p">(</span>biomaRt<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>httr<span class="p">)</span>
+
+args <span class="o">=</span> <span class="kp">commandArgs</span><span class="p">(</span>trailingOnly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+originalIDFormat <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
+requiredIDFormat <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
+inputFile <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">3</span><span class="p">]]</span>
+outputFile <span class="o">&lt;-</span> <span class="kp">args</span><span class="p">[[</span><span class="m">4</span><span class="p">]]</span>
+httr<span class="o">::</span>set_config<span class="p">(</span>httr<span class="o">::</span>config<span class="p">(</span>ssl_verifypeer <span class="o">=</span> <span class="kc">FALSE</span><span class="p">))</span>
+mart<span class="o">&lt;-</span>useEnsembl<span class="p">(</span>biomart <span class="o">=</span> <span class="s">&quot;ENSEMBL_MART_ENSEMBL&quot;</span><span class="p">,</span>
+                 dataset <span class="o">=</span> <span class="s">&quot;hsapiens_gene_ensembl&quot;</span><span class="p">,</span> mirror <span class="o">=</span> <span class="s">&quot;useast&quot;</span><span class="p">)</span>
+<span class="kp">print</span><span class="p">(</span>inputFile<span class="p">)</span>
+<span class="c1">#load data set from file</span>
+data <span class="o">&lt;-</span> read.csv<span class="p">(</span>inputFile<span class="p">,</span> header <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> stringsAsFactors <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="c1">#fetch gene mapping</span>
+<span class="c1">#attributes: what your results shall include</span>
+<span class="c1">#filters: what platform your IDs are currently from</span>
+<span class="c1">#values: the concrete IDs as input</span>
+<span class="c1">#mapping &lt;- getBM(attributes = c(originalIDFormat, requiredIDFormat), filters = originalIDFormat, values=data, mart = mart)</span>
+chunksize <span class="o">=</span> <span class="m">10000</span>
+
+final_mapping <span class="o">=</span> <span class="kc">NULL</span>
+chunks <span class="o">=</span> <span class="kp">as.integer</span><span class="p">(</span><span class="kp">nrow</span><span class="p">(</span>data<span class="p">)</span><span class="o">/</span>chunksize<span class="p">)</span>
+<span class="kr">if</span> <span class="p">(</span>chunks <span class="o">&gt;</span> <span class="m">0</span><span class="p">){</span>
+  <span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>chunks<span class="p">){</span>
+    start <span class="o">=</span> <span class="p">((</span>i<span class="m">-1</span><span class="p">)</span> <span class="o">*</span> chunksize<span class="p">)</span> <span class="o">+</span> <span class="m">1</span>
+    end <span class="o">=</span> i <span class="o">*</span> chunksize
+    genechunk <span class="o">=</span> data<span class="p">[</span>start<span class="o">:</span>end<span class="p">,</span><span class="m">1</span><span class="p">]</span>
+    mapping <span class="o">&lt;-</span> getBM<span class="p">(</span>attributes <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>originalIDFormat<span class="p">,</span> requiredIDFormat<span class="p">),</span> filters <span class="o">=</span> originalIDFormat<span class="p">,</span> values<span class="o">=</span><span class="p">(</span>genechunk<span class="p">),</span> mart <span class="o">=</span> mart<span class="p">)</span>
+    <span class="kr">if</span> <span class="p">(</span><span class="kp">is.null</span><span class="p">(</span>final_mapping<span class="p">)){</span>
+      final_mapping <span class="o">=</span> mapping
+    <span class="p">}</span> <span class="kp">else</span><span class="p">{</span>
+      final_mapping <span class="o">=</span> <span class="kp">rbind</span><span class="p">(</span>final_mapping<span class="p">,</span> mapping<span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+leftover <span class="o">=</span> <span class="kp">as.integer</span><span class="p">(</span><span class="kp">nrow</span><span class="p">(</span>data<span class="p">)</span> <span class="o">-</span> <span class="p">(</span>chunks <span class="o">*</span> chunksize<span class="p">))</span>
+<span class="kr">if</span> <span class="p">(</span>leftover <span class="o">&gt;</span> <span class="m">0</span><span class="p">){</span>
+  start <span class="o">=</span> <span class="p">(</span>chunks <span class="o">*</span> chunksize<span class="p">)</span> <span class="o">+</span> <span class="m">1</span>
+  end <span class="o">=</span> <span class="kp">nrow</span><span class="p">(</span>data<span class="p">)</span>
+  last_genechunk <span class="o">=</span> data<span class="p">[</span>start<span class="o">:</span>end<span class="p">,</span><span class="m">1</span><span class="p">]</span>
+  mapping <span class="o">&lt;-</span> getBM<span class="p">(</span>attributes <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>originalIDFormat<span class="p">,</span> requiredIDFormat<span class="p">),</span> filters <span class="o">=</span> originalIDFormat<span class="p">,</span> values<span class="o">=</span><span class="p">(</span>last_genechunk<span class="p">),</span> mart <span class="o">=</span> mart<span class="p">)</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="kp">is.null</span><span class="p">(</span>final_mapping<span class="p">)){</span>
+    final_mapping <span class="o">=</span> mapping
+  <span class="p">}</span> <span class="kp">else</span><span class="p">{</span>
+    final_mapping <span class="o">=</span> <span class="kp">rbind</span><span class="p">(</span>final_mapping<span class="p">,</span> mapping<span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+write.csv<span class="p">(</span>final_mapping<span class="p">,</span> outputFile<span class="p">,</span> row.names <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><p>The current implementation sends the identifiers for mapping in chunks of 10.000 identifiers (that was one desperate try to improve biomaRt stability, but it probably did not help…).
+Invoked by <a class="reference internal" href="comprior.html#knowledgebases.BioMART" title="knowledgebases.BioMART"><code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebases.BioMART</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param args:</th><td class="field-body">the input parameters parsed from the command line, consisting of a) the original ID format (corresponding to biomaRt identifiers), e.g. ensembl_gene_id, b) the desired ID format (corresponding to biomaRt identifiers), e.g. hgnc_symbol, c) the absolute path to the input file, which contains one identifier per line, and d) the absolute path to the output file where the mapping will be stored.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="java-doc.html" class="btn btn-neutral float-right" title="Java Code Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="comprior.html" class="btn btn-neutral float-left" title="Python Code Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Configuration Parameters &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Output Folder Structure - Where to find what Files" href="outputstructure.html" />
+    <link rel="prev" title="Input Data Sets" href="inputdata.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#r">R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#java">Java</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-selection-general">Gene Selection - General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-selection-methods">Gene Selection - Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rankings">Rankings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prediction-not-implemented-yet">Prediction (not implemented yet)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enrichr">Enrichr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opentargets">OpenTargets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kegg">KEGG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#umls-needed-for-disgenet">UMLS (needed for DisGeNET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#disgenet">DisGeNET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pathwaycommons">PathwayCommons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biomart">BiomaRt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gconvert">gConvert</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Configuration Parameters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/configparams.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuration-parameters">
+<span id="inputparams"></span><h1>Configuration Parameters<a class="headerlink" href="#configuration-parameters" title="Permalink to this headline">¶</a></h1>
+<p>Config parameters are grouped into sections and needed by the framework to function properly.
+In the following, we provide brief explanations for the existing parameters and their values</p>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>name</strong> - framework name, mainly used for logging</li>
+<li><strong>numCores</strong> (<em>int</em>) - number of available cores that can be used for parallel running of gene selectors</li>
+<li><strong>homePath</strong> - contains the path to the framework</li>
+<li><strong>inputDir</strong> - the path to the directory where all input data is located</li>
+<li><strong>intermediateDir</strong> - where to put intermediate results (recommended not to changed)</li>
+<li><strong>externalKbDir</strong> - where to put intermediate query results from knowledge bases (recommended not to changed)</li>
+<li><strong>resultsDir</strong> - where to put the final results (recommended not to changed)</li>
+<li><strong>preprocessing</strong> - where to put preprocessed data sets (recommended not to changed)</li>
+<li><strong>crossVal_preprocessing</strong> - where to put preprocessed data sets for cross-validation (recommended not to changed)</li>
+<li><strong>outputDir_name</strong> - name of the overall output directory. If that directory already exists, Comprior adds numbering.</li>
+</ul>
+</div>
+<div class="section" id="r">
+<h2>R<a class="headerlink" href="#r" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>code</strong> - path to R source files (recommended not to changed)</li>
+<li><strong>RscriptLocation</strong> - path to Rscript</li>
+</ul>
+</div>
+<div class="section" id="java">
+<h2>Java<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>code</strong> - path to Java jar files (recommended not to changed)</li>
+<li><strong>JavaLocation</strong> - path to Java</li>
+</ul>
+</div>
+<div class="section" id="dataset">
+<h2>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>input</strong> - path to expression dataset</li>
+<li><strong>metadata</strong> - path to metadata file for expression dataset</li>
+<li><strong>classLabelName</strong> - specify the metadata column name of the label to use for classification (=keywords that will also be used for search in knowledge bases)</li>
+<li><strong>alternativeSearchTerms</strong> - specify alternative search terms that will be used by knowledge bases. Separate search terms by spaces and replace spaces within a search term with _, e.g. “Breast Cancer Kidney_Cancer” will be parsed to the following search terms:”Breast”, “Cancer”, “Kidney Cancer”</li>
+<li><strong>genesInColumns</strong> (<em>true/false</em>) - specify if genes are in the columns so that the data can be transformed automatically</li>
+<li><strong>metadataIDsInColumns</strong> (<em>true/false</em>) - specify if sample IDs in the metadata file are in the columns</li>
+<li><strong>dataSeparator</strong> (<em>sep</em>) - specify file separator (must be the same for metadata and gene expression), e.g. <em>,</em>, <em>t</em></li>
+<li><strong>currentGeneIDFormat</strong> - specify the current gene ID format with g:Convert IDs, e.g. <em>ENTREZGENE, ENSG, AFFY_HG_U133_PLUS_2, HGNC</em> (see <a class="reference external" href="https://biit.cs.ut.ee/gprofiler/convert">https://biit.cs.ut.ee/gprofiler/convert</a>)</li>
+<li><strong>finalGeneIDFormat</strong> - specify the gene ID format with g:Convert IDs you want to have in your gene rankings, e.g. <em>HGNC</em> (see <a class="reference external" href="https://biit.cs.ut.ee/gprofiler/convert">https://biit.cs.ut.ee/gprofiler/convert</a>)</li>
+</ul>
+</div>
+<div class="section" id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>filterMissingsInGenes</strong> (<em>true/false</em>) - filter genes that have a higher percentage of missing fields than specified in treshold parameter</li>
+<li><strong>filterMissingsInSamples</strong> (<em>true/false</em>) - filter samples that have a higher percentage of missing fields than specified in the treshold parameter</li>
+<li><strong>threshold</strong> (<em>[0..100]</em>) - percentage used for filtering</li>
+</ul>
+</div>
+<div class="section" id="gene-selection-general">
+<h2>Gene Selection - General<a class="headerlink" href="#gene-selection-general" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>outputDirectory</strong> - where the final gene rankings are stored (recommended not to changed)</li>
+<li><strong>selectKgenes</strong> (<em>int</em>) - maximum number of genes to select (to reduce runtimes). Must be &gt;= topKmax param in  <a class="reference internal" href="#evaluation"><span class="std std-ref">Evaluation</span></a>.</li>
+</ul>
+</div>
+<div class="section" id="gene-selection-methods">
+<h2>Gene Selection - Methods<a class="headerlink" href="#gene-selection-methods" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>traditional_methods</strong> - select multiple traditional gene selection methods (separated by spaces):</p>
+<blockquote>
+<div><ul class="simple">
+<li>filter: <em>Random</em>, <em>InfoGain</em>, <em>ReliefF</em>, <em>VB-FS</em> (R-based variance selection), <em>ANOVA</em>, <em>mRMR</em>, <em>Variance</em> (Python-based variance selection)</li>
+<li>wrapper: <em>SVMpRFE</em> (SVM-RFE with polykernel), <em>x-SFS</em>, <em>x-RFE</em> (x = add the desired classifier: K-nearest Neighbor (KNN3, KNN5), Naive Bayes (NB), Linear Regression (LR), Support Vector Machines with linear kernel (SVMl))</li>
+<li>embedded: <em>RandomForest</em>, <em>Lasso</em></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>modifying_methods</strong> - combine knowledge base with traditional approach from above. Currently implemented:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Postfilter_trad_kb</em>: Filter the features selected by traditional approach (<em>trad</em>) by the features/genes retrieved from knowledge base (<em>kb</em>)</li>
+<li><em>Prefilter_trad_kb</em>: Filter the input features by the genes retrieved from the knowledge base (<em>kb</em>) first and forward this reduced input set to the traditional approach (<em>trad</em>) for feature selection</li>
+<li><em>Extension_trad_kb</em>: Extends features selected by traditional approach (<em>trad</em>) by features/genes retrieved from knowledge base (<em>kb</em>). Traditionally selected features and external features/genes make up 50% of top k features, respectively (so if topKmax param is 2, 1 feature from traditional approach, 1 feature from external will be selected)</li>
+<li><em>KBonly_kb</em>: Only use the scores from the knowledge base to rank features, setting a default score of 0.000001.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>combining_methods</strong> - select combining methods to apply. Combining methods should combine a traditional approach (<em>trad</em>) with a knowledge base (<em>kb</em>), the prefix indicates the actual combining strategy. Currently implemented:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Weighted_trad_kb</em>: weights the score from traditional approach <em>trad</em> by the score retrieved from knowledge base <em>kb</em>)</li>
+<li><em>LassoPenalty_kb</em>: includes external knowledge via Lasso penalty as described by Zeng et al.: <a class="reference external" href="https://doi.org/10.1093/bioinformatics/btaa776">“Incorporating prior knowledge into regularized regression”</a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>network_methods</strong> - select network approaches to apply. Currently implemented:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>NetworkActivity_kb</em>: retrieves pathway from knowledge base <em>kb</em>, ranks them via average of (ANOVA of gene expression value/sample class) for every gene in pathway, and creates an activity score as new feature value for the pathway for every sample (= average of (gene expression value x variance x average of (Pearson correlation with network neighbors))) for all genes in the pathway)</li>
+<li><em>CorgsNetworkActivity_kb</em>: retrieves pathway from knowledge base <em>kb</em>, ranks them via average of (ANOVA of gene expression value/sample class) for every gene in pathway, and creates an activity score as new feature value for the pathway for every sample as described by Lee et al.: <a class="reference external" href="https://doi.org/10.1371/journal.pcbi.1000217">“Inferring Pathway Activity toward Precise Disease Classification”</a></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="evaluation">
+<span id="id1"></span><h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>topKmin</strong> (<em>int</em>) - minimum number of features to select</p>
+</li>
+<li><p class="first"><strong>topKmax</strong> (<em>int</em>) - maximum number of features to select</p>
+</li>
+<li><p class="first"><strong>kfold</strong> (<em>int</em>) - k parameter for k-fold cross-validation during classification</p>
+</li>
+<li><p class="first"><strong>results</strong> - where to put the results (recommended not to changed)</p>
+</li>
+<li><p class="first"><strong>reducedDataset</strong> - where to put the reduced data sets (with k features) (recommended not to changed)</p>
+</li>
+<li><p class="first"><strong>preanalysis</strong> - where to put plots created during preanalysis</p>
+</li>
+<li><p class="first"><strong>preanalysis_plots</strong> - create plots on input data before any analysis. Currently implemented:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>density</em>: density plot showing the average density distribution of expression values (per class)</li>
+<li><em>box</em>: box plot showing the average gene expression (per class)</li>
+<li><em>mds</em>: multidimensional scaling plot showing dis-/similarities between samples</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>evaluateKBcoverage</strong> (<em>true/false</em>) - create diagrams showing coverage of search terms in the used knowledge bases</p>
+</li>
+<li><p class="first"><strong>robustnessResults</strong> - where to put the cross-validation results (recommended not to changed)</p>
+</li>
+<li><p class="first"><strong>enableCrossEvaluation</strong> (<em>true/false</em>) - whether to use a second data set for cross-validation</p>
+</li>
+<li><p class="first"><strong>crossEvaluationData</strong> - path to second data set for cross-validation (must have genes in columns and be already labeled)</p>
+</li>
+<li><p class="first"><strong>crossEvaluationClassLabel</strong> - column name of second data set for cross-validation containing the class label</p>
+</li>
+<li><p class="first"><strong>crossEvaluationGeneIDFormat</strong> - current g:Convert gene ID format of the second data set for cross-validation (see https://biit.cs.ut.ee/gprofiler/convert)</p>
+</li>
+<li><p class="first"><strong>enableClassification</strong> (<em>true/false</em>) - use classification algorithms for evaluation</p>
+</li>
+<li><p class="first"><strong>enablePrediction</strong> (<em>true/false</em>) - use predictive algorithms for evaluation (functionality not implemented yet)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="rankings">
+<h2>Rankings<a class="headerlink" href="#rankings" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>results</strong> - where to put the actual rankings (recommended not to change)</p>
+</li>
+<li><p class="first"><strong>metricsDir</strong> - where to put the metric results (recommended not to change)</p>
+</li>
+<li><p class="first"><strong>annotationsDir</strong> - where to put the annotation information(recommended not to change)</p>
+</li>
+<li><p class="first"><strong>metrics</strong> - specify which evaluation metrics to apply/compare on feature rankings. Currently provided:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>top_k_overlap</em>: overlap of top k features of rankings</li>
+<li><em>kendall_w</em>: Kendall’s W ranking comparison</li>
+<li><em>fleiss_kappa</em>: Fleiss’ Kappa ranking comparison</li>
+<li><em>annotation_overlap</em>: shows gene annotation overlap in rankings (e.g. which annotated genes where found jointly by all rankings)</li>
+<li><em>enrichment_overlap</em>: shows enrichment term overlap of rankings (e.g. which enrichment terms where found jointly by all rankings)</li>
+<li><em>annotation_percentage</em>: compares average p</li>
+<li><em>average_foldchange</em>: compares average fold change of genes in rankings</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="classification">
+<h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>classifiers</strong> - specify classifiers to use for classsification task. Currently provided:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>KNN(int)</em>:  K-nearest Neighbor, e.g. <em>KNN3</em></li>
+<li><em>NB</em>: Naive Bayes</li>
+<li><em>LR</em>: Linear Regression</li>
+<li><em>SMO</em>: Support Vector Machines</li>
+<li><em>RF</em>: Random Forest</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>metrics</strong> - specify which evaluation metrics to apply on classification results. Currently provided:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>accuracy</em></li>
+<li><em>sensitivity</em></li>
+<li><em>specificity</em></li>
+<li><em>F1</em></li>
+<li><em>kappa</em></li>
+<li><em>AUROC</em></li>
+<li><em>precision</em></li>
+<li><em>matthewcoef</em>: Matthews Correlation Coefficient</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>results</strong> - where to put the classification results (recommended not to change)</p>
+</li>
+<li><p class="first"><strong>crossEvaluationDir</strong> - where to put classification results from cross-validation (recommended not to change)</p>
+</li>
+<li><p class="first"><strong>metricsDir</strong> - where to put the evaluation results (recommended not to change)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="prediction-not-implemented-yet">
+<h2>Prediction (not implemented yet)<a class="headerlink" href="#prediction-not-implemented-yet" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>predictors</strong> - specify predictors to use for prediction task (still under construction)</li>
+<li><strong>metrics</strong> - specify which evaluation metrics to apply on prediction results (still under construction)</li>
+<li><strong>results</strong> - where to put the classification results (recommended not to change)</li>
+<li><strong>crossEvaluationDir</strong> - where to put classification results from cross-validation (recommended not to change)</li>
+<li><strong>metricsDir</strong> - where to put the evaluation results (recommended not to change)</li>
+</ul>
+</div>
+<div class="section" id="enrichr">
+<h2>Enrichr<a class="headerlink" href="#enrichr" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>webservice_uri</strong> - URL of Enrichr web service (recommended not to change)</li>
+<li><strong>outputDir</strong>  - output directory for intermediate results from web service (recommended not to change)</li>
+<li><strong>geneSetLibrary</strong> - gene set library to use for annotation/enrichment. Choose any available at <a class="reference external" href="https://maayanlab.cloud/Enrichr/#stats">https://maayanlab.cloud/Enrichr/#stats</a></li>
+</ul>
+</div>
+<div class="section" id="opentargets">
+<h2>OpenTargets<a class="headerlink" href="#opentargets" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>outputDir</strong>  - output directory for intermediate results from web service (recommended not to change)</li>
+</ul>
+</div>
+<div class="section" id="kegg">
+<h2>KEGG<a class="headerlink" href="#kegg" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>outputDir</strong>  - output directory for intermediate results from web service (recommended not to change)</li>
+<li><strong>maxNumPathways</strong> (<em>int</em>) - specify the maximum number of pathways to retrieve per search term (for performance reasons)</li>
+</ul>
+</div>
+<div class="section" id="umls-needed-for-disgenet">
+<h2>UMLS (needed for DisGeNET)<a class="headerlink" href="#umls-needed-for-disgenet" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>login_uri</strong> - URL of login web service (recommended not to change)</li>
+<li><strong>loginservice_uri</strong> - URL of login web service (recommended not to change)</li>
+<li><strong>auth_endpoint</strong> - authentication endpoint for API (recommended not to change)</li>
+<li><strong>apikey</strong> - API key for accessing UMLS (recommended not to change unless own API key available)</li>
+<li><strong>webservice_uri</strong> - URL of UMLS web service (recommended not to change)</li>
+</ul>
+</div>
+<div class="section" id="disgenet">
+<h2>DisGeNET<a class="headerlink" href="#disgenet" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>associationScore</strong> (<em>score/gene_dsi/gene_dpi</em>) - which association score to use for knowledge retrieval: score (overall score), gene_dsi (disease specificity), gene_dpi (disease pleiotropy)</li>
+<li><strong>webservice_url</strong> - URL of DisGeNET web service (recommended not to change)</li>
+<li><strong>outputDir</strong> - output directory for intermediate results from web service (recommended not to change)</li>
+</ul>
+</div>
+<div class="section" id="pathwaycommons">
+<h2>PathwayCommons<a class="headerlink" href="#pathwaycommons" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>webservice_url</strong> - URL of PathwayCommons web service (recommended not to change)</li>
+<li><strong>outputDir</strong> - output directory for intermediate results from web service (recommended not to change)</li>
+<li><strong>maxNumPathways</strong> (<em>int</em>) - specify the maximum number of pathways to retrieve per search term (for performance reasons)</li>
+</ul>
+</div>
+<div class="section" id="biomart">
+<h2>BiomaRt<a class="headerlink" href="#biomart" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>outputDir</strong> - output directory for intermediate results from web service (recommended not to change)</li>
+</ul>
+</div>
+<div class="section" id="gconvert">
+<h2>gConvert<a class="headerlink" href="#gconvert" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>webservice_url</strong> - URL of g:Convert web service (recommended not to change)</li>
+<li><strong>outputDir</strong> - output directory for intermediate results from web service (recommended not to change)</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="outputstructure.html" class="btn btn-neutral float-right" title="Output Folder Structure - Where to find what Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="inputdata.html" class="btn btn-neutral float-left" title="Input Data Sets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

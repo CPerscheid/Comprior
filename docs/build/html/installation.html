@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Installation and Usage &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Input Data Sets" href="inputdata.html" />
+    <link rel="prev" title="Welcome to Comprior’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-java-jdk-and-maven-on-ubuntu">Installing Java JDK and Maven on Ubuntu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Installation and Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation-and-usage">
+<h1>Installation and Usage<a class="headerlink" href="#installation-and-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Prerequisites: R 3.5+, Python 3.5+, Java with JDK, and Maven. See in <a class="reference internal" href="#installingjavamaven"><span class="std std-ref">Installing Java JDK and Maven on Ubuntu</span></a> how to install JDK and Maven.</p>
+</li>
+<li><p class="first">check out the repository on your machine (or download the sources from <a class="reference external" href="https://github.com/CPerscheid/Comprior/archive/master.zip">https://github.com/CPerscheid/Comprior/archive/master.zip</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">CPerscheid</span><span class="o">/</span><span class="n">Comprior</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run the installation bash script <em>install.sh</em> (if your are on MacOS, use <em>install_macos.sh</em>) and let it write its output into a file (the tee command prints the output to both command line and a file) - installation execution requires root access rights:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">./</span><span class="n">install</span><span class="o">.</span><span class="n">sh</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">tee</span> <span class="n">installout</span><span class="o">.</span><span class="n">out</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">go grab some healthy snacks, for this might take a while depending on what is already installed on your machine :-)</p>
+</li>
+<li><p class="first">check <em>installout.out</em> for any errors</p>
+</li>
+<li><p class="first">check <em>code/configs/config.ini</em> if the variables <em>homePath</em> (path to Comprior’s root directory), <em>RscriptLocation</em> (path to your Rscript), and <em>JavaLocation</em> (path to your Java location) point to the right locations.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Prior information: In order to enable a flexible pipeline design for users, Comprior makes use of config files. All config files are to be stored in <em>code/configs</em> directory. <strong>The main config file is located at code/configs/config.ini.</strong> It is recommended not to be changed, as it specifies all parameters that Comprior needs for functioning properly, including access points to knowledge base web services and output folder structure. Instead, users can specify an own config file that contains only those parameters they want to overwrite from <em>config.ini</em>, e.g. where the input data is located or what feature selectors to apply. <strong>Store your custom config file in the code/configs/ directory.</strong> For a complete overview of the input parameters, see <a class="reference internal" href="configparams.html#inputparams"><span class="std std-ref">Configuration Parameters</span></a>. If you write an own config file, make sure to provide it as input parameter for the framework (<em>config.ini</em> will always be loaded by default)</p>
+</li>
+<li><dl class="first docutils">
+<dt>To start Comprior</dt>
+<dd><ul class="first last">
+<li><p class="first">navigate to <em>code/Python/comprior</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">code</span><span class="o">/</span><span class="n">Python</span><span class="o">/</span><span class="n">comprior</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">start Comprior (optionally provide a custom config file):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="o">../../</span><span class="n">configs</span><span class="o">/</span><span class="n">exampleconfig</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Check your results in <em>data/results/example</em> - see <a class="reference internal" href="outputstructure.html#outputstructure"><span class="std std-ref">Output Folder Structure  - Where to find what Files</span></a> for where to find what results.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="installing-java-jdk-and-maven-on-ubuntu">
+<span id="installingjavamaven"></span><h2>Installing Java JDK and Maven on Ubuntu<a class="headerlink" href="#installing-java-jdk-and-maven-on-ubuntu" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">install a JDK distribution for your Ubuntu version, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">default</span><span class="o">-</span><span class="n">jdk</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">let your JAVA_HOME variable point to your installed JDK. Typically, Ubuntu installs it in /usr/lib/jvm, so find it there and provide the correct path, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">JAVA_HOME</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">openjdk</span><span class="o">-</span><span class="n">amd64</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">also update your PATH variable to point to your JDK:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=$PATH:$JAVA_HOME/bin
+</pre></div>
+</div>
+</li>
+<li><p class="first">check your variables by typing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>echo $PATH
+echo $JAVA_HOME
+</pre></div>
+</div>
+</li>
+<li><p class="first">you can store the above variables permanently by just adding the above commands to <em>/etc/profile.d/myenvvars.sh</em> (or similar name):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME/bin
+</pre></div>
+</div>
+</li>
+<li><p class="first">install Maven:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>wget https://ftp.fau.de/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /your/path/to/
+tar xzvf /your/path/to/apache-maven-3.6.3-bin.tar.gz -C /your/path/to/
+export PATH=/your/path/to/apache-maven-3.6.3/bin:$PATH
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cannot find xml2-config
+ERROR: configuration failed for package ‘XML’
+</pre></div>
+</div>
+<ul class="simple">
+<li>install libxml2-dev, e.g. when on Ubuntu <em>apt install libxml2-dev</em> or similar (the available package name depends on your Ubuntu distribution, which you can find out with the help of this tutorial <a class="reference external" href="https://itsfoss.com/unable-to-locate-package-error-ubuntu/">https://itsfoss.com/unable-to-locate-package-error-ubuntu/</a>)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">FileNotFoundError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span><span class="p">:</span> <span class="s1">&#39;curl-config&#39;</span><span class="p">:</span> <span class="s1">&#39;curl-config</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>this error comes from pycurl - install <em>libcurl4-openssl-dev</em> and <em>libssl-dev</em> packages, e.g. when on Ubuntu <em>apt install libcurl4-openssl-dev libssl-dev</em> or similar (the available package name depends on your Ubuntu distribution, which you can find out with the help of this tutorial <a class="reference external" href="https://itsfoss.com/unable-to-locate-package-error-ubuntu/">https://itsfoss.com/unable-to-locate-package-error-ubuntu/</a>)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WARNING</span><span class="p">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">load</span> <span class="n">implementation</span> <span class="n">from</span><span class="p">:</span> <span class="n">com</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">fommil</span><span class="o">.</span><span class="n">netlib</span><span class="o">.</span><span class="n">Native</span><span class="o">***</span> <span class="p">(</span><span class="n">SystemBLAS</span><span class="p">,</span> <span class="n">RefBLAS</span><span class="p">,</span> <span class="n">SystemLAPACK</span><span class="p">,</span> <span class="n">RefLAPACK</span><span class="p">,</span> <span class="n">SystemARPACK</span><span class="p">,</span> <span class="n">RefARPACK</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>this can happen when running on Ubuntu and is related packages internally used by  <a class="reference external" href="https://waikato.github.io/weka-wiki/faqs/ubuntu_1804_blas_warning/">WEKA</a></li>
+<li>install <em>libgfortran-6-dev</em> package, e.g. when on Ubuntu <em>apt-get install libgfortran-6-dev</em> or similar (the available package name depends on your Ubuntu distribution, which you can find out with the help of this tutorial <a class="reference external" href="https://itsfoss.com/unable-to-locate-package-error-ubuntu/">https://itsfoss.com/unable-to-locate-package-error-ubuntu/</a>)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[ERROR] No compiler is provided in this environment. Perhaps you are running on a JRE rather than a JDK?
+</pre></div>
+</div>
+<ul class="simple">
+<li>you either do not have a JDK installed or your variables point to the wrong location. Follow <a class="reference internal" href="#installingjavamaven"><span class="std std-ref">Installing Java JDK and Maven on Ubuntu</span></a> for installing JDK and setting the environment variables correctly.</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Configuration</span> <span class="n">failed</span> <span class="n">because</span> <span class="n">libxml</span><span class="o">-</span><span class="mf">2.0</span> <span class="n">was</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span> <span class="n">Try</span> <span class="n">installing</span><span class="p">:</span>
+<span class="o">*</span> <span class="n">deb</span><span class="p">:</span> <span class="n">libxml2</span><span class="o">-</span><span class="n">dev</span> <span class="p">(</span><span class="n">Debian</span><span class="p">,</span> <span class="n">Ubuntu</span><span class="p">,</span> <span class="n">etc</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">rpm</span><span class="p">:</span> <span class="n">libxml2</span><span class="o">-</span><span class="n">devel</span> <span class="p">(</span><span class="n">Fedora</span><span class="p">,</span> <span class="n">CentOS</span><span class="p">,</span> <span class="n">RHEL</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">csw</span><span class="p">:</span> <span class="n">libxml2_dev</span> <span class="p">(</span><span class="n">Solaris</span><span class="p">)</span>
+<span class="n">If</span> <span class="n">libxml</span><span class="o">-</span><span class="mf">2.0</span> <span class="ow">is</span> <span class="n">already</span> <span class="n">installed</span><span class="p">,</span> <span class="n">check</span> <span class="n">that</span> <span class="s1">&#39;pkg-config&#39;</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">your</span>
+<span class="n">PATH</span> <span class="ow">and</span> <span class="n">PKG_CONFIG_PATH</span> <span class="n">contains</span> <span class="n">a</span> <span class="n">libxml</span><span class="o">-</span><span class="mf">2.0</span><span class="o">.</span><span class="n">pc</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span> <span class="n">pkg</span><span class="o">-</span><span class="n">config</span>
+<span class="ow">is</span> <span class="n">unavailable</span> <span class="n">you</span> <span class="n">can</span> <span class="nb">set</span> <span class="n">INCLUDE_DIR</span> <span class="ow">and</span> <span class="n">LIB_DIR</span> <span class="n">manually</span> <span class="n">via</span><span class="p">:</span>
+<span class="n">R</span> <span class="n">CMD</span> <span class="n">INSTALL</span> <span class="o">--</span><span class="n">configure</span><span class="o">-</span><span class="nb">vars</span><span class="o">=</span><span class="s1">&#39;INCLUDE_DIR=... LIB_DIR=…&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>lixml-2.0 is not installed. Follow the recommendations stated there and install it, e.g. by <em>apt-get install libxml2-dev</em> or similar (the available package name depends on your Ubuntu distribution, which you can find out with the help of this tutorial <a class="reference external" href="https://itsfoss.com/unable-to-locate-package-error-ubuntu/">https://itsfoss.com/unable-to-locate-package-error-ubuntu/</a>)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Configuration</span> <span class="n">failed</span> <span class="n">because</span> <span class="n">openssl</span> <span class="n">was</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span> <span class="n">Try</span> <span class="n">installing</span><span class="p">:</span>
+<span class="o">*</span> <span class="n">deb</span><span class="p">:</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span> <span class="p">(</span><span class="n">Debian</span><span class="p">,</span> <span class="n">Ubuntu</span><span class="p">,</span> <span class="n">etc</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">rpm</span><span class="p">:</span> <span class="n">openssl</span><span class="o">-</span><span class="n">devel</span> <span class="p">(</span><span class="n">Fedora</span><span class="p">,</span> <span class="n">CentOS</span><span class="p">,</span> <span class="n">RHEL</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">csw</span><span class="p">:</span> <span class="n">libssl_dev</span> <span class="p">(</span><span class="n">Solaris</span><span class="p">)</span>
+<span class="o">*</span> <span class="n">brew</span><span class="p">:</span> <span class="n">openssl</span><span class="nd">@1</span><span class="o">.</span><span class="mi">1</span> <span class="p">(</span><span class="n">Mac</span> <span class="n">OSX</span><span class="p">)</span>
+<span class="n">If</span> <span class="n">openssl</span> <span class="ow">is</span> <span class="n">already</span> <span class="n">installed</span><span class="p">,</span> <span class="n">check</span> <span class="n">that</span> <span class="s1">&#39;pkg-config&#39;</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">your</span>
+<span class="n">PATH</span> <span class="ow">and</span> <span class="n">PKG_CONFIG_PATH</span> <span class="n">contains</span> <span class="n">a</span> <span class="n">openssl</span><span class="o">.</span><span class="n">pc</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span> <span class="n">pkg</span><span class="o">-</span><span class="n">config</span>
+<span class="ow">is</span> <span class="n">unavailable</span> <span class="n">you</span> <span class="n">can</span> <span class="nb">set</span> <span class="n">INCLUDE_DIR</span> <span class="ow">and</span> <span class="n">LIB_DIR</span> <span class="n">manually</span> <span class="n">via</span><span class="p">:</span>
+<span class="n">R</span> <span class="n">CMD</span> <span class="n">INSTALL</span> <span class="o">--</span><span class="n">configure</span><span class="o">-</span><span class="nb">vars</span><span class="o">=</span><span class="s1">&#39;INCLUDE_DIR=... LIB_DIR=…&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>openssl is not installed. Follow the recommendations stated there and install it, e.g. by <em>apt-get install libssl-dev</em> or similar (the available package name depends on your Ubuntu distribution, which you can find out with the help of this tutorial <a class="reference external" href="https://itsfoss.com/unable-to-locate-package-error-ubuntu/">https://itsfoss.com/unable-to-locate-package-error-ubuntu/</a>)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>** package ‘xml2’ successfully unpacked and MD5 sums checked
+Found pkg-config cflags and libs!
+Using PKG_CFLAGS=-I/usr/include/libxml2
+Using PKG_LIBS=-lxml2 -lz -llzma -licui18n -licuuc -licudata -lm -ldl
+** libs
+g++ -I/usr/share/R/include -DNDEBUG -I../inst/include -I/usr/include/libxml2 -DUCHAR_TYPE=wchar_t    -fvisibility=hidden -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c connection.cpp -o connection.o
+In file included from /usr/include/unicode/uenum.h:23:0,
+         from /usr/include/unicode/ucnv.h:53,
+         from /usr/include/libxml2/libxml/encoding.h:31,
+         from /usr/include/libxml2/libxml/parser.h:810,
+         from /usr/include/libxml2/libxml/globals.h:18,
+         from /usr/include/libxml2/libxml/threads.h:35,
+         from /usr/include/libxml2/libxml/xmlmemory.h:218,
+         from /usr/include/libxml2/libxml/tree.h:1307,
+         from xml2_utils.h:5,
+         from connection.cpp:3:
+/usr/include/unicode/localpointer.h:224:34: error: expected ‘,’ or ‘...’ before ‘&amp;&amp;’ token
+LocalPointer(LocalPointer&lt;T&gt; &amp;&amp;src) U_NOEXCEPT : LocalPointerBase&lt;T&gt;(src.ptr) {
+...
+make: *** [connection.o] Error 1
+ERROR: compilation failed for package ‘xml2’
+* removing ‘/usr/local/lib/R/site-library/xml2’
+
+The downloaded source packages are in
+    ‘/tmp/Rtmpashma8/downloaded_packages’
+Warning message:
+In install.packages(&quot;xml2&quot;) :
+installation of package ‘xml2’ had non-zero exit status
+</pre></div>
+</div>
+<ul class="simple">
+<li>There seems to be a different compiler required than what is currently provided in your  <em>~/.R/Makevars</em> file. Add <em>CXX=g++ -std=c++11</em> (or whatever is stated at the very beginning of the error) to your <em>~/.R/Makevars</em> file. The problem and solution are also described here: <a class="reference external" href="https://github.com/r-lib/xml2/issues/294">https://github.com/r-lib/xml2/issues/294</a></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Error: package or namespace load failed for ‘glmnet’ in dyn.load(file, DLLpath = DLLpath, ...):
+unable to load shared object &#39;/usr/local/lib/R/site-library/00LOCK-glmnet/00new/glmnet/libs/glmnet.so&#39;:
+/usr/lib/x86_64-linux-gnu/libgfortran.so.5: version `GFORTRAN_1.0&#39; not found (required by /usr/local/lib/R/site-library/00LOCK-glmnet/00new/glmnet/libs/glmnet.so)
+</pre></div>
+</div>
+<ul class="simple">
+<li>the R package glmnet (used by xtune package) needs a Fortran interpreter. If you have not installed it already, install it. If you have installed it already, adapt <em>~/.R/Makevars</em> and add <em>CC=gcc</em></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ImportError</span><span class="p">:</span> <span class="n">pycurl</span><span class="p">:</span> <span class="n">libcurl</span> <span class="n">link</span><span class="o">-</span><span class="n">time</span> <span class="n">ssl</span> <span class="n">backends</span> <span class="p">(</span><span class="n">secure</span><span class="o">-</span><span class="n">transport</span><span class="p">,</span> <span class="n">openssl</span><span class="p">)</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">include</span> <span class="nb">compile</span><span class="o">-</span><span class="n">time</span> <span class="n">ssl</span> <span class="n">backend</span> <span class="p">(</span><span class="n">none</span><span class="o">/</span><span class="n">other</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first">Looks like something went wrong with pycurl/openssl. Try this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">uninstall</span> <span class="n">pycurl</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="nb">compile</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">option</span><span class="o">=</span><span class="s2">&quot;--with-openssl&quot;</span> <span class="n">pycurl</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first">if it still fails, try this as well:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">reinstall</span> <span class="n">openssl</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="inputdata.html" class="btn btn-neutral float-right" title="Input Data Sets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Comprior’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

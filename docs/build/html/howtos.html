@@ -1,0 +1,623 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How-Tos &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python Code Documentation" href="comprior.html" />
+    <link rel="prev" title="Output Folder Structure - Where to find what Files" href="outputstructure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How-Tos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#add-new-preprocessing-functionality">Add New Preprocessing Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#implement-a-new-preprocessor">1. Implement a new Preprocessor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#update-the-config-file-optional">2. Update the Config File (optional)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#include-the-preprocessor-in-the-execution-pipeline">3. Include the Preprocessor in the Execution Pipeline</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#add-a-new-knowledge-base">Add a New Knowledge Base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#implement-knowledgebase-class">1 Implement KnowledgeBase Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-a-pathway-parser-optional">2 Implement a Pathway Parser (optional)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-web-service-accessing-class">3 Implement Web Service Accessing Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#update-the-config-file">4 Update the Config File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register-the-knowledge-base-at-knowledgebasefactory">5 Register the Knowledge Base at KnowledgeBaseFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#add-a-new-feature-selector-approach">Add a new Feature Selector Approach</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#a-implement-a-feature-selector">1a. Implement a Feature Selector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#b-implement-a-network-selector">1b. Implement a Network Selector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">2. Update the Config File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register-feature-network-selection-approach-to-the-featureselectorfactory">3. Register Feature/Network Selection Approach to the FeatureSelectorFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#add-custom-code-from-r-java-another-programming-languages">Add Custom Code from R/Java/another Programming Languages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#invoking-r-or-java-code">Invoking R or Java Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#invoking-code-from-another-programming-language-than-r-or-java">Invoking Code from Another Programming Language than R or Java</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>How-Tos</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/howtos.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-tos">
+<h1>How-Tos<a class="headerlink" href="#how-tos" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="add-new-preprocessing-functionality">
+<h2>Add New Preprocessing Functionality<a class="headerlink" href="#add-new-preprocessing-functionality" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="implement-a-new-preprocessor">
+<h3>1. Implement a new Preprocessor<a class="headerlink" href="#implement-a-new-preprocessor" title="Permalink to this headline">¶</a></h3>
+<p>Every preprocessing functionality must be implemented in its own class.
+To achieve that, create a new class that inherits from <a class="reference internal" href="comprior.html#preprocessing.Preprocessor" title="preprocessing.Preprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">preprocessing.Preprocessor</span></code></a> and implements <a class="reference internal" href="comprior.html#preprocessing.Preprocessor.preprocess" title="preprocessing.Preprocessor.preprocess"><code class="xref py py-meth docutils literal notranslate"><span class="pre">preprocessing.Preprocessor.preprocess()</span></code></a> method, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExamplePreprocessor</span><span class="p">(</span><span class="n">Preprocessor</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Does some example preprocessing</span>
+
+<span class="sd">    :param input: absolute path to the input file to preprocess.</span>
+<span class="sd">    :type input: str</span>
+<span class="sd">    :param output: absolute path to the output directory where to store the preprocessing results.</span>
+<span class="sd">    :type output: str</span>
+<span class="sd">    :param whatever_you_need: whatever other parameters your preprocessor needs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">whatever_you_need</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">whatever_you_need</span> <span class="o">=</span> <span class="n">whatever_you_need</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Does some example preprocessing</span>
+
+<span class="sd">       :return: absolute path to the new file location.</span>
+<span class="sd">       :rtype: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="c1">#implement your preprocessing here...</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-the-config-file-optional">
+<h3>2. Update the Config File (optional)<a class="headerlink" href="#update-the-config-file-optional" title="Permalink to this headline">¶</a></h3>
+<p>If your preprocessing functionality requires that the user sets any specific parameters, adapt the preprocessing section of <em>config.ini</em> and include these parameters.
+Do not forget to provide this config to your preprocessor class then.</p>
+</div>
+<div class="section" id="include-the-preprocessor-in-the-execution-pipeline">
+<h3>3. Include the Preprocessor in the Execution Pipeline<a class="headerlink" href="#include-the-preprocessor-in-the-execution-pipeline" title="Permalink to this headline">¶</a></h3>
+<p>Add your preprocessor to <a class="reference internal" href="comprior.html#pipeline.Pipeline.preprocessData" title="pipeline.Pipeline.preprocessData"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pipeline.Pipeline.preprocessData()</span></code></a> method.
+Make sure that a) <a class="reference internal" href="comprior.html#preprocessing.DataTransformationPreprocessor" title="preprocessing.DataTransformationPreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">preprocessing.DataTransformationPreprocessor</span></code></a> is always the first preprocessor (it transforms the file to use pandas’ default separator so that we do not need to handle different separators anymore), b) all preprocessores write their outputs to the same intermediate directory, and c) set the correct inputs: your preprocessor’s input is the output of the preceding preprocessor, your preprocessor’s output will be the input of the subsequent preprocessor:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataFormatter</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">DataTransformationPreprocessor</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">input_metadata</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">sep</span><span class="p">)</span>
+<span class="n">transposed_input</span> <span class="o">=</span> <span class="n">dataFormatter</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+<span class="c1">#here comes your new preprocessor</span>
+<span class="n">examplePreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">ExamplePreprocessor</span><span class="p">(</span><span class="n">transposed_input</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">whatever_you_need</span><span class="p">)</span>
+<span class="n">exampled_input</span> <span class="o">=</span> <span class="n">examplePreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+<span class="n">mappingPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MappingPreprocessor</span><span class="p">(</span><span class="n">exampled_input</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">currentIDFormat</span><span class="p">,</span> <span class="n">desiredIDFormat</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">mapped_input</span> <span class="o">=</span> <span class="n">mappingPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="add-a-new-knowledge-base">
+<h2>Add a New Knowledge Base<a class="headerlink" href="#add-a-new-knowledge-base" title="Permalink to this headline">¶</a></h2>
+<p>Every knowledge base needs to classes: One class inheriting from <a class="reference internal" href="comprior.html#knowledgebases.KnowledgeBase" title="knowledgebases.KnowledgeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBase</span></code></a> and implementing the interface methods and a second class inheriting from bioservice’s REST class for web service access.</p>
+<div class="section" id="implement-knowledgebase-class">
+<h3>1 Implement KnowledgeBase Class<a class="headerlink" href="#implement-knowledgebase-class" title="Permalink to this headline">¶</a></h3>
+<p>The class inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebase.KnowledgeBase</span></code> is accessed from any other class within Comprior that wants to retrieve prior knowledge.
+It must implement the methods <a class="reference internal" href="comprior.html#knowledgebases.KnowledgeBase.getRelevantGenes" title="knowledgebases.KnowledgeBase.getRelevantGenes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBase.getRelevantGenes()</span></code></a>, <a class="reference internal" href="comprior.html#knowledgebases.KnowledgeBase.getGeneScores" title="knowledgebases.KnowledgeBase.getGeneScores"><code class="xref py py-meth docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBase.getGeneScores()</span></code></a>, and <a class="reference internal" href="comprior.html#knowledgebases.KnowledgeBase.getRelevantPathways" title="knowledgebases.KnowledgeBase.getRelevantPathways"><code class="xref py py-meth docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBase.getRelevantPathways()</span></code></a> (depending on the type of knowledge base, raise a NotImplementedError).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleKB</span><span class="p">(</span><span class="n">KnowledgeBase</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1">#pass the knowledge base name, its config, the web service accessing class, and booleans indicating what type of knowledge is provided by that knowledge base</span>
+    <span class="n">geneInfo</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">pathwayInfo</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;ExampleKB&quot;</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">getConfig</span><span class="p">(</span><span class="s2">&quot;ExampleKB&quot;</span><span class="p">),</span> <span class="n">ExampleKBWS</span><span class="p">(),</span> <span class="n">geneInfo</span><span class="p">,</span> <span class="n">pathwayInfo</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">getRelevantGenes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all genes that are somehow associated to the given labels, e.g. disease names.</span>
+
+<span class="sd">     :param labels: list of identifiers, e.g. disease names, for which to find associated genes.</span>
+<span class="sd">     :type labels: list of str</span>
+<span class="sd">     :return: list of associated genes.</span>
+<span class="sd">     :rtype: list of str</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="c1">#implement the gene retrieval strategy here...</span>
+    <span class="k">return</span> <span class="n">genes</span>
+
+
+  <span class="k">def</span> <span class="nf">getGeneScores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Get all genes and their association scores that are related to the given labels, e.g. disease names.</span>
+
+<span class="sd">       :param labels: list of identifiers, e.g. disease names, for which to find associated genes.</span>
+<span class="sd">       :type labels: list of str</span>
+<span class="sd">       :return: DataFrame of associated genes and their association scores, in descending order.</span>
+<span class="sd">       :rtype: :class:`pandas.DataFrame`</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="c1">#implement the gene score retrieval strategy here...</span>
+    <span class="c1">#if your knowledge base provides pathways only, you can implement an own strategy or raise a NotImplementedError</span>
+
+    <span class="k">return</span> <span class="n">geneScores</span>
+
+  <span class="k">def</span> <span class="nf">getRelevantPathways</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;As this knowledge base currently does not provide pathway information, this feature is not implemented.</span>
+
+<span class="sd">       :param labels: list of labels for which to find related pathways.</span>
+<span class="sd">       :type labels: list of str</span>
+<span class="sd">       :return: :class:`NotImplementedError` as this knowledge base is not intended to be used for such analyses.</span>
+<span class="sd">       :rtype: :class:`NotImplementedError`</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="c1">#if the knowledge base does not provide pathway information, raise a NotImplementedError</span>
+
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implement-a-pathway-parser-optional">
+<h3>2 Implement a Pathway Parser (optional)<a class="headerlink" href="#implement-a-pathway-parser-optional" title="Permalink to this headline">¶</a></h3>
+<p>If the knowledge base provides pathway or network information, parse the pathway information into a pypath <code class="xref py py-class docutils literal notranslate"><span class="pre">pypath.Network</span></code> (for an example, see <a class="reference internal" href="comprior.html#knowledgebases.KEGGPathwayParser" title="knowledgebases.KEGGPathwayParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebases.KEGGPathwayParser</span></code></a>).
+Inherit from <a class="reference internal" href="comprior.html#knowledgebases.PathwayParser" title="knowledgebases.PathwayParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">knowledgebases.PathwayParser</span></code></a> to do that and implement your own <a class="reference internal" href="comprior.html#knowledgebases.PathwayParser.parsePathway" title="knowledgebases.PathwayParser.parsePathway"><code class="xref py py-meth docutils literal notranslate"><span class="pre">knowledgebases.PathwayParser.parsePathway()</span></code></a> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExamplePathwayParser</span><span class="p">(</span><span class="n">PathwayParser</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Parses a pathway from a custom format to :class:`pypath.Network`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">parsePathway</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pathway</span><span class="p">,</span> <span class="n">pathwayID</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse pathway to the internally used format of :class:`pypath.Network`.</span>
+
+<span class="sd">       :param pathway: pathway string to parse</span>
+<span class="sd">       :type pathway: str</span>
+<span class="sd">       :param pathwayID: name of the pathway</span>
+<span class="sd">       :type pathwayID: str</span>
+<span class="sd">       :return: pathway in the internally used format..</span>
+<span class="sd">       :rtype: :class:`pypath.Network`</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="c1">#implement your pathway parsing strategy here...</span>
+
+    <span class="k">return</span> <span class="n">pathway</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implement-web-service-accessing-class">
+<h3>3 Implement Web Service Accessing Class<a class="headerlink" href="#implement-web-service-accessing-class" title="Permalink to this headline">¶</a></h3>
+<p>First of all, check if bioservices already provides a class for accessing the knowledge base web service: <a class="reference external" href="https://bioservices.readthedocs.io/en/master/references.html#services">https://bioservices.readthedocs.io/en/master/references.html#services</a>
+If your knowledge base is not available, implement your own class by inheriting from bioservice’s REST or WSDL classes.
+Optimally, your REST class provides the API endpoints as methods, so if there is an endpoint <em>search</em>, implement a corresponding method named <em>search</em>.
+To send the actual request, construct a query string that specifies our endpoint (without the general API url) and provide that string to <em>self.http_get(your_string)</em>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleKBWS</span><span class="p">(</span><span class="n">REST</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Queries the web service of ExampleKB for a given set of labels and retrieves association scores for all genes related to the query labels.</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;ExampleKBWS&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">util</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;ExampleKB&quot;</span><span class="p">][</span><span class="s2">&quot;webservice_url&quot;</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">getVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the current version of the API endpoint.</span>
+
+<span class="sd">       :return: web service version infos.</span>
+<span class="sd">       :rtype: json dict</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_get</span><span class="p">(</span><span class="s2">&quot;/version&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-the-config-file">
+<h3>4 Update the Config File<a class="headerlink" href="#update-the-config-file" title="Permalink to this headline">¶</a></h3>
+<p>Create a new section in <em>config.ini</em> for your knowledge base.
+It must contain an output directory (where intermediate results are written to), optionally the web service API URL (if you had to implement your own REST class), and any other parameter you need for your knowledge base class to function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[ExampleKB]
+webservice_url = https://www.myexamplekbwebservice.org/api
+outputDir = ${General:externalKbDir}ExampleKB/
+</pre></div>
+</div>
+</div>
+<div class="section" id="register-the-knowledge-base-at-knowledgebasefactory">
+<h3>5 Register the Knowledge Base at KnowledgeBaseFactory<a class="headerlink" href="#register-the-knowledge-base-at-knowledgebasefactory" title="Permalink to this headline">¶</a></h3>
+<p>Register your new knowledge base at <code class="xref py py-meth docutils literal notranslate"><span class="pre">knowledgebases.KnowledgeBaseFactory.createKnowledgeBase()</span></code>.
+If your knowledge base is o not forget to provide the pathway parser to your knowledge base when creating</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">createKnowledgeBase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledgebase</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Creates knowledge base based on a given name.</span>
+
+<span class="sd"> :param knowledgebase: name of the knowledge base to be created.</span>
+<span class="sd"> :type knowledgebase: str</span>
+<span class="sd"> :return: knowledge base object.</span>
+<span class="sd"> :rtype: :class:`KnowledgeBase` or inheriting classes</span>
+<span class="sd"> &quot;&quot;&quot;</span>
+
+ <span class="k">if</span> <span class="n">knowledgebase</span> <span class="o">==</span> <span class="s2">&quot;ExampleKB&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">ExampleKB</span><span class="p">()</span>
+
+  <span class="k">if</span> <span class="n">knowledgebase</span> <span class="o">==</span> <span class="s2">&quot;ExamplePathwayKB&quot;</span><span class="p">:</span>
+    <span class="c1">#create a pathway parser if your knowledge base requires that</span>
+    <span class="n">pathwayparser</span> <span class="o">=</span> <span class="n">ExamplePathwayParser</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ExamplePathwayKB</span><span class="p">(</span><span class="n">pathwayparser</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="add-a-new-feature-selector-approach">
+<h2>Add a new Feature Selector Approach<a class="headerlink" href="#add-a-new-feature-selector-approach" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="a-implement-a-feature-selector">
+<h3>1a. Implement a Feature Selector<a class="headerlink" href="#a-implement-a-feature-selector" title="Permalink to this headline">¶</a></h3>
+<p>Feature selection approaches are implemented in separate classes for each approach.
+Inherit from one (or multiple) of the many abstract classes that are available for feature selectors, e.g. <a class="reference internal" href="comprior.html#featureselection.RSelector" title="featureselection.RSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.RSelector</span></code></a> when invoking R code or <a class="reference internal" href="comprior.html#featureselection.PriorKnowledgeSelector" title="featureselection.PriorKnowledgeSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.PriorKnowledgeSelector</span></code></a> when implementing a prior knowledge approach that uses a knowledge base.
+See all the class hierarchy HERE.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleSelector</span><span class="p">(</span><span class="n">PriorKnowledgeSelector</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledgebase</span><span class="p">,</span> <span class="n">whatever_you_need</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">whatever_you_need</span> <span class="o">=</span> <span class="n">whatever_you_need</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;YourSelectorName&quot;</span><span class="p">,</span> <span class="n">knowledgebase</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">selectFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Your feature selection strategy.</span>
+
+<span class="sd">    :return: absolute path to the output ranking file.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#define the name of the output file name (must follow this schema!)</span>
+    <span class="n">outputFilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+
+    <span class="c1">#implement your feature selection procedure here...</span>
+
+    <span class="k">return</span> <span class="n">outputFilename</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="b-implement-a-network-selector">
+<h3>1b. Implement a Network Selector<a class="headerlink" href="#b-implement-a-network-selector" title="Permalink to this headline">¶</a></h3>
+<p>If you want to implement a network approach that maps the original feature space of the data to (sub-)networks, e.g. pathways, inherit from <a class="reference internal" href="comprior.html#featureselection.NetworkSelector" title="featureselection.NetworkSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.NetworkSelector</span></code></a> and implement its <a class="reference internal" href="comprior.html#featureselection.NetworkSelector.selectPathways" title="featureselection.NetworkSelector.selectPathways"><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.NetworkSelector.selectPathways()</span></code></a> instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleNetworkSelector</span><span class="p">(</span><span class="n">NetworkSelector</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledgebase</span><span class="p">,</span> <span class="n">featuremapper</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;YourNetworkSelector&quot;</span><span class="p">,</span> <span class="n">knowledgebase</span><span class="p">,</span> <span class="n">featuremapper</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">selectPathways</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pathways</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Your pathway selection strategy</span>
+
+<span class="sd">    :param pathways: selector name</span>
+<span class="sd">    :type pathways: str</span>
+<span class="sd">    :returns: pathway ranking with pathway scores</span>
+<span class="sd">    :rtype: :class:`pandas.DataFrame`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#implement your pathway/subnetwork selection strategy here...</span>
+
+    <span class="k">return</span> <span class="n">pathwayRanking</span>
+</pre></div>
+</div>
+<p>Classes inheriting from <a class="reference internal" href="comprior.html#featureselection.NetworkSelector" title="featureselection.NetworkSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.NetworkSelector</span></code></a> additionally require a feature mapper that, once the (sub-) networks were selected as new features by your new network selector, creates new feature values for every selected (sub-) network.
+To do that, either use an existing feature mapper or implement a new one that inherits from <a class="reference internal" href="comprior.html#featureselection.FeatureMapper" title="featureselection.FeatureMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.FeatureMapper</span></code></a> and implements <a class="reference internal" href="comprior.html#featureselection.FeatureMapper.mapFeatures" title="featureselection.FeatureMapper.mapFeatures"><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.FeatureMapper.mapFeatures()</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleFeatureMapper</span><span class="p">(</span><span class="n">FeatureMapper</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">mapFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_data</span><span class="p">,</span> <span class="n">subnetworkNames</span><span class="p">,</span> <span class="n">subnetworks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Your feature mapping strategy</span>
+
+<span class="sd">          :param original_data: the original data set of which to map the feature space.</span>
+<span class="sd">          :type original_data: :class:`pandas.DataFrame`</span>
+<span class="sd">          :param pathways: dict of pathway names as keys and corresponding pathway :class:`pypath.Network` objects as values</span>
+<span class="sd">          :type pathways: dict</span>
+<span class="sd">          :returns: the transformed data set with new feature values</span>
+<span class="sd">          :rtype: :class:`pandas.DataFrame`</span>
+<span class="sd">          &quot;&quot;&quot;</span>
+          <span class="c1">#implement your feature mapping strategy here...</span>
+
+          <span class="k">return</span> <span class="n">mappedDataset</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>2. Update the Config File<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>List the new feature selection approach in the comments of the <em>config.ini</em> file and preferably, this Wiki ;).
+When providing a name to your feature selection approach, follow this naming schema (<em>YourSelectorName</em> MUST be the same as the name provided in the selector’s init method):</p>
+<ul class="simple">
+<li><em>YourSelectorName</em> for a traditional approach without any knowledge base</li>
+<li><em>YourSelectorName_kbName</em> for a selector that uses a knowledge base</li>
+<li><em>YourSelectorName_tradName_kbName</em> for a selector that uses a knowledge base and another selector.</li>
+</ul>
+</div>
+<div class="section" id="register-feature-network-selection-approach-to-the-featureselectorfactory">
+<h3>3. Register Feature/Network Selection Approach to the FeatureSelectorFactory<a class="headerlink" href="#register-feature-network-selection-approach-to-the-featureselectorfactory" title="Permalink to this headline">¶</a></h3>
+<p>Register your new feature selector class at <a class="reference internal" href="comprior.html#featureselection.FeatureSelectorFactory" title="featureselection.FeatureSelectorFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">featureselection.FeatureSelectorFactory</span></code></a> in one of the following methods, depending on the type of selector you implemented (see the sources as the methods are encapsulated in a singleton construct):</p>
+<ul class="simple">
+<li><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.FeatureSelectorFactory.createTraditionalSelector()</span></code> if it is a traditional selector not using a knowledge base</li>
+<li><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.FeatureSelectorFactory.createCombinedSelector()</span></code> if it uses a traditional approach and a knowledge base in a combined manner</li>
+<li><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.FeatureSelectorFactory.createIntegrativeSelector()</span></code> if it is a selector that only uses a knowledge base</li>
+</ul>
+<p>When registering, you need to specify the first part (=YourSelectorName) of the overall name as an if-statement</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">createIntegrativeSelector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selectorName</span><span class="p">,</span> <span class="n">kb</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Creates a feature selector using a knowledge base from the given selector and knowledge base names.</span>
+<span class="sd">  Register new implementations of a prior knowledge selector here that does not requires a (traditional) selector.</span>
+<span class="sd">  Stops processing if the selector could not be found.</span>
+
+<span class="sd">  :param selectorName: selector name</span>
+<span class="sd">  :type selectorName: str</span>
+<span class="sd">  :param kb: knowledge base name</span>
+<span class="sd">  :type kb: str</span>
+<span class="sd">  :return: instance of a feature selector implementation.</span>
+<span class="sd">  :rtype: :class:`FeatureSelector` or inheriting class</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">kbfactory</span> <span class="o">=</span> <span class="n">knowledgebases</span><span class="o">.</span><span class="n">KnowledgeBaseFactory</span><span class="p">()</span>
+  <span class="n">knowledgebase</span> <span class="o">=</span> <span class="n">kbfactory</span><span class="o">.</span><span class="n">createKnowledgeBase</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">selectorName</span> <span class="o">==</span> <span class="s2">&quot;YourSelectorName&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">knowledgebase</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">selectorName</span> <span class="o">==</span> <span class="s2">&quot;YourNetworkSelectorName&quot;</span><span class="p">:</span>
+      <span class="n">featureMapper</span> <span class="o">=</span> <span class="n">ExampleFeatureMapper</span><span class="p">()</span>
+      <span class="k">return</span> <span class="n">ExampleNetworkSelector</span><span class="p">(</span><span class="n">knowledgebase</span><span class="p">,</span> <span class="n">featureMapper</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="add-custom-code-from-r-java-another-programming-languages">
+<h2>Add Custom Code from R/Java/another Programming Languages<a class="headerlink" href="#add-custom-code-from-r-java-another-programming-languages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="invoking-r-or-java-code">
+<span id="invokingrjavacode"></span><h3>Invoking R or Java Code<a class="headerlink" href="#invoking-r-or-java-code" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The benchutils package provides methods for invoking R or Java code (<a class="reference internal" href="comprior.html#benchutils.runRCommand" title="benchutils.runRCommand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">benchutils.runRCommand()</span></code></a> and <a class="reference internal" href="comprior.html#benchutils.runJavaCommand" title="benchutils.runJavaCommand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">benchutils.runJavaCommand()</span></code></a>, respectively).
+These methods are already used, e.g. by <a class="reference internal" href="comprior.html#featureselection.RSelector.selectFeatures" title="featureselection.RSelector.selectFeatures"><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.RSelector.selectFeatures()</span></code></a> and <a class="reference internal" href="comprior.html#featureselection.JavaSelector.selectFeatures" title="featureselection.JavaSelector.selectFeatures"><code class="xref py py-meth docutils literal notranslate"><span class="pre">featureselection.JavaSelector.selectFeatures()</span></code></a>.
+If you have R or Java code that you want to invoke, use these methods and provide them with the R/Java config parameters, the name of the script/jar to execute, and a list of parameters.
+The example below runs an R script called “FS_LassoPenalty.R” that expects three parameters providing file names to the input, output, and external score files.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_filename</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">,</span> <span class="n">externalscores_filename</span><span class="p">]</span>
+<span class="n">benchutils</span><span class="o">.</span><span class="n">runRCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rConfig</span><span class="p">,</span> <span class="s2">&quot;FS_LassoPenalty.R&quot;</span> <span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="invoking-code-from-another-programming-language-than-r-or-java">
+<h3>Invoking Code from Another Programming Language than R or Java<a class="headerlink" href="#invoking-code-from-another-programming-language-than-r-or-java" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Currently, Comprior supports to run Python, R, and Java code.
+If you want to integrate custom code from another programming language, you can implement a corresponding function like <a class="reference internal" href="comprior.html#benchutils.runRCommand" title="benchutils.runRCommand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">benchutils.runRCommand()</span></code></a> and <a class="reference internal" href="comprior.html#benchutils.runJavaCommand" title="benchutils.runJavaCommand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">benchutils.runJavaCommand()</span></code></a>.
+Such a function constructs an execution string that is then forwarded to the command line.
+To do that,</p>
+<blockquote>
+<div><ul class="simple">
+<li>create a new folder for your programming language in Comprior’s <em>code</em> directory (next to the <em>Python</em>, <em>R</em>, and <em>Java</em> directories), e.g. <em>Cpp</em> for adding C++ code</li>
+<li>place your executable files or script(s) into the new directory</li>
+<li>adapt the <em>config.ini</em> file and add a new segment for the programming language that contains the path to your executable source code (e.g. the <em>compiled</em> files of your C++ code) and to the programming language interpreter (for C++, however, code is invoked by just typing <em>./filename</em> on the command line)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[C++]
+code = ${General:homePath}code/Cpp
+CppLocation=./
+</pre></div>
+</div>
+<ul class="simple">
+<li>adapt <em>benchutils.py</em> and implement an additional function (do not forget to add code documentation!)</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">runCppCommand</span><span class="p">(</span><span class="n">cppConfig</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;Run external C++ code.</span>
+
+<span class="sd">  :param cppConfig: C++ config parameters (store paths to C++ and the C++ code).</span>
+<span class="sd">  :type cppConfig: dict</span>
+<span class="sd">  :param filename: name of the C++ file to be executed.</span>
+<span class="sd">  :type filename: str</span>
+<span class="sd">  :param params: list of parameters that will be forwarded to the C++ file.</span>
+<span class="sd">  :type params: list of str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">cppConfig</span><span class="p">[</span><span class="s2">&quot;C++&quot;</span><span class="p">],</span> <span class="n">filename</span><span class="p">]</span>
+  <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cppConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
+  <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>invoke your code from within Python as described above in <a class="reference internal" href="#invokingrjavacode"><span class="std std-ref">Invoking R or Java Code</span></a>.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="comprior.html" class="btn btn-neutral float-right" title="Python Code Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="outputstructure.html" class="btn btn-neutral float-left" title="Output Folder Structure - Where to find what Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

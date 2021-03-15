@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pipeline &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>pipeline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pipeline</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">mcolors</span>
+<span class="kn">import</span> <span class="nn">benchutils</span>
+<span class="kn">import</span> <span class="nn">preprocessing</span>
+<span class="kn">import</span> <span class="nn">featureselection</span>
+<span class="kn">import</span> <span class="nn">evaluation</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<div class="viewcode-block" id="Pipeline"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline">[docs]</a><span class="k">class</span> <span class="nc">Pipeline</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Class that executes the complete benchmarking pipeline.</span>
+
+<span class="sd">       :param outputRootPath: absolute path to the overall output directory (will be extended by own folders by every :class:`evaluation.Evaluator`).</span>
+<span class="sd">       :type outputRootPath: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepareExecution</span><span class="p">(</span><span class="n">userConfig</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Pipeline.prepareExecution"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.prepareExecution">[docs]</a>    <span class="k">def</span> <span class="nf">prepareExecution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userConfig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepares the pipeline execution by loading the configuration file, clearing intermediate directories, and creating output directories.</span>
+
+<span class="sd">           :param userConfig: absolute path to an additional user configuration file (config.ini will always be used by default) to overwrite default configuration.</span>
+<span class="sd">           :type userConfig: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## LOAD CONFIG... ########################&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadConfig</span><span class="p">(</span><span class="n">userConfig</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## PREPARE DIRECTORIES... ########################&quot;</span><span class="p">)</span>
+        <span class="n">outputRootPath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepareDirectories</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputRootPath</span></div>
+
+<div class="viewcode-block" id="Pipeline.evaluateInputData"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.evaluateInputData">[docs]</a>    <span class="k">def</span> <span class="nf">evaluateInputData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run :class:`evaluation.DatasetEvaluator` to create plots as specified by the config&#39;s Evaluation-preanalysis parameter.</span>
+
+<span class="sd">            :param inputfile: absolute path to the input data set to be analyzed.</span>
+<span class="sd">            :type inputfile: str</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;preanalysis_plots&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">dataEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">DatasetEvaluator</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;preanalysis&quot;</span><span class="p">)</span> <span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+        <span class="n">dataEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pipeline.evaluateKnowledgeBases"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.evaluateKnowledgeBases">[docs]</a>    <span class="k">def</span> <span class="nf">evaluateKnowledgeBases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labeledInputDataPath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates knowledge base coverage for all knowledge bases that are used in the specified feature selection methods.</span>
+<span class="sd">           Uses the class labels and alternativeSearchTerms from the config, queries the knowledge bases and creates corresponding plots regarding coverage of theses search terms.</span>
+
+<span class="sd">           :param labeledInputDataPath: absolute path to the labeled input data set.</span>
+<span class="sd">           :type labeledInputDataPath: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;evaluateKBcoverage&quot;</span><span class="p">)):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;preanalysis&quot;</span><span class="p">)</span>
+
+            <span class="c1">#get all knowledgebases that are used by selected approaches</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;combining_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+            <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;modifying_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+            <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;network_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+            <span class="c1"># remove empty values in case a methods list was empty</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+            <span class="n">knowledgebases</span> <span class="o">=</span><span class="p">[</span><span class="n">method</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">]</span>
+
+            <span class="c1">#get all searchterms from config and classlabels</span>
+            <span class="n">alternativeTerms</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;alternativeSearchTerms&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">altTerms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">alternativeTerms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">term</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">altTerms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>
+            <span class="c1">#only read in the first column with the class labels</span>
+            <span class="n">classLabels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">labeledInputDataPath</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">squeeze</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">searchTerms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">classLabels</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+            <span class="n">searchTerms</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">altTerms</span><span class="p">)</span>
+
+
+            <span class="n">dataEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">KnowledgeBaseEvaluator</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">knowledgebases</span><span class="p">,</span> <span class="n">searchTerms</span><span class="p">)</span>
+            <span class="n">dataEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pipeline.runFeatureSelector"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.runFeatureSelector">[docs]</a>    <span class="k">def</span> <span class="nf">runFeatureSelector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="p">,</span> <span class="n">datasetLocation</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">loggingDir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs a given feature selector.</span>
+
+<span class="sd">           :param selector: Any feature selector that inherits from :class:`featureselection.FeatureSelector`.</span>
+<span class="sd">           :type selector: :class:`featureselection.FeatureSelector`</span>
+<span class="sd">           :param datasetLocation: absolute path to the input data set (from which features should be selected).</span>
+<span class="sd">           :type datasetLocation: str</span>
+<span class="sd">           :param outputDir: absolute path to the selector&#39;s output directory (where ranking will be written to).</span>
+<span class="sd">           :type outputDir: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">selector</span><span class="o">.</span><span class="n">setParams</span><span class="p">(</span><span class="n">datasetLocation</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">loggingDir</span><span class="p">)</span>
+        <span class="n">selector</span><span class="o">.</span><span class="n">selectFeatures</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pipeline.selectFeatures"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.selectFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">selectFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasetLocation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates and runs all feature selectors that are listed in the config file.</span>
+<span class="sd">           Applies parallelization by running as much feature selectors in parallel as stated in the config&#39;s General--&gt;numCores attribute.</span>
+
+<span class="sd">           :param datasetLocation: absolute path to the input data set (from which features should be selected).</span>
+<span class="sd">           :type datasetLocation: str</span>
+<span class="sd">           :param outputRootPath: absolute path to the selector&#39;s output directory (where ranking will be written to).</span>
+<span class="sd">           :type outputRootPath: str</span>
+<span class="sd">           :return: absolute path to directory that contains generated feature rankings.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">outputDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - General&quot;</span><span class="p">,</span> <span class="s2">&quot;outputDirectory&quot;</span><span class="p">)</span>
+        <span class="c1"># create directory for time logging files</span>
+        <span class="n">loggingDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="s2">&quot;timeLogs/&quot;</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">loggingDir</span><span class="p">)</span>
+
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;traditional_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;combining_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;modifying_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;network_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="c1"># remove empty values in case a methods list was empty</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+        <span class="n">selectorFactory</span> <span class="o">=</span> <span class="n">featureselection</span><span class="o">.</span><span class="n">FeatureSelectorFactory</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">numCores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;numCores&quot;</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numCores must be an integeger value. Exit program.&quot;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">()</span>
+
+        <span class="n">rounds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">/</span> <span class="n">numCores</span><span class="p">)</span>
+        <span class="c1">#walk through every method and create a gene selector</span>
+        <span class="c1">#parallelize, but only run at max as much threads as cpus in parallel, also to avoid running out of space</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rounds</span><span class="p">):</span>
+            <span class="c1"># create threadpool</span>
+            <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">numCores</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numCores</span><span class="p">):</span>
+                <span class="n">selector</span> <span class="o">=</span> <span class="n">selectorFactory</span><span class="o">.</span><span class="n">createFeatureSelector</span><span class="p">(</span><span class="n">methods</span><span class="p">[(</span><span class="n">j</span> <span class="o">*</span> <span class="n">numCores</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">])</span>
+                <span class="c1">#self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)</span>
+                <span class="c1">#spawn new process for actual gene selection</span>
+                <span class="c1">#print(&quot;spawn process number &quot; + str((j * numCores) + i) + &quot;: &quot; + methods[(j * numCores) + i])</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runFeatureSelector</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">datasetLocation</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">loggingDir</span><span class="p">))</span>
+                <span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+                <span class="c1"># wait for all threads to finish</span>
+            <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+                <span class="c1">#print(&quot;join thread...&quot;)</span>
+                <span class="n">thr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                <span class="c1">#print(&quot;... finished&quot;)</span>
+
+        <span class="c1">#if there are remaining threads, start them</span>
+        <span class="n">remaining_threads</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">rounds</span> <span class="o">*</span> <span class="n">numCores</span><span class="p">)</span>
+        <span class="c1">#print(&quot;remaining threads: &quot; + str(remaining_threads))</span>
+        <span class="k">if</span> <span class="n">remaining_threads</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># create threadpool</span>
+            <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">remaining_threads</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">remaining_threads</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">selector</span> <span class="o">=</span> <span class="n">selectorFactory</span><span class="o">.</span><span class="n">createFeatureSelector</span><span class="p">(</span><span class="n">methods</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+                <span class="c1">#print(&quot;spawn process number &quot; + str(len(methods) - i) + &quot;: &quot; + methods[len(methods) - i])</span>
+                <span class="c1">#self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)</span>
+                <span class="c1">#spawn new process for actual gene selection</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runFeatureSelector</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="n">datasetLocation</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">loggingDir</span><span class="p">))</span>
+                <span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+                <span class="c1"># wait for all threads to finish</span>
+            <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+                <span class="c1">#print(&quot;join thread...&quot;)</span>
+                <span class="n">thr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                <span class="c1">###print(&quot;... finished&quot;)</span>
+
+        <span class="k">return</span> <span class="n">outputDir</span></div>
+
+<div class="viewcode-block" id="Pipeline.assignColors"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.assignColors">[docs]</a>    <span class="k">def</span> <span class="nf">assignColors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assigns each (feature selection) method a unique color.</span>
+<span class="sd">           Will be delivered later on to every :class:`evaluation.Evaluator` instance to create visualizations with consistent coloring for evaluated approaches.</span>
+
+<span class="sd">           :param methods: List of method names.</span>
+<span class="sd">           :type methods: :class:`List` of str</span>
+<span class="sd">           :return: Dictionary containing hex color codes for every method</span>
+<span class="sd">           :rtype: dict</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">colorPalette</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">mcolors</span><span class="o">.</span><span class="n">CSS4_COLORS</span><span class="p">)</span>
+        <span class="n">colorNames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">colorPalette</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+            <span class="n">labelColor</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">colorNames</span><span class="p">)</span>
+            <span class="n">colorNames</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">labelColor</span><span class="p">)</span>
+            <span class="c1">#colors[method] = labelColor</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">to_hex</span><span class="p">(</span><span class="n">labelColor</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">colors</span></div>
+
+<div class="viewcode-block" id="Pipeline.evaluateBiomarkers"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.evaluateBiomarkers">[docs]</a>    <span class="k">def</span> <span class="nf">evaluateBiomarkers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Covers the evaluation phase.</span>
+<span class="sd">           Processes input data to only contain the top k selected features per feature selection approach via the :class:`evaluation.AttributeRemover`.</span>
+<span class="sd">           Runs all selected evaluation strategies that cover assessment of rankings (:class:`evaluation.RankingsEvaluator`), annotations(:class:`evaluation.AnnotationEvaluator`), and classification performance (:class:`evaluation.ClassificationEvaluator`).</span>
+<span class="sd">           If selected, also conducts cross-validation across data sets with :class:`evaluation.CrossEvaluator`.</span>
+
+<span class="sd">           :param inputDir: absolute path to the directory where input data sets are located (for :class:`evaluation.AttributeRemover`).</span>
+<span class="sd">           :type inputDir: str</span>
+<span class="sd">           :param dataset: absolute file path to the input data set (from which features should be selected).</span>
+<span class="sd">           :type dataset: str</span>
+<span class="sd">           :param rankingsDir: absolute path to the directory that contains all rankings.</span>
+<span class="sd">           :type rankingsDir: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;traditional_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;combining_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;modifying_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="n">methods</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - Methods&quot;</span><span class="p">,</span> <span class="s2">&quot;network_methods&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+        <span class="c1"># remove empty values in case a methods list was empty</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">methods</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+        <span class="n">methodColors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assignColors</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span>
+
+        <span class="c1">#################################</span>
+        <span class="c1">### RANKINGS EVALUATION ###</span>
+        <span class="c1">#################################</span>
+
+        <span class="n">rankingsEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">RankingsEvaluator</span><span class="p">(</span><span class="n">rankingsDir</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span> <span class="s2">&quot;metricsDir&quot;</span><span class="p">),</span> <span class="n">methodColors</span><span class="p">)</span>
+        <span class="n">rankingsEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+
+        <span class="n">annotationEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">AnnotationEvaluator</span><span class="p">(</span><span class="n">rankingsDir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span>
+                                                                                                            <span class="s2">&quot;annotationsDir&quot;</span><span class="p">),</span> <span class="n">methodColors</span><span class="p">)</span>
+        <span class="n">annotationEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+
+        <span class="c1">#################################</span>
+        <span class="c1">### CLASSIFICATION EVALUATION ###</span>
+        <span class="c1">#################################</span>
+        <span class="c1">#attributeRemover = evaluation.AttributeRemover(inputDir,</span>
+        <span class="c1">#                                               self.outputRootPath + benchutils.getConfigValue(</span>
+        <span class="c1">#                                                   &quot;Gene Selection - General&quot;,</span>
+        <span class="c1">#                                                   &quot;outputDirectory&quot;),</span>
+        <span class="c1">#                                               benchutils.getConfigValue(&quot;Evaluation&quot;, &quot;topKmax&quot;),</span>
+        <span class="c1">#                                               self.outputRootPath + benchutils.getConfigValue(&quot;Evaluation&quot;,</span>
+        <span class="c1">#                                                                                              &quot;reducedDataset&quot;))</span>
+        <span class="c1">#attributeRemover.removeUnusedAttributes()</span>
+
+        <span class="k">if</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableClassification&quot;</span><span class="p">):</span>
+            <span class="n">datasetDir</span> <span class="o">=</span> <span class="n">inputDir</span>
+            <span class="n">rankingsDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - General&quot;</span><span class="p">,</span><span class="s2">&quot;outputDirectory&quot;</span><span class="p">)</span>
+            <span class="n">reducedDatasetDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;reducedDataset&quot;</span><span class="p">)</span>
+            <span class="n">metricsDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;metricsDir&quot;</span><span class="p">)</span>
+            <span class="n">classificationEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">ClassificationEvaluator</span><span class="p">(</span><span class="n">datasetDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">reducedDatasetDir</span><span class="p">,</span> <span class="n">metricsDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+            <span class="c1">#classificationEvaluator = evaluation.ClassificationEvaluator(</span>
+            <span class="c1">#    self.outputRootPath + benchutils.getConfigValue(&quot;Evaluation&quot;, &quot;reducedDataset&quot;),</span>
+            <span class="c1">#    self.outputRootPath + benchutils.getConfigValue(&quot;Classification&quot;, &quot;metricsDir&quot;), methodColors)</span>
+            <span class="n">classificationEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+
+        <span class="c1">##########################################</span>
+        <span class="c1">### CROSS-VALIDATION ON SECOND DATASET ###</span>
+        <span class="c1">##########################################</span>
+        <span class="k">if</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableCrossEvaluation&quot;</span><span class="p">):</span>
+            <span class="n">crossValFileDir</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;crossVal_preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;ready/&quot;</span>
+            <span class="n">outputDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputRootPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">)</span>
+            <span class="n">reducedDatasetDir</span> <span class="o">=</span> <span class="n">outputDir</span> <span class="o">+</span> <span class="s2">&quot;/reducedData/&quot;</span>
+            <span class="n">resultsDir</span> <span class="o">=</span> <span class="n">outputDir</span> <span class="o">+</span> <span class="s2">&quot;/classification/&quot;</span>
+
+            <span class="n">robustnessEvaluator</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">ClassificationEvaluator</span><span class="p">(</span><span class="n">crossValFileDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">reducedDatasetDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+            <span class="n">robustnessEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pipeline.preprocessData"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.preprocessData">[docs]</a>    <span class="k">def</span> <span class="nf">preprocessData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Preprocesses the input data set specified in the config file.</span>
+<span class="sd">           Preprocessing consists of a) transposing the data so that features are in the columns (if necessary), b) mapping the features to the right format (if necessary), c) labeling the data with the user-specified metadata attribute, d) filtering features or samples that have too few information (optional, specified via config), and finally e) putting the analysis-ready data set to the right location for further processing.</span>
+
+<span class="sd">           :return: A tuple consisting of the absolute path to the analysis-ready data set and the absolute path to the mapped input final_filename and mapped_input</span>
+<span class="sd">           :rtype: tuple(str,str)</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1">#####################</span>
+        <span class="c1">### PREPROCESSING ###</span>
+        <span class="c1">#####################</span>
+
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">)</span>
+        <span class="n">input_metadata</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+        <span class="n">intermediate_output</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;preprocessed/&quot;</span>
+        <span class="n">final_output</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;ready/&quot;</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;dataSeparator&quot;</span><span class="p">)</span>
+        <span class="n">currentIDFormat</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;currentGeneIDFormat&quot;</span><span class="p">)</span>
+        <span class="n">desiredIDFormat</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;finalGeneIDFormat&quot;</span><span class="p">)</span>
+
+        <span class="c1">#get original filename</span>
+        <span class="n">original_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+
+        <span class="c1"># THIS ONE MUST ALWAYS BE THE FIRST PREPROCESSING STEP because it potentially changes the separators used in the data</span>
+        <span class="c1"># transpose data matrix if genes are not located in the columns, replace custom separators to the framework-specific ones</span>
+        <span class="n">dataFormatter</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">DataTransformationPreprocessor</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">input_metadata</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">sep</span><span class="p">)</span>
+        <span class="n">transposed_input</span> <span class="o">=</span> <span class="n">dataFormatter</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+        <span class="n">mappingPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MappingPreprocessor</span><span class="p">(</span><span class="n">transposed_input</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">currentIDFormat</span><span class="p">,</span>
+                                                                <span class="n">desiredIDFormat</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">mapped_input</span> <span class="o">=</span> <span class="n">mappingPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+        <span class="c1"># add disease type from metadata to main data set</span>
+        <span class="n">metadataAnnotator</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MetaDataPreprocessor</span><span class="p">(</span><span class="n">mapped_input</span><span class="p">,</span> <span class="n">input_metadata</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">,</span> <span class="n">sep</span><span class="p">)</span>
+        <span class="n">labeled_input</span> <span class="o">=</span> <span class="n">metadataAnnotator</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+        <span class="n">filterPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">FilterPreprocessor</span><span class="p">(</span><span class="n">labeled_input</span><span class="p">,</span> <span class="n">input_metadata</span><span class="p">,</span> <span class="n">intermediate_output</span><span class="p">)</span>
+        <span class="n">filtered_input</span> <span class="o">=</span> <span class="n">filterPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+        <span class="c1">#move last processed file into ready directory with original filename as prefix</span>
+        <span class="n">final_filename</span> <span class="o">=</span> <span class="n">final_output</span> <span class="o">+</span> <span class="n">original_filename</span>
+        <span class="n">datasetPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">DataMovePreprocessor</span><span class="p">(</span><span class="n">filtered_input</span><span class="p">,</span> <span class="n">final_filename</span><span class="p">)</span>
+        <span class="n">datasetPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+        <span class="c1"># if cross-validation is enabled, map the dataset for cross-validation correctly and move it to the right directory</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableCrossEvaluation&quot;</span><span class="p">)):</span>
+            <span class="n">crossValidationFile</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationData&quot;</span><span class="p">)</span>
+            <span class="n">crossValFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">crossValidationFile</span><span class="p">)</span>
+            <span class="n">crossValidationPath</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;crossVal_preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;preprocessed/&quot;</span>
+            <span class="n">crossValIDFormat</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationGeneIDFormat&quot;</span><span class="p">)</span>
+            <span class="n">crossVal_mappingPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MappingPreprocessor</span><span class="p">(</span><span class="n">crossValidationFile</span><span class="p">,</span> <span class="n">crossValidationPath</span><span class="p">,</span>
+                                                                    <span class="n">crossValIDFormat</span><span class="p">,</span><span class="n">desiredIDFormat</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">mapped_crossValdata</span> <span class="o">=</span> <span class="n">crossVal_mappingPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+            <span class="n">crossval_final_output</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;crossVal_preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;ready/&quot;</span>
+            <span class="n">crossval_final_filename</span> <span class="o">=</span> <span class="n">crossval_final_output</span> <span class="o">+</span> <span class="n">crossValFileName</span>
+            <span class="n">datasetPreprocessor</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">DataMovePreprocessor</span><span class="p">(</span><span class="n">mapped_crossValdata</span><span class="p">,</span> <span class="n">crossval_final_filename</span><span class="p">)</span>
+            <span class="n">datasetPreprocessor</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+
+        <span class="k">return</span> <span class="n">final_filename</span><span class="p">,</span> <span class="n">mapped_input</span></div>
+
+<div class="viewcode-block" id="Pipeline.loadConfig"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.loadConfig">[docs]</a>    <span class="k">def</span> <span class="nf">loadConfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userConfig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads the config files.</span>
+<span class="sd">           config.ini will always be loaded as default config file, all other config files provided by userConfig overwrite corresponding values.</span>
+
+<span class="sd">           :param userConfig: absolute path(s) to user-defined config files that should be used. If config files specify the same parameter, the value specified by the last config file in the list will be used.</span>
+<span class="sd">           :type userConfig: str or :class:`List` of str, optional</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">userConfig</span><span class="p">:</span>
+            <span class="c1">#config can read in a list of multiple config files one after the other. if they have overlapping keywords, the values from the config last read are kept.</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">loadConfig</span><span class="p">([</span><span class="s2">&quot;../../configs/config.ini&quot;</span><span class="p">,</span> <span class="n">userConfig</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">loadConfig</span><span class="p">(</span><span class="s2">&quot;../../configs/config.ini&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pipeline.prepareDirectories"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.prepareDirectories">[docs]</a>    <span class="k">def</span> <span class="nf">prepareDirectories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepares directory structure for benchmarking run.</span>
+<span class="sd">           Creates all necessary directories in the output folder.</span>
+<span class="sd">           Also cleans up intermediate directory so that no old data is accidentially used.</span>
+
+<span class="sd">           :return: absolute path to the directory where all results from this run will be stored.</span>
+<span class="sd">           :rtype: str</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="c1">##########################################</span>
+        <span class="c1">###  CLEANUP RESULTS FROM FORMER RUNS  ###</span>
+        <span class="c1">##########################################</span>
+
+        <span class="c1"># create directory for intermediate results from knowledge bases</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediateDir&quot;</span><span class="p">))</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;preprocessing&quot;</span><span class="p">))</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;preprocessed/&quot;</span><span class="p">)</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;ready/&quot;</span><span class="p">)</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;crossVal_preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;preprocessed/&quot;</span><span class="p">)</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;crossVal_preprocessing&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;ready/&quot;</span><span class="p">)</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;externalKbDir&quot;</span><span class="p">))</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediateDir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;identifierMappings/&quot;</span><span class="p">)</span>
+
+
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">cleanupResults</span><span class="p">()</span>
+        <span class="n">outputPath</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;resultsdir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;outputDir_name&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="c1"># create root directory for final analysis outputs</span>
+        <span class="c1">#rename output folder if it already exists</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outputPath</span><span class="p">):</span>
+            <span class="nb">dir</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;outputDir_name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="n">outputPath</span> <span class="o">=</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;resultsdir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">dir</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span><span class="p">)</span>
+
+        <span class="c1"># create new directory for ranking and evaluation results</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;results&quot;</span><span class="p">))</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;reducedDataset&quot;</span><span class="p">))</span>
+        <span class="c1">#create directory for preanalysis plots</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;preanalysis&quot;</span><span class="p">))</span>
+
+        <span class="c1"># create directory for ranking results</span>
+        <span class="c1"># ranking analysis will always be conducted</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span> <span class="s2">&quot;metricsDir&quot;</span><span class="p">))</span>
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Rankings&quot;</span><span class="p">,</span> <span class="s2">&quot;annotationsDir&quot;</span><span class="p">))</span>
+
+        <span class="c1"># create directory for classification results</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableClassification&quot;</span><span class="p">)):</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;metricsDir&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enableCrossEvaluation&quot;</span><span class="p">):</span>
+                <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">))</span>
+                <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span>
+                    <span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;reducedData/&quot;</span><span class="p">)</span>
+                <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span>
+                    <span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Classification&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;classification/&quot;</span><span class="p">)</span>
+
+        <span class="c1"># create directory for prediction results</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;enablePrediction&quot;</span><span class="p">)):</span>
+            <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;metricsDir&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigBoolean</span><span class="p">(</span><span class="s2">&quot;Evaluation&quot;</span><span class="p">,</span> <span class="s2">&quot;doCrossEvaluation&quot;</span><span class="p">):</span>
+                <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">))</span>
+                <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span>
+                    <span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;crossEvaluationDir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;reducedDataset/&quot;</span><span class="p">)</span>
+
+        <span class="n">benchutils</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputPath</span> <span class="o">+</span> <span class="n">benchutils</span><span class="o">.</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;Gene Selection - General&quot;</span><span class="p">,</span> <span class="s2">&quot;outputDirectory&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">outputPath</span></div>
+
+<div class="viewcode-block" id="Pipeline.executePipeline"><a class="viewcode-back" href="../comprior.html#pipeline.Pipeline.executePipeline">[docs]</a>    <span class="k">def</span> <span class="nf">executePipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The entry point for the overall benchmarking process.</span>
+<span class="sd">           This method is invoked when running the framework, and from here all other steps of the benchmarking process are encapsulated in own methods.</span>
+
+<span class="sd">        :param userConfig: absolute path to an additional user configuration file (config.ini will always be used by default) to overwrite default configuration.</span>
+<span class="sd">        :type userConfig: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## PREPROCESS DATA... ########################&quot;</span><span class="p">)</span>
+        <span class="n">datasetLocation</span><span class="p">,</span> <span class="n">mappedLocation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessData</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## EVALUATE INPUT DATA... ########################&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluateInputData</span><span class="p">(</span><span class="n">datasetLocation</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## EVALUATE KNOWLEDGE BASES... ########################&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluateKnowledgeBases</span><span class="p">(</span><span class="n">datasetLocation</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## SELECT FEATURES... ########################&quot;</span><span class="p">)</span>
+        <span class="n">outputDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectFeatures</span><span class="p">(</span><span class="n">datasetLocation</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## EVALUATE BIOMARKERS... ########################&quot;</span><span class="p">)</span>
+        <span class="n">dataPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">datasetLocation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluateBiomarkers</span><span class="p">(</span><span class="n">dataPath</span><span class="p">,</span> <span class="n">mappedLocation</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######################## ... FINISHED ########################&quot;</span><span class="p">)</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># parse input params</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;User-specific config file that overwrites parts of the original config file.&#39;</span><span class="p">)</span>
+
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">executePipeline</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
