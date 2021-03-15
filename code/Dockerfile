@@ -60,4 +60,4 @@ COPY data/input/examples/example_TCGA-BRCA_metadata.csv /home/app/data/input/exa
 COPY data/input/examples/crossEval_TCGA-BRCA_610samples_5000genes_labeled.csv /home/app/data/input/crossEval_TCGA-BRCA_610samples_5000genes_labeled.csv
 
 
-ENTRYPOINT ["python3", "/home/app/code/Python/igea/pipeline.py" ] #for being able to pass arguments to the script
+ENTRYPOINT ["python3", "/home/app/code/Python/comprior/pipeline.py" ] #for being able to pass arguments to the script
