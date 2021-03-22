@@ -1,3 +1,4 @@
 # ignore
-dataset
+*
 !example
+!GBM-LGG

@@ -1,10 +1,21 @@
 Installation and Usage
 ======================
 
-Installation
-************
+For working with Comprior, you have two options:
 
-* Prerequisites: R 3.5+, Python 3.5+, Java with JDK, and Maven. See in :ref:`installingJavaMaven` how to install JDK and Maven.
+* :ref:`dockerrun` - for just executing Comprior with a custom data set and configuration
+* :ref:`sourcerun` - for developing new approaches and extending Comprior
+
+.. _sourcerun:
+
+Install and Run Comprior from Source
+************************************
+
+* **Prerequisites:** R 3.5+, Python 3.5+, Java with JDK, and Maven. See in :ref:`installingJavaMaven` how to install JDK and Maven.
+
+1. Installation
+^^^^^^^^^^^^^^^
+
 * check out the repository on your machine (or download the sources from https://github.com/CPerscheid/Comprior/archive/master.zip)::
 
     git clone https://github.com/CPerscheid/Comprior.git
@@ -17,10 +28,10 @@ Installation
 * check *installout.out* for any errors
 * check *code/configs/config.ini* if the variables *homePath* (path to Comprior's root directory), *RscriptLocation* (path to your Rscript), and *JavaLocation* (path to your Java location) point to the right locations.
 
-Usage
-*****
+2. Usage
+^^^^^^^^
 
-* Prior information: In order to enable a flexible pipeline design for users, Comprior makes use of config files. All config files are to be stored in *code/configs* directory. **The main config file is located at code/configs/config.ini.** It is recommended not to be changed, as it specifies all parameters that Comprior needs for functioning properly, including access points to knowledge base web services and output folder structure. Instead, users can specify an own config file that contains only those parameters they want to overwrite from *config.ini*, e.g. where the input data is located or what feature selectors to apply. **Store your custom config file in the code/configs/ directory.** For a complete overview of the input parameters, see :ref:`inputParams`. If you write an own config file, make sure to provide it as input parameter for the framework (*config.ini* will always be loaded by default)
+* **Prior information:** In order to enable a flexible pipeline design for users, Comprior makes use of config files. All config files are to be stored in *code/configs* directory. **The main config file is located at code/configs/config.ini.** It is recommended not to be changed, as it specifies all parameters that Comprior needs for functioning properly, including access points to knowledge base web services and output folder structure. Instead, users can specify an own config file that contains only those parameters they want to overwrite from *config.ini*, e.g. where the input data is located or what feature selectors to apply. **Store your custom config file in the code/configs/ directory.** For a complete overview of the input parameters, see :ref:`inputParams`. If you write an own config file, make sure to provide it as input parameter for the framework (*config.ini* will always be loaded by default)
 
 * To start Comprior
     * navigate to *code/Python/comprior*::
@@ -32,6 +43,25 @@ Usage
         python3 pipeline.py --config ../../configs/exampleconfig.ini
 
 * Check your results in *data/results/example* - see :ref:`outputStructure` for where to find what results.
+
+.. _dockerrun:
+
+Run Comprior in a Docker Container
+**********************************
+
+* **Prerequisites:** `Docker <https://docs.docker.com/get-docker/>`_
+* check out the repository on your machine (or download the sources from https://github.com/CPerscheid/Comprior/archive/master.zip)::
+
+    git clone https://github.com/CPerscheid/Comprior.git
+
+* Via command line, navigate to the *Comprior/code* where the Dockerfile is located and create the image (this might take a while)::
+
+    docker build -t comprior .
+
+* provide the *Comprior/code/comprior_docker* directory as mounting directory (it contains the config file and input data sets), and the config file as parameter to Comprior::
+
+    docker run -it --rm -v /absolute/path/to/Comprior/code/comprior_docker:/home/app/data comprior —-config /home/app/data/dockerexampleconfig.ini
+
 
 .. _installingJavaMaven:
 
