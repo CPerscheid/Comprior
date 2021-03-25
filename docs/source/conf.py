@@ -45,6 +45,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'javasphinx',
+    'sphinx.ext.mathjax'
 ]
 
 #javadoc_url_map = {

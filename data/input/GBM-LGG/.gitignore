@@ -1,5 +1,4 @@
 # ignore
-!GBM-LGG_TP_expressions_normalized.csv
-!GBM-LGG_TP_metadata.csv
-!REMBRANDT_labeled.csv
+!TCGA.zip
+!REMBRANDT_labeled.csv.zip
 !.gitignore

@@ -14,6 +14,8 @@ Welcome to Comprior's documentation!
    inputdata
    configparams
    outputstructure
+   knowledgebases
+   priorknowledge
    howtos
    comprior
    r-doc
