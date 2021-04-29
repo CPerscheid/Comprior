@@ -650,6 +650,19 @@ class NetworkSelector(PriorKnowledgeSelector):
            """
         return self.name + "_" +  self.knowledgebase.getName()
 
+    def filterPathways(self, pathways):
+        filtered_pathways = {}
+        for pathwayName in pathways:
+            genes = pathways[pathwayName].nodes_by_label.keys()
+            #check if there is an overlap between the pathway and data set genes
+            existingGenes = list(set(self.getFeatures()) & set(genes))
+            if len(existingGenes) > 0:
+                filtered_pathways[pathwayName] = pathways[pathwayName]
+            else:
+                print("No genes of pathway " + pathwayName + " found in dataset. Pathway will not be considered")
+
+        return filtered_pathways
+
     def selectFeatures(self):
         """Instead of selecting existing features, instances of :class:`NetworkSelector` select pathways or submodules as features.
            For that, it first queries its knowledge base for pathways.
@@ -666,6 +679,8 @@ class NetworkSelector(PriorKnowledgeSelector):
         end = time.time()
         self.timeLogs = utils.log(self.timeLogs, overallstart, end, "Get Pathways")
 
+        #filter pathways to only those that contain at least one gene from the data set
+        pathways = self.filterPathways(pathways)
         start = time.time()
         pathwayRanking = self.selectPathways(pathways)
         outputFile = self.output + self.getName() + ".csv"
@@ -1370,7 +1385,7 @@ class RandomForestSelector(PythonSelector):
         # setting k to "all" returns all features
 
         start = time.time()
-        clf = RandomForestClassifier()
+        clf = RandomForestClassifier(random_state = 0)
         # Train the classifier
         clf.fit(data, labels)
 
@@ -1684,11 +1699,8 @@ class NetworkActivitySelector(NetworkSelector):
             genes = pathways[pathwayName].nodes_by_label.keys()
             #check if all genes in genes are in the pvals matrix
             existingGenes = list(set(pvals.index) & set(genes))
-            if len(existingGenes)>0:
-                score = pvals.loc[existingGenes].mean()
-                pathway_scores[pathwayName] = score
-            else:
-                print("No genes of pathway " + pathwayName + " found in dataset. Pathway will not be considered")
+            score = pvals.loc[existingGenes].mean()
+            pathway_scores[pathwayName] = score
 
         # if we do not have any pathways, stop here
         if not pathway_scores:
@@ -1891,7 +1903,7 @@ class CORGSActivityMapper(FeatureMapper):
             if (len(pathwaygenes) == 0):
                 # if none of the genes in the pathway are in the data, just set the pathwayscore to 0
                 print(
-                    "No genes of pathway " + pathwayname + " found in dataset. Assign activity score of 0.0 to all samples.")
+                    "No genes of pathway " + pathwayname + " found in dataset for feature mapping. Assign activity score of 0.0 to all samples.")
                 corgs_activities = [0.0] * len(samples)
                 continue
 

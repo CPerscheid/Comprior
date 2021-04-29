@@ -9,6 +9,8 @@ import evaluation
 import argparse
 import pandas as pd
 
+MARKERS = [".", "o", "v", "^", "<", ">", "1", "s", "p", "P", "*", "h", "+", "x", "d", "D"]
+
 class Pipeline():
     """Class that executes the complete benchmarking pipeline.
 
@@ -134,18 +136,18 @@ class Pipeline():
             threads = [None] * numCores
             for i in range(numCores):
                 selector = selectorFactory.createFeatureSelector(methods[(j * numCores) + i])
-                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
                 #print("spawn process number " + str((j * numCores) + i) + ": " + methods[(j * numCores) + i])
-                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                threads[i] = p
-                p.start()
+                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                #threads[i] = p
+                #p.start()
 
                 # wait for all threads to finish
-            for thr in threads:
+            #for thr in threads:
                 #print("join thread...")
-                thr.join()
-                #print("... finished")
+                #thr.join()
+                ##print("... finished")
 
         #if there are remaining threads, start them
         remaining_threads = len(methods) - (rounds * numCores)
@@ -156,17 +158,17 @@ class Pipeline():
             for i in range(1, remaining_threads + 1):
                 selector = selectorFactory.createFeatureSelector(methods[len(methods) - i])
                 #print("spawn process number " + str(len(methods) - i) + ": " + methods[len(methods) - i])
-                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
-                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                threads[i-1] = p
-                p.start()
+                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                #threads[i-1] = p
+                #p.start()
 
                 # wait for all threads to finish
-            for thr in threads:
+            #for thr in threads:
                 #print("join thread...")
-                thr.join()
-                ###print("... finished")
+                #thr.join()
+                #print("... finished")
 
         return outputDir
 
@@ -181,6 +183,7 @@ class Pipeline():
            """
         colors = {}
         colorPalette = dict(**mcolors.CSS4_COLORS)
+
         colorNames = list(colorPalette.keys())
         for method in methods:
             labelColor = random.choice(colorNames)
@@ -189,6 +192,21 @@ class Pipeline():
             colors[method] = mcolors.to_hex(labelColor)
 
         return colors
+
+    def assignMarkers(self, approaches):
+        """Assigns each (feature selection) method a unique color.
+           Will be delivered later on to every :class:`evaluation.Evaluator` instance to create visualizations with consistent coloring for evaluated approaches.
+
+           :param methods: List of method names.
+           :type methods: :class:`List` of str
+           :return: Dictionary containing hex color codes for every method
+           :rtype: dict
+           """
+        markers = {}
+        for approach in approaches:
+            markers[approach] = random.choice(MARKERS)
+
+        return markers
 
     def evaluateBiomarkers(self, inputDir, dataset, rankingsDir):
         """Covers the evaluation phase.
@@ -213,6 +231,7 @@ class Pipeline():
         methods = [value for value in methods if value != ""]
 
         methodColors = self.assignColors(methods)
+        methodMarkers = self.assignMarkers(methods)
 
         #################################
         ### RANKINGS EVALUATION ###
@@ -243,7 +262,7 @@ class Pipeline():
             rankingsDir = self.outputRootPath + benchutils.getConfigValue("Gene Selection - General","outputDirectory")
             reducedDatasetDir = self.outputRootPath + benchutils.getConfigValue("Evaluation", "reducedDataset")
             metricsDir = self.outputRootPath + benchutils.getConfigValue("Classification", "metricsDir")
-            classificationEvaluator = evaluation.ClassificationEvaluator(datasetDir, rankingsDir, reducedDatasetDir, metricsDir, methodColors)
+            classificationEvaluator = evaluation.ClassificationEvaluator(datasetDir, rankingsDir, reducedDatasetDir, metricsDir, methodColors, methodMarkers)
 
             #classificationEvaluator = evaluation.ClassificationEvaluator(
             #    self.outputRootPath + benchutils.getConfigValue("Evaluation", "reducedDataset"),
@@ -259,7 +278,7 @@ class Pipeline():
             reducedDatasetDir = outputDir + "/reducedData/"
             resultsDir = outputDir + "/classification/"
 
-            robustnessEvaluator = evaluation.ClassificationEvaluator(crossValFileDir, rankingsDir, reducedDatasetDir, resultsDir, methodColors)
+            robustnessEvaluator = evaluation.ClassificationEvaluator(crossValFileDir, rankingsDir, reducedDatasetDir, resultsDir, methodColors, methodMarkers)
             robustnessEvaluator.evaluate()
 
     def preprocessData(self):

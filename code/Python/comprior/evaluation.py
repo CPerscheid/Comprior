@@ -210,6 +210,37 @@ class Evaluator:
         S = m * np.var(rating_sums)
         return 12 * S / denom
 
+class ClassificationEvaluator(Evaluator):
+    """Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.
+       Uses :class:`AttributeRemover` to create reduced datasets containing only the top k features, which are then used for subsequent classification.
+       Currently, classification and subsequent evaluation is wrapped here and is actually carried out by java jars using WEKA.
+
+       :param input: absolute path to the directory where the input data for classification is located.
+       :type input: str
+       :param rankingsDir: absolute path to the directory where the rankings are located.
+       :type rankingsDir: str
+       :param intermediateDir: absolute path to the directory where the reduced datasets (containing only the top k features) are written to.
+       :type intermediateDir: str
+       :param output: absolute path to the directory to which to save results.
+       :type output: str
+       :param methodColors: dictionary containing a color string for every selection method.
+       :type methodColors: dict of str
+       :param javaConfig: configuration parameters for java code (as specified in the config file).
+       :type javaConfig: str
+       :param rConfig: configuration parameters for R code (as specified in the config file).
+       :type rConfig: str
+       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).
+       :type evalConfig: str
+       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).
+       :type classificationConfig: str
+       """
+
+    def __init__(self, inputDir, rankingsDir, intermediateDir, outputDir, methodColors, methodMarkers):
+        self.rankingsDir = rankingsDir
+        self.intermediateDir = intermediateDir
+        self.methodMarkers = methodMarkers
+        super().__init__(inputDir, outputDir, methodColors)
+
     def drawLinePlot(self, inputDir, outputDir, topK, metric):
         """Draws a line plot for a given metric, using all files containing evaluation results for that metric in inputDir.
            In the end, the plot will have one line per feature selection approach for which classification results are available.
@@ -252,7 +283,7 @@ class Evaluator:
                 ax.set_xlim(x_axis[0], x_axis.iloc[-1])
                 ax.set_xticks(x_axis)
                 count = count + 1
-            l1 = ax.plot(ranking["#ofAttributes"], ranking["average"], label=methodName, color = self.methodColors[methodName])
+            l1 = ax.plot(ranking["#ofAttributes"], ranking["average"], label=methodName, color = self.methodColors[methodName], marker = self.methodMarkers[methodName])
             # adapt the lower bound of y axis to the respective
             if ranking.empty:
                 #no evaluation results for this approach
@@ -275,36 +306,6 @@ class Evaluator:
         # plt.show()
         matplots.pyplot.savefig(outputDir + metric + ".pdf")
         matplots.pyplot.clf()
-
-class ClassificationEvaluator(Evaluator):
-    """Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.
-       Uses :class:`AttributeRemover` to create reduced datasets containing only the top k features, which are then used for subsequent classification.
-       Currently, classification and subsequent evaluation is wrapped here and is actually carried out by java jars using WEKA.
-
-       :param input: absolute path to the directory where the input data for classification is located.
-       :type input: str
-       :param rankingsDir: absolute path to the directory where the rankings are located.
-       :type rankingsDir: str
-       :param intermediateDir: absolute path to the directory where the reduced datasets (containing only the top k features) are written to.
-       :type intermediateDir: str
-       :param output: absolute path to the directory to which to save results.
-       :type output: str
-       :param methodColors: dictionary containing a color string for every selection method.
-       :type methodColors: dict of str
-       :param javaConfig: configuration parameters for java code (as specified in the config file).
-       :type javaConfig: str
-       :param rConfig: configuration parameters for R code (as specified in the config file).
-       :type rConfig: str
-       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).
-       :type evalConfig: str
-       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).
-       :type classificationConfig: str
-       """
-
-    def __init__(self, inputDir, rankingsDir, intermediateDir, outputDir, methodColors):
-        self.rankingsDir = rankingsDir
-        self.intermediateDir = intermediateDir
-        super().__init__(inputDir, outputDir, methodColors)
 
     def evaluate(self):
         """Triggers classification and evaluation in Java and creates corresponding plots for every metric that was selected in the config.
@@ -522,7 +523,7 @@ class RankingsEvaluator(Evaluator):
 
         ax1.set_ylabel(prefix + ' gene fold change across all samples')
         plt.tight_layout()
-        matplots.pyplot.savefig(self.output + prefix + "FoldChanges.pdf")
+        matplots.pyplot.savefig(self.output + prefix + "FoldChanges.pdf", bbox_inches = "tight")
         matplots.pyplot.clf()
 
     def computeFoldChangeDiffs(self):
@@ -899,7 +900,7 @@ class KnowledgeBaseEvaluator(Evaluator):
            :param colors: List of colors to use for the different search terms.
            :type colors: :class:`List` of str
            """
-        pl = stats.boxplot(by =stats.columns[0], rot = 45, column = stats.columns[colIndex], patch_artist=True, return_type = "both",
+        pl = stats.boxplot(by =stats.columns[0], rot = 90, column = stats.columns[colIndex], patch_artist=True, return_type = "both",
                            boxprops = dict(color="k"), medianprops= dict(color="k"),whiskerprops= dict(color="k"), capprops= dict(color="k"), flierprops= dict(color="k", markeredgecolor="k"))  # fill with color
         bplot = pl.iloc[0]
         for patch, color in zip(bplot[1]['boxes'], colors):
@@ -908,10 +909,12 @@ class KnowledgeBaseEvaluator(Evaluator):
         bplot[0].set_xlabel("")
         bplot[0].set_title(title)
         bplot[0].figure.texts = []
-        bplot[0].set_xticklabels(bplot[0].get_xticklabels(), horizontalalignment='right')
+        ind = np.arange(1, len(colors)+1)
+        bplot[0].set_xticks(ind)
+        bplot[0].set_xticklabels(bplot[0].get_xticklabels())
+        plt.gca().autoscale()
 
-
-        matplots.pyplot.savefig(self.output + filename)
+        matplots.pyplot.savefig(self.output + filename, bbox_inches = "tight")
         matplots.pyplot.clf()
 
 
@@ -929,15 +932,16 @@ class KnowledgeBaseEvaluator(Evaluator):
            :param colors: List of colors to use.
            :type colors: :class:`List` of str
            """
-        pl = stats.plot.bar(x=stats.index, rot = 45, color = colors)
+        pl = stats.plot.bar(x=stats.index, rot = 90, color = colors)
         pl.set_ylabel(ylabel)
         pl.set_xlabel("")
         pl.set_title(title)
         pl.figure.texts = []
-        pl.set_xticklabels(pl.get_xticklabels(), horizontalalignment='right')
+        ind = np.arange(stats.shape[0] + 1)
+        pl.set_xticks(ind)
+        pl.set_xticklabels(pl.get_xticklabels())
 
-
-        matplots.pyplot.savefig(self.output + filename)
+        matplots.pyplot.savefig(self.output + filename, bbox_inches = "tight")
         matplots.pyplot.clf()
 
     def createKnowledgeBases(self, knowledgebaseList):
@@ -955,7 +959,7 @@ class KnowledgeBaseEvaluator(Evaluator):
             kbs.append(kbfactory.createKnowledgeBase(kb))
         return kbs
 
-    def checkCoverage(self, kb, colors):
+    def checkCoverage(self, kb, colors, useIDs):
         """Checks the coverage for a given knowledge base and creates corresponding plots.
 
            :param kb: knowledge base object for which to check coverage.
@@ -967,7 +971,10 @@ class KnowledgeBaseEvaluator(Evaluator):
         for term in self.searchterms:
             # query knowledge base
             geneSet = kb.getGeneScores([term])
-            geneSet.insert(0, "search term", [term] * len(geneSet.index), True)
+            if useIDs:
+                geneSet.insert(0, "search term", [int(self.searchterms.index(term) + 1)] * len(geneSet.index), True)
+            else:
+                geneSet.insert(0, "search term", [term] * len(geneSet.index), True)
             if stats.empty:
                 stats = geneSet
             else:
@@ -980,15 +987,15 @@ class KnowledgeBaseEvaluator(Evaluator):
         barplotfile = kb.getName() + "_NumberOfGenes.pdf"
         df_statscounts = stats["search term"].value_counts()
         if not stats.empty:
-            self.drawBoxPlot(stats, 2, boxplotfile, kb.getName() + ": Gene association scores",
-                         "association scores", colors)
-            self.drawBarPlot(df_statscounts, barplotfile, kb.getName() + ": Number of genes per search term",
-                         "number of genes", colors)
+            self.drawBoxPlot(stats, 2, boxplotfile, kb.getName(),
+                         "gene association scores", colors)
+            self.drawBarPlot(df_statscounts, barplotfile, kb.getName(),
+                         "number of genes per search term", colors)
         else:
             print("NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.")
 
 
-    def checkPathwayCoverage(self, kb, colors):
+    def checkPathwayCoverage(self, kb, colors, useIDs):
         """Checks the pathway coverage for a given knowledge base and creates corresponding plots.
 
            :param kb: knowledge base object for which to check pathway coverage.
@@ -1005,7 +1012,10 @@ class KnowledgeBaseEvaluator(Evaluator):
                 numGenes = value.vcount
                 #pathwayName = pathway.name
                 #evtl. score attribut?
-                stats.append((term, pathwayName, numGenes))
+                if useIDs:
+                    stats.append((int(self.searchterms.index(term) + 1), pathwayName, numGenes))
+                else:
+                    stats.append((term, pathwayName, numGenes))
 
         #make dataframe from list
         df_stats = pd.DataFrame(stats, columns = ["search term", "pathway", "#genes"])
@@ -1030,6 +1040,17 @@ class KnowledgeBaseEvaluator(Evaluator):
         #set colors for every search term
         colors = []
 
+        #check if the individual length of a search term is longer than 20
+        #map them to IDs then instead to avoid too long axis labels to be plotted
+        maxLength = len(max(self.searchterms, key=len))
+        useIDs = False
+        if maxLength > 15:
+            useIDs = True
+            term_df = pd.DataFrame(self.searchterms, columns=['search term'])
+            term_df.index = term_df.index + 1
+            term_df.to_csv(self.output + "searchterm_IDs.txt")
+
+
         #if we have more than 12 search terms we need a color map with more colors
         if len(self.searchterms) <= 12:
             colorPalette = list(plt.get_cmap("Paired").colors)
@@ -1048,9 +1069,10 @@ class KnowledgeBaseEvaluator(Evaluator):
         for kb in self.knowledgebases:
             print("Draw plots for " + kb.getName() + "...")
             if kb.hasPathways():
-                self.checkPathwayCoverage(kb, colors)
+                self.checkPathwayCoverage(kb, colors, useIDs)
 
             if kb.hasGenes():
-                self.checkCoverage(kb, colors)
+
+                self.checkCoverage(kb, colors, useIDs)
 
         print("...finished.")

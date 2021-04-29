@@ -173,11 +173,12 @@
             
   <h1>Source code for knowledgebases</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">opentargets</span> <span class="k">import</span> <span class="n">OpenTargetsClient</span>
 <span class="kn">from</span> <span class="nn">bioservices</span> <span class="k">import</span> <span class="n">KEGG</span><span class="p">,</span> <span class="n">REST</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">benchutils</span> <span class="k">as</span> <span class="nn">util</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">lxml.html</span> <span class="k">import</span> <span class="n">fromstring</span>
 <span class="kn">import</span> <span class="nn">pypath.core.network</span> <span class="k">as</span> <span class="nn">network</span>
@@ -245,7 +246,22 @@
 <span class="sd">           &quot;&quot;&quot;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_get</span><span class="p">(</span><span class="s2">&quot;genemap&quot;</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">response</span></div></div>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="ENRICHR.enrich"><a class="viewcode-back" href="../comprior.html#knowledgebases.ENRICHR.enrich">[docs]</a>    <span class="k">def</span> <span class="nf">enrich</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all that are terms available in library (specified by backgroundType param) and enriched in the given set of genes (specified by userListId param).</span>
+
+<span class="sd">            :param params: list of parameters to be used for the query (userListId: Identifier returned from addList endpoint; backgroundType: Gene set library to enrich against)</span>
+<span class="sd">            :type params: list of str</span>
+<span class="sd">            :return: dataframe object of all enriched terms (unsorted, unfiltered.</span>
+<span class="sd">            :rtype: dataframe</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_get</span><span class="p">(</span><span class="s2">&quot;enrich&quot;</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Rank&quot;</span><span class="p">,</span> <span class="s2">&quot;Term name&quot;</span><span class="p">,</span> <span class="s2">&quot;P-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Z-score&quot;</span><span class="p">,</span> <span class="s2">&quot;Combined score&quot;</span><span class="p">,</span> <span class="s2">&quot;Overlapping genes&quot;</span><span class="p">,</span> <span class="s2">&quot;Adjusted p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Old p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Old adjusted p-value&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">res</span><span class="p">[[</span><span class="s2">&quot;Term name&quot;</span><span class="p">,</span> <span class="s2">&quot;P-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Z-score&quot;</span><span class="p">,</span> <span class="s2">&quot;Combined score&quot;</span><span class="p">,</span> <span class="s2">&quot;Overlapping genes&quot;</span><span class="p">,</span> <span class="s2">&quot;Adjusted p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Old p-value&quot;</span><span class="p">,</span> <span class="s2">&quot;Old adjusted p-value&quot;</span><span class="p">]]</span></div></div>
 
 
 <div class="viewcode-block" id="UMLS_AUTH"><a class="viewcode-back" href="../comprior.html#knowledgebases.UMLS_AUTH">[docs]</a><span class="k">class</span> <span class="nc">UMLS_AUTH</span><span class="p">(</span><span class="n">REST</span><span class="p">):</span>
@@ -800,6 +816,7 @@
 
 <div class="viewcode-block" id="Enrichr.downloadEnrichedTerms"><a class="viewcode-back" href="../comprior.html#knowledgebases.Enrichr.downloadEnrichedTerms">[docs]</a>    <span class="k">def</span> <span class="nf">downloadEnrichedTerms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userIdList</span><span class="p">,</span> <span class="n">filePrefix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Downloads enriched terms from a former query into a file.</span>
+<span class="sd">           Filters these terms for those with an adjusted p-value &gt; 0.05, then sorts by combined score in descending order.</span>
 
 <span class="sd">           :param userIdList: userIdList to retrieve enrichment/annotation results from the original query.</span>
 <span class="sd">           :type userIdList: str</span>
@@ -812,14 +829,15 @@
         <span class="n">util</span><span class="o">.</span><span class="n">createDirectory</span><span class="p">(</span><span class="n">outputDir</span><span class="p">)</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="n">filePrefix</span> <span class="o">+</span> <span class="s2">&quot;_enrichedTerms.txt&quot;</span>
 
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userListId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">userIdList</span><span class="p">),</span> <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">outputFile</span> <span class="p">,</span> <span class="s2">&quot;backgroundType&quot;</span><span class="p">:</span> <span class="n">geneSetLibrary</span><span class="p">}</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userListId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">userIdList</span><span class="p">),</span> <span class="s2">&quot;backgroundType&quot;</span><span class="p">:</span> <span class="n">geneSetLibrary</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">enrich</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="c1"># first, filter enriched terms by q-score &gt; 0.05</span>
+        <span class="c1"># second, order by combined score in descending order</span>
+        <span class="c1"># see also this best practices recommendation: https://www.researchgate.net/post/Enrichr_what_value_of_combined_score_is_significant</span>
+        <span class="n">final_terms</span> <span class="o">=</span> <span class="n">response</span><span class="p">[(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;Adjusted p-value&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)]</span>
+        <span class="n">final_terms</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;Combined score&quot;</span><span class="p">,</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1">#outputPrefix contains the full filepath</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span></div>
+        <span class="n">final_terms</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Enrichr.getRelevantGenes"><a class="viewcode-back" href="../comprior.html#knowledgebases.Enrichr.getRelevantGenes">[docs]</a>    <span class="k">def</span> <span class="nf">getRelevantGenes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Is not implemented for EnrichR.</span>
@@ -1520,50 +1538,69 @@
 <span class="sd">           :rtype: dict</span>
 <span class="sd">           &quot;&quot;&quot;</span>
         <span class="c1">#collect pathway IDs first</span>
-
+        <span class="n">overall</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">pathways</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">p_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-            <span class="n">p_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-            <span class="n">pathwayIDs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">organism</span> <span class="o">=</span> <span class="s2">&quot;homo sapiens&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;pathway&quot;</span><span class="p">)</span>
-            <span class="c1">#if no error code was returned</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathwayIDs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pathwayIDs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">items</span> <span class="o">=</span> <span class="n">pathwayIDs</span><span class="p">[</span><span class="s2">&quot;searchHit&quot;</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-                    <span class="n">p_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">])</span>
+            <span class="n">pathwayIDs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;homo sapiens&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;pathway&quot;</span><span class="p">)</span>
+            <span class="c1"># if no error code was returned</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pathwayIDs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathwayIDs</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">continue</span>
 
-                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">p_ids</span><span class="p">:</span>
-                    <span class="n">pathway_sif</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">frmt</span> <span class="o">=</span> <span class="s2">&quot;SIF&quot;</span><span class="p">)</span>
-                    <span class="c1">#if server does not return an error code and the pathway has a sif version</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathway_sif</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pathway_sif</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pathway_sif</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                        <span class="c1">#only load the pathway if the maxNumPathways count is not reached yet</span>
-                        <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;maxNumPathways&quot;</span><span class="p">]):</span>
-                            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;pathway&quot;</span><span class="p">:</span> <span class="n">pathway_sif</span><span class="p">}</span>
+            <span class="n">numHits</span> <span class="o">=</span> <span class="n">pathwayIDs</span><span class="p">[</span><span class="s2">&quot;numHits&quot;</span><span class="p">]</span>
+            <span class="n">maxHits</span> <span class="o">=</span> <span class="n">pathwayIDs</span><span class="p">[</span><span class="s2">&quot;maxHitsPerPage&quot;</span><span class="p">]</span>
+            <span class="n">pages</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">numHits</span> <span class="o">/</span> <span class="n">maxHits</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pages</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pages</span><span class="p">):</span>
+                    <span class="n">pathwayIDs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;homo sapiens&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;pathway&quot;</span><span class="p">)</span>
 
-                            <span class="c1">#create pypath pathway from SIF</span>
-                            <span class="nb">input</span> <span class="o">=</span> <span class="n">input_formats</span><span class="o">.</span><span class="n">NetworkInput</span><span class="p">(</span>
-                                <span class="n">name</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                                <span class="nb">input</span><span class="o">=</span> <span class="n">Pathwaycommons</span><span class="o">.</span><span class="n">readPathway</span><span class="p">,</span>
-                                <span class="n">input_args</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                                <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-                                <span class="n">id_col_a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                <span class="n">id_col_b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                <span class="n">id_type_a</span><span class="o">=</span><span class="s1">&#39;genesymbol&#39;</span><span class="p">,</span>
-                                <span class="n">id_type_b</span><span class="o">=</span><span class="s1">&#39;genesymbol&#39;</span><span class="p">,</span>
-                                <span class="n">sign</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
-                            <span class="p">)</span>
+                    <span class="c1">#if no error code was returned</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">pathwayIDs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathwayIDs</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="k">continue</span>
 
-                            <span class="n">pathway</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">Network</span><span class="p">()</span>
-                            <span class="n">pathway</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-                            <span class="c1">#only add pathway if it has nodes</span>
-                            <span class="k">if</span> <span class="n">pathway</span><span class="o">.</span><span class="n">vcount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                                <span class="n">pathways</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pathway</span>
-                                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">items</span> <span class="o">=</span> <span class="n">pathwayIDs</span><span class="p">[</span><span class="s2">&quot;searchHit&quot;</span><span class="p">]</span>
+                    <span class="n">overall</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                        <span class="n">p_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">])</span>
 
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">break</span>
+
+
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">p_ids</span><span class="p">:</span>
+            <span class="n">pathway_sif</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webservice</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">frmt</span> <span class="o">=</span> <span class="s2">&quot;SIF&quot;</span><span class="p">)</span>
+            <span class="c1">#if server does not return an error code and the pathway has a sif version</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pathway_sif</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathway_sif</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pathway_sif</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                <span class="c1">#only load the pathway if the maxNumPathways count is not reached yet</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;maxNumPathways&quot;</span><span class="p">]):</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;self&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;pathway&quot;</span><span class="p">:</span> <span class="n">pathway_sif</span><span class="p">}</span>
+
+                    <span class="c1">#create pypath pathway from SIF</span>
+                    <span class="nb">input</span> <span class="o">=</span> <span class="n">input_formats</span><span class="o">.</span><span class="n">NetworkInput</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+                        <span class="nb">input</span><span class="o">=</span> <span class="n">Pathwaycommons</span><span class="o">.</span><span class="n">readPathway</span><span class="p">,</span>
+                        <span class="n">input_args</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                        <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="n">id_col_a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">id_col_b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                        <span class="n">id_type_a</span><span class="o">=</span><span class="s1">&#39;genesymbol&#39;</span><span class="p">,</span>
+                        <span class="n">id_type_b</span><span class="o">=</span><span class="s1">&#39;genesymbol&#39;</span><span class="p">,</span>
+                        <span class="n">sign</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="n">pathway</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">Network</span><span class="p">()</span>
+                    <span class="n">pathway</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+                    <span class="c1">#only add pathway if it has nodes</span>
+                    <span class="k">if</span> <span class="n">pathway</span><span class="o">.</span><span class="n">vcount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pathways</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pathway</span>
+                        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
 
         <span class="k">return</span> <span class="n">pathways</span></div></div>
 

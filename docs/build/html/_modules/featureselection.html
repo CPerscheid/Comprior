@@ -824,6 +824,19 @@
 <span class="sd">           &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span>  <span class="bp">self</span><span class="o">.</span><span class="n">knowledgebase</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="NetworkSelector.filterPathways"><a class="viewcode-back" href="../comprior.html#featureselection.NetworkSelector.filterPathways">[docs]</a>    <span class="k">def</span> <span class="nf">filterPathways</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pathways</span><span class="p">):</span>
+        <span class="n">filtered_pathways</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pathwayName</span> <span class="ow">in</span> <span class="n">pathways</span><span class="p">:</span>
+            <span class="n">genes</span> <span class="o">=</span> <span class="n">pathways</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span><span class="o">.</span><span class="n">nodes_by_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="c1">#check if there is an overlap between the pathway and data set genes</span>
+            <span class="n">existingGenes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getFeatures</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">genes</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">existingGenes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">filtered_pathways</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span> <span class="o">=</span> <span class="n">pathways</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No genes of pathway &quot;</span> <span class="o">+</span> <span class="n">pathwayName</span> <span class="o">+</span> <span class="s2">&quot; found in dataset. Pathway will not be considered&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filtered_pathways</span></div>
+
 <div class="viewcode-block" id="NetworkSelector.selectFeatures"><a class="viewcode-back" href="../comprior.html#featureselection.NetworkSelector.selectFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">selectFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Instead of selecting existing features, instances of :class:`NetworkSelector` select pathways or submodules as features.</span>
 <span class="sd">           For that, it first queries its knowledge base for pathways.</span>
@@ -840,6 +853,8 @@
         <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeLogs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeLogs</span><span class="p">,</span> <span class="n">overallstart</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="s2">&quot;Get Pathways&quot;</span><span class="p">)</span>
 
+        <span class="c1">#filter pathways to only those that contain at least one gene from the data set</span>
+        <span class="n">pathways</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterPathways</span><span class="p">(</span><span class="n">pathways</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">pathwayRanking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectPathways</span><span class="p">(</span><span class="n">pathways</span><span class="p">)</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
@@ -1544,7 +1559,7 @@
         <span class="c1"># setting k to &quot;all&quot; returns all features</span>
 
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Train the classifier</span>
         <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
 
@@ -1858,11 +1873,8 @@
             <span class="n">genes</span> <span class="o">=</span> <span class="n">pathways</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span><span class="o">.</span><span class="n">nodes_by_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="c1">#check if all genes in genes are in the pvals matrix</span>
             <span class="n">existingGenes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pvals</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">genes</span><span class="p">))</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">existingGenes</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">pvals</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">existingGenes</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-                <span class="n">pathway_scores</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No genes of pathway &quot;</span> <span class="o">+</span> <span class="n">pathwayName</span> <span class="o">+</span> <span class="s2">&quot; found in dataset. Pathway will not be considered&quot;</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">pvals</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">existingGenes</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">pathway_scores</span><span class="p">[</span><span class="n">pathwayName</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
 
         <span class="c1"># if we do not have any pathways, stop here</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pathway_scores</span><span class="p">:</span>
@@ -2065,7 +2077,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pathwaygenes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="c1"># if none of the genes in the pathway are in the data, just set the pathwayscore to 0</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;No genes of pathway &quot;</span> <span class="o">+</span> <span class="n">pathwayname</span> <span class="o">+</span> <span class="s2">&quot; found in dataset. Assign activity score of 0.0 to all samples.&quot;</span><span class="p">)</span>
+                    <span class="s2">&quot;No genes of pathway &quot;</span> <span class="o">+</span> <span class="n">pathwayname</span> <span class="o">+</span> <span class="s2">&quot; found in dataset for feature mapping. Assign activity score of 0.0 to all samples.&quot;</span><span class="p">)</span>
                 <span class="n">corgs_activities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
                 <span class="k">continue</span>
 

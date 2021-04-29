@@ -310,6 +310,25 @@ Will be delivered later on to every <a class="reference internal" href="#evaluat
 </dd></dl>
 
 <dl class="method">
+<dt id="pipeline.Pipeline.assignMarkers">
+<code class="descname">assignMarkers</code><span class="sig-paren">(</span><em>approaches</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pipeline.html#Pipeline.assignMarkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pipeline.Pipeline.assignMarkers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns each (feature selection) method a unique color.
+Will be delivered later on to every <a class="reference internal" href="#evaluation.Evaluator" title="evaluation.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">evaluation.Evaluator</span></code></a> instance to create visualizations with consistent coloring for evaluated approaches.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>methods</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code> of str) – List of method names.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary containing hex color codes for every method</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pipeline.Pipeline.evaluateBiomarkers">
 <code class="descname">evaluateBiomarkers</code><span class="sig-paren">(</span><em>inputDir</em>, <em>dataset</em>, <em>rankingsDir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pipeline.html#Pipeline.evaluateBiomarkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pipeline.Pipeline.evaluateBiomarkers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covers the evaluation phase.
@@ -1735,6 +1754,11 @@ Implement this method (instead of <a class="reference internal" href="#featurese
 </dd></dl>
 
 <dl class="method">
+<dt id="featureselection.NetworkSelector.filterPathways">
+<code class="descname">filterPathways</code><span class="sig-paren">(</span><em>pathways</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/featureselection.html#NetworkSelector.filterPathways"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#featureselection.NetworkSelector.filterPathways" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="featureselection.NetworkSelector.selectFeatures">
 <code class="descname">selectFeatures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/featureselection.html#NetworkSelector.selectFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#featureselection.NetworkSelector.selectFeatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instead of selecting existing features, instances of <a class="reference internal" href="#featureselection.NetworkSelector" title="featureselection.NetworkSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetworkSelector</span></code></a> select pathways or submodules as features.
@@ -2970,6 +2994,24 @@ Requires a userListId that was retrieved from a prior query.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="knowledgebases.ENRICHR.enrich">
+<code class="descname">enrich</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/knowledgebases.html#ENRICHR.enrich"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#knowledgebases.ENRICHR.enrich" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all that are terms available in library (specified by backgroundType param) and enriched in the given set of genes (specified by userListId param).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<em>list of str</em>) – list of parameters to be used for the query (userListId: Identifier returned from addList endpoint; backgroundType: Gene set library to enrich against)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dataframe object of all enriched terms (unsorted, unfiltered.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dataframe</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3419,7 +3461,8 @@ Instead, it is used for evaluation purposes to annotate and enrich rankings.</p>
 <dl class="method">
 <dt id="knowledgebases.Enrichr.downloadEnrichedTerms">
 <code class="descname">downloadEnrichedTerms</code><span class="sig-paren">(</span><em>userIdList</em>, <em>filePrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/knowledgebases.html#Enrichr.downloadEnrichedTerms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#knowledgebases.Enrichr.downloadEnrichedTerms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads enriched terms from a former query into a file.</p>
+<dd><p>Downloads enriched terms from a former query into a file.
+Filters these terms for those with an adjusted p-value &gt; 0.05, then sorts by combined score in descending order.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -4345,32 +4388,11 @@ Note: measure does not make much sense if the two rankings are highly disjunct, 
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="evaluation.Evaluator.drawLinePlot">
-<code class="descname">drawLinePlot</code><span class="sig-paren">(</span><em>inputDir</em>, <em>outputDir</em>, <em>topK</em>, <em>metric</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#Evaluator.drawLinePlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.Evaluator.drawLinePlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draws a line plot for a given metric, using all files containing evaluation results for that metric in inputDir.
-In the end, the plot will have one line per feature selection approach for which classification results are available.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>inputDir</strong> (<em>str</em>) – absolute path to directory containing all input files (from which to draw the graph).</li>
-<li><strong>outputDir</strong> (<em>str</em>) – absolute path to the output directory where the the graph will be saved.</li>
-<li><strong>topK</strong> (<em>int</em>) – maximum x axis value</li>
-<li><strong>metric</strong> (<em>str</em>) – metric name for which to draw the graph.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="evaluation.ClassificationEvaluator">
-<em class="property">class </em><code class="descclassname">evaluation.</code><code class="descname">ClassificationEvaluator</code><span class="sig-paren">(</span><em>inputDir</em>, <em>rankingsDir</em>, <em>intermediateDir</em>, <em>outputDir</em>, <em>methodColors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#ClassificationEvaluator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.ClassificationEvaluator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">evaluation.</code><code class="descname">ClassificationEvaluator</code><span class="sig-paren">(</span><em>inputDir</em>, <em>rankingsDir</em>, <em>intermediateDir</em>, <em>outputDir</em>, <em>methodColors</em>, <em>methodMarkers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#ClassificationEvaluator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.ClassificationEvaluator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#evaluation.Evaluator" title="evaluation.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">evaluation.Evaluator</span></code></a></p>
 <p>Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.
 Uses <a class="reference internal" href="#evaluation.AttributeRemover" title="evaluation.AttributeRemover"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeRemover</span></code></a> to create reduced datasets containing only the top k features, which are then used for subsequent classification.
@@ -4394,6 +4416,27 @@ Currently, classification and subsequent evaluation is wrapped here and is actua
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="evaluation.ClassificationEvaluator.drawLinePlot">
+<code class="descname">drawLinePlot</code><span class="sig-paren">(</span><em>inputDir</em>, <em>outputDir</em>, <em>topK</em>, <em>metric</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#ClassificationEvaluator.drawLinePlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.ClassificationEvaluator.drawLinePlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a line plot for a given metric, using all files containing evaluation results for that metric in inputDir.
+In the end, the plot will have one line per feature selection approach for which classification results are available.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputDir</strong> (<em>str</em>) – absolute path to directory containing all input files (from which to draw the graph).</li>
+<li><strong>outputDir</strong> (<em>str</em>) – absolute path to the output directory where the the graph will be saved.</li>
+<li><strong>topK</strong> (<em>int</em>) – maximum x axis value</li>
+<li><strong>metric</strong> (<em>str</em>) – metric name for which to draw the graph.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="evaluation.ClassificationEvaluator.evaluate">
 <code class="descname">evaluate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#ClassificationEvaluator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.ClassificationEvaluator.evaluate" title="Permalink to this definition">¶</a></dt>
@@ -4784,7 +4827,7 @@ Queries the knowledge bases with the given search terms and checks how many gene
 
 <dl class="method">
 <dt id="evaluation.KnowledgeBaseEvaluator.checkCoverage">
-<code class="descname">checkCoverage</code><span class="sig-paren">(</span><em>kb</em>, <em>colors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#KnowledgeBaseEvaluator.checkCoverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.KnowledgeBaseEvaluator.checkCoverage" title="Permalink to this definition">¶</a></dt>
+<code class="descname">checkCoverage</code><span class="sig-paren">(</span><em>kb</em>, <em>colors</em>, <em>useIDs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#KnowledgeBaseEvaluator.checkCoverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.KnowledgeBaseEvaluator.checkCoverage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the coverage for a given knowledge base and creates corresponding plots.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -4802,7 +4845,7 @@ Queries the knowledge bases with the given search terms and checks how many gene
 
 <dl class="method">
 <dt id="evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage">
-<code class="descname">checkPathwayCoverage</code><span class="sig-paren">(</span><em>kb</em>, <em>colors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#KnowledgeBaseEvaluator.checkPathwayCoverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage" title="Permalink to this definition">¶</a></dt>
+<code class="descname">checkPathwayCoverage</code><span class="sig-paren">(</span><em>kb</em>, <em>colors</em>, <em>useIDs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/evaluation.html#KnowledgeBaseEvaluator.checkPathwayCoverage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the pathway coverage for a given knowledge base and creates corresponding plots.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

@@ -1,9 +1,10 @@
 from abc import abstractmethod
+import math
 from opentargets import OpenTargetsClient
 from bioservices import KEGG, REST
 import pandas as pd
 import benchutils as util
-import time, requests
+import time, requests, json
 from datetime import datetime
 from lxml.html import fromstring
 import pypath.core.network as network
@@ -72,6 +73,21 @@ class ENRICHR(REST):
         response = self.http_get("genemap", params = params)
 
         return response
+
+    def enrich(self, params):
+        """Returns all that are terms available in library (specified by backgroundType param) and enriched in the given set of genes (specified by userListId param).
+
+            :param params: list of parameters to be used for the query (userListId: Identifier returned from addList endpoint; backgroundType: Gene set library to enrich against)
+            :type params: list of str
+            :return: dataframe object of all enriched terms (unsorted, unfiltered.
+            :rtype: dataframe
+            """
+
+        response = self.http_get("enrich", params = params)
+        res = pd.DataFrame.from_dict(list(response.values())[0])
+        res.columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
+
+        return res[["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]]
 
 
 class UMLS_AUTH(REST):
@@ -626,6 +642,7 @@ class Enrichr(KnowledgeBase):
 
     def downloadEnrichedTerms(self, userIdList, filePrefix):
         """Downloads enriched terms from a former query into a file.
+           Filters these terms for those with an adjusted p-value > 0.05, then sorts by combined score in descending order.
 
            :param userIdList: userIdList to retrieve enrichment/annotation results from the original query.
            :type userIdList: str
@@ -638,14 +655,15 @@ class Enrichr(KnowledgeBase):
         util.createDirectory(outputDir)
         outputFile = filePrefix + "_enrichedTerms.txt"
 
-        params = {"userListId": str(userIdList), "filename": outputFile , "backgroundType": geneSetLibrary}
-        response = self.webservice.export(params)
+        params = {"userListId": str(userIdList), "backgroundType": geneSetLibrary}
+        response = self.webservice.enrich(params)
+        # first, filter enriched terms by q-score > 0.05
+        # second, order by combined score in descending order
+        # see also this best practices recommendation: https://www.researchgate.net/post/Enrichr_what_value_of_combined_score_is_significant
+        final_terms = response[(response["Adjusted p-value"] < 0.05)]
+        final_terms.sort_values(by = "Combined score", ascending = False, inplace = True)
 
-        #outputPrefix contains the full filepath
-        with open(outputFile, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
+        final_terms.to_csv(outputFile, sep = "\t", index = False)
 
     def getRelevantGenes(self, labels):
         """Is not implemented for EnrichR.
@@ -1346,50 +1364,69 @@ class Pathwaycommons(KnowledgeBase):
            :rtype: dict
            """
         #collect pathway IDs first
-
+        overall = 0
         pathways = {}
+        p_ids = set()
         for term in labels:
-            p_ids = set()
-            pathwayIDs = self.webservice.search(term, organism = "homo sapiens", type = "pathway")
-            #if no error code was returned
-            if not isinstance(pathwayIDs, int) and (pathwayIDs is not None):
-                items = pathwayIDs["searchHit"]
-                for item in items:
-                    p_ids.add(item["uri"])
+            pathwayIDs = self.webservice.search(term, organism="homo sapiens", type="pathway")
+            # if no error code was returned
+            if (pathwayIDs is None) or isinstance(pathwayIDs, int):
+                continue
 
-                count = 0
-                for id in p_ids:
-                    pathway_sif = self.webservice.get(id, frmt = "SIF")
-                    #if server does not return an error code and the pathway has a sif version
-                    if not isinstance(pathway_sif, int) and not (pathway_sif.text == "") and (pathway_sif is not None):
-                        #only load the pathway if the maxNumPathways count is not reached yet
-                        if count <= int(self.config["maxNumPathways"]):
-                            params = {"self": self, "pathway": pathway_sif}
+            numHits = pathwayIDs["numHits"]
+            maxHits = pathwayIDs["maxHitsPerPage"]
+            pages = math.ceil(numHits / maxHits)
+            if pages > 1:
+                for i in range(0, pages):
+                    pathwayIDs = self.webservice.search(term, page=i, organism="homo sapiens", type="pathway")
 
-                            #create pypath pathway from SIF
-                            input = input_formats.NetworkInput(
-                                name=id,
-                                input= Pathwaycommons.readPathway,
-                                input_args=params,
-                                separator='\t',
-                                id_col_a=0,
-                                id_col_b=2,
-                                id_type_a='genesymbol',
-                                id_type_b='genesymbol',
-                                sign = (1, "+", "-")
-                            )
+                    #if no error code was returned
+                    if (pathwayIDs is None) or isinstance(pathwayIDs, int):
+                        continue
 
-                            pathway = network.Network()
-                            pathway.load(input)
-                            #only add pathway if it has nodes
-                            if pathway.vcount > 0:
-                                pathways[id] = pathway
-                                count += 1
+                    items = pathwayIDs["searchHit"]
+                    overall += len(items)
+                    for item in items:
+                        p_ids.add(item["uri"])
 
-                        else:
-                            break
-                    else:
-                        break
+
+
+        count = 0
+        for id in p_ids:
+            pathway_sif = self.webservice.get(id, frmt = "SIF")
+            #if server does not return an error code and the pathway has a sif version
+            if (pathway_sif is None):
+                continue
+
+            if not isinstance(pathway_sif, int) and not (pathway_sif.text == ""):
+                #only load the pathway if the maxNumPathways count is not reached yet
+                if count <= int(self.config["maxNumPathways"]):
+                    params = {"self": self, "pathway": pathway_sif}
+
+                    #create pypath pathway from SIF
+                    input = input_formats.NetworkInput(
+                        name=id,
+                        input= Pathwaycommons.readPathway,
+                        input_args=params,
+                        separator='\t',
+                        id_col_a=0,
+                        id_col_b=2,
+                        id_type_a='genesymbol',
+                        id_type_b='genesymbol',
+                        sign = (1, "+", "-")
+                    )
+
+                    pathway = network.Network()
+                    pathway.load(input)
+                    #only add pathway if it has nodes
+                    if pathway.vcount > 0:
+                        pathways[id] = pathway
+                        count += 1
+
+                else:
+                    break
+            else:
+                continue
 
         return pathways
 

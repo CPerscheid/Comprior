@@ -382,9 +382,40 @@
         <span class="n">denom</span> <span class="o">=</span> <span class="n">m</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
         <span class="n">rating_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rankings</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">rating_sums</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">S</span> <span class="o">/</span> <span class="n">denom</span></div>
+        <span class="k">return</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">S</span> <span class="o">/</span> <span class="n">denom</span></div></div>
 
-<div class="viewcode-block" id="Evaluator.drawLinePlot"><a class="viewcode-back" href="../comprior.html#evaluation.Evaluator.drawLinePlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawLinePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+<div class="viewcode-block" id="ClassificationEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator">[docs]</a><span class="k">class</span> <span class="nc">ClassificationEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.</span>
+<span class="sd">       Uses :class:`AttributeRemover` to create reduced datasets containing only the top k features, which are then used for subsequent classification.</span>
+<span class="sd">       Currently, classification and subsequent evaluation is wrapped here and is actually carried out by java jars using WEKA.</span>
+
+<span class="sd">       :param input: absolute path to the directory where the input data for classification is located.</span>
+<span class="sd">       :type input: str</span>
+<span class="sd">       :param rankingsDir: absolute path to the directory where the rankings are located.</span>
+<span class="sd">       :type rankingsDir: str</span>
+<span class="sd">       :param intermediateDir: absolute path to the directory where the reduced datasets (containing only the top k features) are written to.</span>
+<span class="sd">       :type intermediateDir: str</span>
+<span class="sd">       :param output: absolute path to the directory to which to save results.</span>
+<span class="sd">       :type output: str</span>
+<span class="sd">       :param methodColors: dictionary containing a color string for every selection method.</span>
+<span class="sd">       :type methodColors: dict of str</span>
+<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
+<span class="sd">       :type javaConfig: str</span>
+<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
+<span class="sd">       :type rConfig: str</span>
+<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
+<span class="sd">       :type evalConfig: str</span>
+<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
+<span class="sd">       :type classificationConfig: str</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">intermediateDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">,</span> <span class="n">methodMarkers</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">=</span> <span class="n">rankingsDir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intermediateDir</span> <span class="o">=</span> <span class="n">intermediateDir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methodMarkers</span> <span class="o">=</span> <span class="n">methodMarkers</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClassificationEvaluator.drawLinePlot"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator.drawLinePlot">[docs]</a>    <span class="k">def</span> <span class="nf">drawLinePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">topK</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws a line plot for a given metric, using all files containing evaluation results for that metric in inputDir.</span>
 <span class="sd">           In the end, the plot will have one line per feature selection approach for which classification results are available.</span>
 
@@ -426,7 +457,7 @@
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_axis</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x_axis</span><span class="p">)</span>
                 <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">l1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;#ofAttributes&quot;</span><span class="p">],</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">methodName</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">methodName</span><span class="p">])</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;#ofAttributes&quot;</span><span class="p">],</span> <span class="n">ranking</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">methodName</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodColors</span><span class="p">[</span><span class="n">methodName</span><span class="p">],</span> <span class="n">marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodMarkers</span><span class="p">[</span><span class="n">methodName</span><span class="p">])</span>
             <span class="c1"># adapt the lower bound of y axis to the respective</span>
             <span class="k">if</span> <span class="n">ranking</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
                 <span class="c1">#no evaluation results for this approach</span>
@@ -448,37 +479,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; for Approaches&#39;</span><span class="p">)</span>
         <span class="c1"># plt.show()</span>
         <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outputDir</span> <span class="o">+</span> <span class="n">metric</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">)</span>
-        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div></div>
-
-<div class="viewcode-block" id="ClassificationEvaluator"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator">[docs]</a><span class="k">class</span> <span class="nc">ClassificationEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Evaluates selection methods via classification by using only the selected features and computing multiple standard metrics.</span>
-<span class="sd">       Uses :class:`AttributeRemover` to create reduced datasets containing only the top k features, which are then used for subsequent classification.</span>
-<span class="sd">       Currently, classification and subsequent evaluation is wrapped here and is actually carried out by java jars using WEKA.</span>
-
-<span class="sd">       :param input: absolute path to the directory where the input data for classification is located.</span>
-<span class="sd">       :type input: str</span>
-<span class="sd">       :param rankingsDir: absolute path to the directory where the rankings are located.</span>
-<span class="sd">       :type rankingsDir: str</span>
-<span class="sd">       :param intermediateDir: absolute path to the directory where the reduced datasets (containing only the top k features) are written to.</span>
-<span class="sd">       :type intermediateDir: str</span>
-<span class="sd">       :param output: absolute path to the directory to which to save results.</span>
-<span class="sd">       :type output: str</span>
-<span class="sd">       :param methodColors: dictionary containing a color string for every selection method.</span>
-<span class="sd">       :type methodColors: dict of str</span>
-<span class="sd">       :param javaConfig: configuration parameters for java code (as specified in the config file).</span>
-<span class="sd">       :type javaConfig: str</span>
-<span class="sd">       :param rConfig: configuration parameters for R code (as specified in the config file).</span>
-<span class="sd">       :type rConfig: str</span>
-<span class="sd">       :param evalConfig: configuration parameters for evaluation, e.g. how many features to select (as specified in the config file).</span>
-<span class="sd">       :type evalConfig: str</span>
-<span class="sd">       :param classificationConfig: configuration parameters for classification, e.g. which classifiers to use (as specified in the config file).</span>
-<span class="sd">       :type classificationConfig: str</span>
-<span class="sd">       &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputDir</span><span class="p">,</span> <span class="n">rankingsDir</span><span class="p">,</span> <span class="n">intermediateDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rankingsDir</span> <span class="o">=</span> <span class="n">rankingsDir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">intermediateDir</span> <span class="o">=</span> <span class="n">intermediateDir</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">inputDir</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">methodColors</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ClassificationEvaluator.evaluate"><a class="viewcode-back" href="../comprior.html#evaluation.ClassificationEvaluator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Triggers classification and evaluation in Java and creates corresponding plots for every metric that was selected in the config.</span>
@@ -696,7 +697,7 @@
 
         <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39; gene fold change across all samples&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;FoldChanges.pdf&quot;</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;FoldChanges.pdf&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">)</span>
         <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RankingsEvaluator.computeFoldChangeDiffs"><a class="viewcode-back" href="../comprior.html#evaluation.RankingsEvaluator.computeFoldChangeDiffs">[docs]</a>    <span class="k">def</span> <span class="nf">computeFoldChangeDiffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1073,7 +1074,7 @@
 <span class="sd">           :param colors: List of colors to use for the different search terms.</span>
 <span class="sd">           :type colors: :class:`List` of str</span>
 <span class="sd">           &quot;&quot;&quot;</span>
-        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">colIndex</span><span class="p">],</span> <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_type</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">colIndex</span><span class="p">],</span> <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_type</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
                            <span class="n">boxprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">medianprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span><span class="n">whiskerprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">capprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">flierprops</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">))</span>  <span class="c1"># fill with color</span>
         <span class="n">bplot</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">patch</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bplot</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;boxes&#39;</span><span class="p">],</span> <span class="n">colors</span><span class="p">):</span>
@@ -1082,10 +1083,12 @@
         <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
         <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bplot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">())</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">autoscale</span><span class="p">()</span>
 
-
-        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">)</span>
         <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
 
 
@@ -1103,15 +1106,16 @@
 <span class="sd">           :param colors: List of colors to use.</span>
 <span class="sd">           :type colors: :class:`List` of str</span>
 <span class="sd">           &quot;&quot;&quot;</span>
-        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">)</span>
         <span class="n">pl</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
         <span class="n">pl</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">pl</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
         <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">pl</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">())</span>
 
-
-        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span><span class="p">)</span>
         <span class="n">matplots</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="KnowledgeBaseEvaluator.createKnowledgeBases"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.createKnowledgeBases">[docs]</a>    <span class="k">def</span> <span class="nf">createKnowledgeBases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledgebaseList</span><span class="p">):</span>
@@ -1129,7 +1133,7 @@
             <span class="n">kbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kbfactory</span><span class="o">.</span><span class="n">createKnowledgeBase</span><span class="p">(</span><span class="n">kb</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">kbs</span></div>
 
-<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">useIDs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks the coverage for a given knowledge base and creates corresponding plots.</span>
 
 <span class="sd">           :param kb: knowledge base object for which to check coverage.</span>
@@ -1141,7 +1145,10 @@
         <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">:</span>
             <span class="c1"># query knowledge base</span>
             <span class="n">geneSet</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getGeneScores</span><span class="p">([</span><span class="n">term</span><span class="p">])</span>
-            <span class="n">geneSet</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">geneSet</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">useIDs</span><span class="p">:</span>
+                <span class="n">geneSet</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">term</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">geneSet</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">geneSet</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">geneSet</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">stats</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
                 <span class="n">stats</span> <span class="o">=</span> <span class="n">geneSet</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1154,15 +1161,15 @@
         <span class="n">barplotfile</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;_NumberOfGenes.pdf&quot;</span>
         <span class="n">df_statscounts</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stats</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">boxplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Gene association scores&quot;</span><span class="p">,</span>
-                         <span class="s2">&quot;association scores&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drawBarPlot</span><span class="p">(</span><span class="n">df_statscounts</span><span class="p">,</span> <span class="n">barplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;: Number of genes per search term&quot;</span><span class="p">,</span>
-                         <span class="s2">&quot;number of genes&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBoxPlot</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">boxplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span>
+                         <span class="s2">&quot;gene association scores&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drawBarPlot</span><span class="p">(</span><span class="n">df_statscounts</span><span class="p">,</span> <span class="n">barplotfile</span><span class="p">,</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span>
+                         <span class="s2">&quot;number of genes per search term&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkPathwayCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkPathwayCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+<div class="viewcode-block" id="KnowledgeBaseEvaluator.checkPathwayCoverage"><a class="viewcode-back" href="../comprior.html#evaluation.KnowledgeBaseEvaluator.checkPathwayCoverage">[docs]</a>    <span class="k">def</span> <span class="nf">checkPathwayCoverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">useIDs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks the pathway coverage for a given knowledge base and creates corresponding plots.</span>
 
 <span class="sd">           :param kb: knowledge base object for which to check pathway coverage.</span>
@@ -1179,7 +1186,10 @@
                 <span class="n">numGenes</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">vcount</span>
                 <span class="c1">#pathwayName = pathway.name</span>
                 <span class="c1">#evtl. score attribut?</span>
-                <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">term</span><span class="p">,</span> <span class="n">pathwayName</span><span class="p">,</span> <span class="n">numGenes</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">useIDs</span><span class="p">:</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">term</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">pathwayName</span><span class="p">,</span> <span class="n">numGenes</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">term</span><span class="p">,</span> <span class="n">pathwayName</span><span class="p">,</span> <span class="n">numGenes</span><span class="p">))</span>
 
         <span class="c1">#make dataframe from list</span>
         <span class="n">df_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;search term&quot;</span><span class="p">,</span> <span class="s2">&quot;pathway&quot;</span><span class="p">,</span> <span class="s2">&quot;#genes&quot;</span><span class="p">])</span>
@@ -1204,6 +1214,17 @@
         <span class="c1">#set colors for every search term</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="c1">#check if the individual length of a search term is longer than 20</span>
+        <span class="c1">#map them to IDs then instead to avoid too long axis labels to be plotted</span>
+        <span class="n">maxLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">))</span>
+        <span class="n">useIDs</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">maxLength</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">useIDs</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">term_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;search term&#39;</span><span class="p">])</span>
+            <span class="n">term_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">term_df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">term_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s2">&quot;searchterm_IDs.txt&quot;</span><span class="p">)</span>
+
+
         <span class="c1">#if we have more than 12 search terms we need a color map with more colors</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">searchterms</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
             <span class="n">colorPalette</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;Paired&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">colors</span><span class="p">)</span>
@@ -1222,10 +1243,11 @@
         <span class="k">for</span> <span class="n">kb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">knowledgebases</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Draw plots for &quot;</span> <span class="o">+</span> <span class="n">kb</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">kb</span><span class="o">.</span><span class="n">hasPathways</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">checkPathwayCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkPathwayCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">useIDs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">kb</span><span class="o">.</span><span class="n">hasGenes</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">checkCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkCoverage</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">useIDs</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;...finished.&quot;</span><span class="p">)</span></div></div>
 </pre></div>
