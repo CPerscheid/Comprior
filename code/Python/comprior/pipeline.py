@@ -136,17 +136,17 @@ class Pipeline():
             threads = [None] * numCores
             for i in range(numCores):
                 selector = selectorFactory.createFeatureSelector(methods[(j * numCores) + i])
-                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
                 #print("spawn process number " + str((j * numCores) + i) + ": " + methods[(j * numCores) + i])
-                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                #threads[i] = p
-                #p.start()
+                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                threads[i] = p
+                p.start()
 
                 # wait for all threads to finish
-            #for thr in threads:
+            for thr in threads:
                 #print("join thread...")
-                #thr.join()
+                thr.join()
                 ##print("... finished")
 
         #if there are remaining threads, start them
@@ -158,16 +158,16 @@ class Pipeline():
             for i in range(1, remaining_threads + 1):
                 selector = selectorFactory.createFeatureSelector(methods[len(methods) - i])
                 #print("spawn process number " + str(len(methods) - i) + ": " + methods[len(methods) - i])
-                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
-                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                #threads[i-1] = p
-                #p.start()
+                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                threads[i-1] = p
+                p.start()
 
                 # wait for all threads to finish
-            #for thr in threads:
+            for thr in threads:
                 #print("join thread...")
-                #thr.join()
+                thr.join()
                 #print("... finished")
 
         return outputDir
