@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Knowledge Bases &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Prior Knowledge Approaches" href="priorknowledge.html" />
+    <link rel="prev" title="Output Folder Structure - Where to find what Files" href="outputstructure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Knowledge Bases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">DisGeNET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">OpenTargets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">KEGG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#retrieving-relevant-genes-from-pathway-information">Retrieving Relevant Genes from Pathway Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gene-association-score-computation-from-network-information">Gene Association Score Computation from Network Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">PathwayCommons</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Knowledge Bases</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/knowledgebases.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="knowledge-bases">
+<h1>Knowledge Bases<a class="headerlink" href="#knowledge-bases" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Comprior queries a knowledge base to retrieve relevant genes, gene association scores, or pathway information, which is then integrated into a prior knowledge feature selection approach</li>
+<li>for the search, Comprior uses a) the class labels and b) alternative search terms that are provided in the config file (see <em>alternative search terms</em> parameter in configuration specification)</li>
+</ul>
+<div class="section" id="id1">
+<h2><a class="reference external" href="https://www.disgenet.org/">DisGeNET</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>aggregates biological information from multiple sources (meta knowledge base, see <a class="reference external" href="https://www.disgenet.org/dbinfo">sources description</a> for original sources)</li>
+<li>provides gene-disease, variant-disease, and variant-gene association scores for genes, disease, and variants (no pathway information) –&gt; used for retrieving relevant genes and gene association scores</li>
+<li>users can choose in the config whether to use DisGeNET’s gene-disease association (GDA) score, disease pleiotropy index, or disease specificity index (see <a class="reference external" href="https://www.disgenet.org/dbinfo">their description</a> for more information)</li>
+<li>DisGeNET uses UMLS identifiers for the search, so Comprior internally first maps the search terms to their corresponding UMLS CUI (via the <a class="reference external" href="https://uts.nlm.nih.gov/uts/">UMLS terminology web service</a>) and forwards these to DisGeNET</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="reference external" href="https://www.targetvalidation.org/">OpenTargets</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>provides biological information from multiple sources (meta knowledge base, see <a class="reference external" href="https://docs.targetvalidation.org/data-sources/data-sources">their documentation</a> for original sources)</li>
+<li>provides association gene-disease association scores (no pathway information) –&gt; used for retrieving relevant genes and gene association scores</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="reference external" href="https://www.kegg.jp/">KEGG</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>provides manually curated pathway information –&gt; used for retrieving relevant genes, gene association scores, and pathway information</li>
+<li>pathways are parsed into pypath.Network format</li>
+</ul>
+<div class="section" id="retrieving-relevant-genes-from-pathway-information">
+<h3>Retrieving Relevant Genes from Pathway Information<a class="headerlink" href="#retrieving-relevant-genes-from-pathway-information" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Comprior retrieves relevant genes from a set of pathways by selecting all their member genes and removing duplications</li>
+</ul>
+</div>
+<div class="section" id="gene-association-score-computation-from-network-information">
+<h3>Gene Association Score Computation from Network Information<a class="headerlink" href="#gene-association-score-computation-from-network-information" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Comprior computes a gene association score <span class="math notranslate nohighlight">\(s_i\)</span> for a gene <span class="math notranslate nohighlight">\(i\)</span> from the sum of its degree percentile rank <span class="math notranslate nohighlight">\(pr_i\)</span> for every pathway (= pathway genes are ranked by their number of in- and outgoing edges), normalized by the overall number of pathways retrieved: <span class="math notranslate nohighlight">\(\frac{\sum_{n=1}^{|P|} pr_{n,i} if i \in p_n}{|P|}\)</span></li>
+<li>this way, hub genes with a lot of interactions receive a higher score than genes at the outside rim of a pathway, becoming even more important if they have many interactions across multiple pathways</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="reference external" href="http://www.pathwaycommons.org/">PathwayCommons</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>provides pathway information from multiple sources (meta knowledge base, see <a class="reference external" href="http://www.pathwaycommons.org/">their sources</a> for original sources)</li>
+<li>relevant genes and gene association scores are currently retrieved the same way as KEGG</li>
+<li>pathways are parsed into pypath.Network format</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="priorknowledge.html" class="btn btn-neutral float-right" title="Prior Knowledge Approaches" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="outputstructure.html" class="btn btn-neutral float-left" title="Output Folder Structure - Where to find what Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

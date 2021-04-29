@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Prior Knowledge Approaches &mdash; Comprior  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How-Tos" href="howtos.html" />
+    <link rel="prev" title="Knowledge Bases" href="knowledgebases.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Comprior
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledgebases.html">Knowledge Bases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Prior Knowledge Approaches</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-prior-knowledge-approaches">Modifying Prior Knowledge Approaches</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#filtering">Filtering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extension">Extension</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#combining-approaches">Combining Approaches</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lassopenalty">LassoPenalty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#weightedscore">WeightedScore</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#network-pathway-approaches">Network/Pathway Approaches</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#networkactivity">NetworkActivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#corgsnetworkactivity">CorgsNetworkActivity</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">System Architecture</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Comprior</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Prior Knowledge Approaches</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/priorknowledge.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="prior-knowledge-approaches">
+<h1>Prior Knowledge Approaches<a class="headerlink" href="#prior-knowledge-approaches" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Comprior provides multiple prior knowledge approaches of types <a class="reference internal" href="#modifying"><span class="std std-ref">Modifying Prior Knowledge Approaches</span></a>, <a class="reference internal" href="#combining"><span class="std std-ref">Combining Approaches</span></a>, <a class="reference internal" href="#network"><span class="std std-ref">Network/Pathway Approaches</span></a> as defined by Perscheid: <a class="reference external" href="https://academic.oup.com/bib/advance-article/doi/10.1093/bib/bbaa151/5881664?casa_token=hxOBxbrIx9sAAAAA:3z1uPc75bgQB2JRnWxsGhTFSSFeRSNB-Cuys4NAvI2sHcTXvcefH8fM5sNh9L66HFy9xXM5WOxQNmw">“Integrative biomarker detection on high-dimensional gene expression data sets: a survey on prior knowledge approaches”</a></li>
+<li>all of them can be flexibly combined with any of the available knowledge bases (see the configuration parameter description on how to do that)</li>
+</ul>
+<div class="section" id="modifying-prior-knowledge-approaches">
+<span id="modifying"></span><h2>Modifying Prior Knowledge Approaches<a class="headerlink" href="#modifying-prior-knowledge-approaches" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>type of prior knowledge used: list of relevant genes (no association scores)</li>
+<li>traditional feature selection and prior knowledge retrieval are carried out independently</li>
+<li>Comprior allows to design flexible modifying prior knowledge approaches that can be combined with any knowledge base and any traditional approach</li>
+<li>kind of two-level approaches that introduce an additional filtering or extension step before or after a traditional feature selection approach</li>
+</ul>
+<div class="section" id="filtering">
+<h3>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><em>Prefilter</em>: prior knowledge is retrieved first and the input data set is filtered for those genes that were retrieved from the knowledge base; traditional feature selection is carried out afterwards</li>
+<li><em>Postfilter</em>: Traditional feature selection is carried out first, and the resulting features are then filtered to keep only those that were also retrieved by the knowledge base</li>
+<li>prefilter and postfilter approaches have the same results for univariate feature selection approaches, e.g. Variance</li>
+</ul>
+</div>
+<div class="section" id="extension">
+<h3>Extension<a class="headerlink" href="#extension" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Comprior retrieves relevant genes and interleaves the gene ranking retrieved by a traditional approach with the set of relevant genes from the knowledge base</li>
+<li>this way, a feature set always not only contains traditionally selected genes, but also nearly as much genes that were retrieved from a knowledge base so that the feature set can contain genes that have a high statistical relevance but no (so far identified) biological relevance according to the knowledge base and vice versa</li>
+</ul>
+</div>
+</div>
+<div class="section" id="combining-approaches">
+<span id="combining"></span><h2>Combining Approaches<a class="headerlink" href="#combining-approaches" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>type of prior knowledge used: relevant genes and their association scores (for the search terms)</li>
+<li>traditional feature selection and prior knowledge retrieval are carried out in parallel and integrated more thoroughly</li>
+<li>if a gene has multiple association scores (because it is associated to multiple search terms), Comprior will always keep the highest association score and remove the duplicate entries</li>
+<li>potentially, network information can also be retrieved via Comprior and then be mapped to some kind of relevance score, e.g. by incorporating topological information of a gene</li>
+</ul>
+<div class="section" id="lassopenalty">
+<h3>LassoPenalty<a class="headerlink" href="#lassopenalty" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>gene association scores are used as individual penalty term per feature applied to Lasso</li>
+<li>Comprior uses the <a class="reference external" href="https://cran.r-project.org/web/packages/xtune/index.html">xtune R package implementation</a> by Zeng et al.: <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/32915960/">“Incorporating prior knowledge into regularized regression”</a></li>
+</ul>
+</div>
+<div class="section" id="weightedscore">
+<h3>WeightedScore<a class="headerlink" href="#weightedscore" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>the final relevance score <span class="math notranslate nohighlight">\(s_i\)</span> for a gene <span class="math notranslate nohighlight">\(i\)</span> is made up of two parts: the association score from the knowledge base <span class="math notranslate nohighlight">\(s_{i,kb}\)</span>, and the statistical relevance score <span class="math notranslate nohighlight">\(s_{i,trad}\)</span> from a traditional approach</li>
+<li>both scores are equally weighted to compute the final relevance score for a gene: <span class="math notranslate nohighlight">\(s_i = s_{i,kb} \times s_{i,trad}\)</span></li>
+</ul>
+</div>
+</div>
+<div class="section" id="network-pathway-approaches">
+<span id="network"></span><h2>Network/Pathway Approaches<a class="headerlink" href="#network-pathway-approaches" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>network/pathway approaches use network information to identify (sub-) networks or pathways as new features and map the feature space from the original genes to the (sub-)networks</li>
+<li>network/pathway approaches thus always have a) a feature, i.e. pathway/subnetwork, selection step and b) a mapping step where new feature values must be computed</li>
+</ul>
+<div class="section" id="networkactivity">
+<span id="id1"></span><h3>NetworkActivity<a class="headerlink" href="#networkactivity" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">feature selection as described by Tian et al.: <a class="reference external" href="https://www.pnas.org/content/102/38/13544.short">“Discovering statistically significant pathways in expression profiling studies”</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>a pathway/subnetwork is considered relevant if the gene expression profiles of its member genes correlate with the data set classes</li>
+<li>average ANOVA score from all pathway member genes and class labels</li>
+<li>rank pathways (= new features) by their ANOVA scores</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">feature mapping is based on Vert and Kanehisa’s definition of pathway relevance and smoothness: <a class="reference external" href="http://members.cbio.mines-paristech.fr/~jvert/svn/bibli/local/Vert2003Graph-driven.pdf">“Graph-driven feature extraction from microarray data using diffusion kernels and kernel CCA”</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>omputes pathway activity scores for every sample and pathway as new feature values.</li>
+<li>the feature value <span class="math notranslate nohighlight">\(v_{p,s}\)</span> for a pathway <span class="math notranslate nohighlight">\(p`and sample :math:`s\)</span> is computed by taking the expression levels of all member genes <span class="math notranslate nohighlight">\(i\)</span> (<span class="math notranslate nohighlight">\(expr_i\)</span>) and weighting these by the variance <span class="math notranslate nohighlight">\(var_i\)</span> of gene <span class="math notranslate nohighlight">\(i\)</span> and the average correlation score <span class="math notranslate nohighlight">\(corr_{i,neighbors_i}\)</span> of its neighbor genes in pathway <span class="math notranslate nohighlight">\(p\)</span>: <span class="math notranslate nohighlight">\(average(expr_i \times var_i \times corr_{i,neighbors_i})\)</span></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="corgsnetworkactivity">
+<h3>CorgsNetworkActivity<a class="headerlink" href="#corgsnetworkactivity" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">feature selection as described by <a class="reference internal" href="#networkactivity"><span class="std std-ref">NetworkActivity</span></a></p>
+</li>
+<li><dl class="first docutils">
+<dt>feature mapping as described by Lee et al: <a class="reference external" href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000217">“Inferring pathway activity toward precise disease classification”</a></dt>
+<dd><ul class="first last">
+<li><p class="first">the feature value <span class="math notranslate nohighlight">\(v_{p,s}\)</span> for a pathway <span class="math notranslate nohighlight">\(p\)</span> and sample <span class="math notranslate nohighlight">\(s\)</span> is computed in the following way:</p>
+<blockquote>
+<div><ul class="simple">
+<li>find the subset of genes (=CORGs) for which the score <span class="math notranslate nohighlight">\(S(CORGs)\)</span> is maximal (via greedy search)</li>
+<li><span class="math notranslate nohighlight">\(S(CORGs)\)</span> comes from a t-test between an activity vector <span class="math notranslate nohighlight">\(a= (a_1, ..., a_n)\)</span> and class vector <span class="math notranslate nohighlight">\(c = (c_1, ... c_n)\)</span> with <span class="math notranslate nohighlight">\(n = \#samples\)</span>, i.e. every sample <span class="math notranslate nohighlight">\(i\)</span> gets an activity score <span class="math notranslate nohighlight">\(a_i\)</span> for the particular set of genes, <span class="math notranslate nohighlight">\(c_i\)</span> is the class label of that sample</li>
+<li><span class="math notranslate nohighlight">\(a_i\)</span> is computed from <span class="math notranslate nohighlight">\(\frac{average(expr_{i,CORGs})}{\sqrt{k}}\)</span>, with <span class="math notranslate nohighlight">\(k = \#CORGs\)</span> and <span class="math notranslate nohighlight">\(expr_{i,CORGs}\)</span> being the expression values of all CORGs genes for sample <span class="math notranslate nohighlight">\(i\)</span></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="howtos.html" class="btn btn-neutral float-right" title="How-Tos" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="knowledgebases.html" class="btn btn-neutral float-left" title="Knowledge Bases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Cindy Perscheid.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
