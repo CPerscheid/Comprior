@@ -85,9 +85,16 @@ class ENRICHR(REST):
 
         response = self.http_get("enrich", params = params)
         res = pd.DataFrame.from_dict(list(response.values())[0])
-        res.columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
 
-        return res[["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]]
+        if not res.empty:
+            res.columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
+            res = res[["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value",
+                 "Old p-value", "Old adjusted p-value"]]
+        else:
+            #create empty dataframe if we did not receive any results
+            res = pd.DataFrame(columns=["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value",
+                 "Old p-value", "Old adjusted p-value"])
+        return res
 
 
 class UMLS_AUTH(REST):
@@ -1514,4 +1521,3 @@ class KEGGPathwayParser(PathwayParser):
         pathway.load(input)
 
         return pathway
-
