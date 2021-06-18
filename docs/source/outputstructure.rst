@@ -1,7 +1,7 @@
 .. _outputStructure:
 
-Output Folder Structure  - Where to find what Files
-===================================================
+Folder Structure  - Where to find what Files (In- and Output)
+=============================================================
 
 Unless the paths are not adapted/overwritten in *config.ini*, Comprior builds up the following folder infrastructure during processing:
 ::
@@ -42,7 +42,7 @@ intermediate/
 ****************
 
   * **dataset/**: preprocessed input data (currently metadata added to one file)
-  * **crossvalidation/**: contains preprocessed dataset for crossvalidation (e.g. mapped to the right identifier or pathway features)
+  * **crossvalidation/**: contains preprocessed dataset for cross-validation (e.g. mapped to the right identifier or pathway features)
   * **externalKnowledge/**: one sub-folder per knowledge base that is queried with query results
 
 results/

@@ -47,8 +47,6 @@ public class WEKA_Evaluator {
      */
     public static void main(String[] args) {
 
-        System.out.println("In WEKA-Evaluator");
-
         //get reduced data set locations
         File folder = new File(args[0]);
         //the input path should only contain directories - one for each method
@@ -62,7 +60,6 @@ public class WEKA_Evaluator {
         String[] metrics = metricParams.split(",");
 
         for (File methodDir : listOfDirs) {
-            System.out.print(methodDir.getAbsolutePath());
 
             classifyAndEvaluate(methodDir.getName(), methodDir.getAbsolutePath(), new File(args[1], methodDir.getName()).getAbsolutePath(),
                         Integer.parseInt(args[2]), Integer.parseInt(args[3]),  Integer.parseInt(args[4]), classifiers, metrics);
@@ -84,11 +81,17 @@ public class WEKA_Evaluator {
      * @param evalMetrics a list of metric names compute for the classification results.
      */
     private static void classifyAndEvaluate(String selectionMethod, String reducedDatasetLocation, String resultLocation, int topKmin, int topKmax, int numFolds, String[] classifiers, String[] evalMetrics) {
-        LOGGER.info(Integer.toString(Array.getLength(evalMetrics)));
-        LOGGER.info(reducedDatasetLocation);
-        LOGGER.info(selectionMethod);
-        LOGGER.info(reducedDatasetLocation);
-        LOGGER.info(resultLocation);
+        System.out.println(Integer.toString(Array.getLength(evalMetrics)));
+        System.out.println(reducedDatasetLocation);
+        System.out.println(selectionMethod);
+        System.out.println(reducedDatasetLocation);
+        System.out.println(resultLocation);
+
+        //LOGGER.info(Integer.toString(Array.getLength(evalMetrics)));
+        //LOGGER.info(reducedDatasetLocation);
+        //LOGGER.info(selectionMethod);
+        //LOGGER.info(reducedDatasetLocation);
+        //LOGGER.info(resultLocation);
 
         HashMap<String, CSVWriter> writers = new HashMap<String, CSVWriter>();
         try {
@@ -136,7 +139,8 @@ public class WEKA_Evaluator {
                         classifierNames = (String[]) ArrayUtils.addAll(classifierNames, "RF");
                         break;
                     default:
-                        LOGGER.info(method + " is no valid classifier/analysis module. Do nothing.");
+                        System.out.println(method + " is no valid classifier/analysis module. Do nothing.");
+                        //LOGGER.info(method + " is no valid classifier/analysis module. Do nothing.");
                         continue;
                 }
 
@@ -162,8 +166,10 @@ public class WEKA_Evaluator {
                 String datasetFile = "";
                 //get the file with k in its name and load its content
                 datasetFile = reducedDatasetLocation + "/top" + String.valueOf(k) + "features_" + selectionMethod + ".csv";
-                LOGGER.info("###################################");
-                LOGGER.info(datasetFile);
+                System.out.println("###################################");
+                System.out.println(datasetFile);
+                //LOGGER.info("###################################");
+                //LOGGER.info(datasetFile);
                 if (new File(datasetFile).isFile()){
                     DataLoader dl = new DataLoader(datasetFile, "\t");
                     Instances data = dl.getData();
@@ -171,8 +177,9 @@ public class WEKA_Evaluator {
                     data.setClassIndex(0);
                     Analyzer ce = new Analyzer(data);
 
+                    System.out.println(": Starting classification evaluation with models " + Arrays.toString(classifierNames) + " with k of " + k + " [" + datasetFile + "]");
 
-                    LOGGER.info(": Starting classification evaluation with models " + Arrays.toString(classifierNames) + " with k of " + k + " [" + datasetFile + "]");
+                    //LOGGER.info(": Starting classification evaluation with models " + Arrays.toString(classifierNames) + " with k of " + k + " [" + datasetFile + "]");
 
                     HashMap<String, String> results = ce.trainAndEvaluateWithTopKAttributes(k, numFolds, classifierObjects, evalMetrics);
                     for (String metric : writers.keySet()) {
@@ -184,10 +191,12 @@ public class WEKA_Evaluator {
                     }
                 }
                 else {
-                    LOGGER.info("No rankings found for k = " + Integer.toString(k) + ". Stop classification for " + selectionMethod + ".");
+                    System.out.println("No rankings found for k = " + Integer.toString(k) + ". Stop classification for " + selectionMethod + ".");
+                    //LOGGER.info("No rankings found for k = " + Integer.toString(k) + ". Stop classification for " + selectionMethod + ".");
                     break;
                 }
-                LOGGER.info(": Finished classification evaluation with models " +  Arrays.toString(classifiers) + " with k of " + k + " [" + datasetFile + "]");
+                System.out.println(": Finished classification evaluation with models " +  Arrays.toString(classifiers) + " with k of " + k + " [" + datasetFile + "]");
+                //LOGGER.info(": Finished classification evaluation with models " +  Arrays.toString(classifiers) + " with k of " + k + " [" + datasetFile + "]");
             }
 
             //close all open file writers

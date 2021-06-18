@@ -1,5 +1,5 @@
-import datetime, time, os
-import random
+import os
+import random, logging
 import multiprocessing
 from matplotlib import colors as mcolors
 import benchutils
@@ -8,6 +8,13 @@ import featureselection
 import evaluation
 import argparse
 import pandas as pd
+#reset the enabled levels of loggers of other packages ERROR
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
+logging.getLogger("bioservices").setLevel(logging.ERROR)
+logging.getLogger("opentargets").setLevel(logging.ERROR)
+logging.getLogger("timeloop").setLevel(logging.ERROR)
+logging.getLogger("sklearn").setLevel(logging.ERROR)
+
 
 MARKERS = [".", "o", "v", "^", "<", ">", "1", "s", "p", "P", "*", "h", "+", "x", "d", "D"]
 
@@ -28,13 +35,10 @@ class Pipeline():
            :param userConfig: absolute path to an additional user configuration file (config.ini will always be used by default) to overwrite default configuration.
            :type userConfig: str
            """
-        print("######################## LOAD CONFIG... ########################")
         self.loadConfig(userConfig)
-        print("######################## ... FINISHED ########################")
-
-        print("######################## PREPARE DIRECTORIES... ########################")
         outputRootPath = self.prepareDirectories()
-        print("######################## ... FINISHED ########################")
+        benchutils.createLogger(outputRootPath)  # always put this after config loading as logger requires config parameter
+
         return outputRootPath
 
     def evaluateInputData(self, inputfile):
@@ -125,7 +129,7 @@ class Pipeline():
         try:
             numCores = int(benchutils.getConfigValue("General", "numCores"))
         except:
-            print("numCores must be an integeger value. Exit program.")
+            benchutils.logError("ERROR: numCores must be an integeger value. Exit program.")
             exit()
 
         rounds = int(len(methods) / numCores)
@@ -136,39 +140,39 @@ class Pipeline():
             threads = [None] * numCores
             for i in range(numCores):
                 selector = selectorFactory.createFeatureSelector(methods[(j * numCores) + i])
-                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
-                #print("spawn process number " + str((j * numCores) + i) + ": " + methods[(j * numCores) + i])
-                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                threads[i] = p
-                p.start()
+                #util.logDebug("spawn process number " + str((j * numCores) + i) + ": " + methods[(j * numCores) + i])
+                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                #threads[i] = p
+                #p.start()
 
                 # wait for all threads to finish
-            for thr in threads:
-                #print("join thread...")
-                thr.join()
-                ##print("... finished")
+            #for thr in threads:
+                #util.logDebug("join thread...")
+                #thr.join()
+                ##util.logDebug("... finished")
 
         #if there are remaining threads, start them
         remaining_threads = len(methods) - (rounds * numCores)
-        #print("remaining threads: " + str(remaining_threads))
+        #util.logDebug("remaining threads: " + str(remaining_threads))
         if remaining_threads > 0:
             # create threadpool
             threads = [None] * remaining_threads
             for i in range(1, remaining_threads + 1):
                 selector = selectorFactory.createFeatureSelector(methods[len(methods) - i])
-                #print("spawn process number " + str(len(methods) - i) + ": " + methods[len(methods) - i])
-                #self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
+                #util.logDebug("spawn process number " + str(len(methods) - i) + ": " + methods[len(methods) - i])
+                self.runFeatureSelector(selector, datasetLocation, outputDir, loggingDir)
                 #spawn new process for actual gene selection
-                p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
-                threads[i-1] = p
-                p.start()
+                #p = multiprocessing.Process(target=self.runFeatureSelector, args=(selector, datasetLocation, outputDir, loggingDir))
+                #threads[i-1] = p
+                #p.start()
 
                 # wait for all threads to finish
-            for thr in threads:
-                #print("join thread...")
-                thr.join()
-                #print("... finished")
+            #for thr in threads:
+                #util.logDebug("join thread...")
+                #thr.join()
+                #util.logDebug("... finished")
 
         return outputDir
 
@@ -183,13 +187,23 @@ class Pipeline():
            """
         colors = {}
         colorPalette = dict(**mcolors.CSS4_COLORS)
-
-        colorNames = list(colorPalette.keys())
+        lightcolors = {"teal", "indigo", "rebeccapurple", "fuchsia", "silver","olive", "crimson","honeydew", "linen", "seashell", "mistyrose", "snow", "white", "lightgray", "lightgrey",
+                           "whitesmoke", "gainsboro", "peachpuff", "antiquewhite", "bisque", "navajowhite",
+                           "blanchedalmond"
+                           "papayawhip", "moccasin", "wheat", "oldlace", "floralwhite", "cornsilk", "lemonchiffon",
+                           "khaki", "palegoldenrod", "ivory",
+                           "beige", "lightyellow", "lightgoldenrodyellow", "greenyellow", "honeydew", "lightgreen", "lime", "limegreen",
+                           "palegreen", "mintcream", "aquamarine",
+                           "azure", "lightcyan", "paleturquoise", "aqua", "cyan", "powderblue", "lightblue", "skyblue",
+                           "lightskyblue", "aliceblue",
+                           "lightsteelblue", "ghostwhite", "lavender", "thistle", "lavenderblush", "pink", "lightpink"}
+        colorNames = set(colorPalette.keys())
+        colorNames = list(colorNames.difference(lightcolors))
         for method in methods:
             labelColor = random.choice(colorNames)
             colorNames.remove(labelColor)
-            #colors[method] = labelColor
-            colors[method] = mcolors.to_hex(labelColor)
+            colors[method] = labelColor
+            #colors[method] = mcolors.to_hex(labelColor)
 
         return colors
 
@@ -429,33 +443,35 @@ class Pipeline():
         :param userConfig: absolute path to an additional user configuration file (config.ini will always be used by default) to overwrite default configuration.
         :type userConfig: str
         """
-        print("######################## PREPROCESS DATA... ########################")
+        benchutils.logInfo("Welcome to Comprior!")
+        benchutils.logInfo("######################## PREPROCESS DATA... ########################")
         datasetLocation, mappedLocation = self.preprocessData()
-        print("######################## ... FINISHED ########################")
+        benchutils.logInfo("######################## ... FINISHED ########################")
 
-        print("######################## EVALUATE INPUT DATA... ########################")
+
         self.evaluateInputData(datasetLocation)
-        print("######################## ... FINISHED ########################")
 
-        print("######################## EVALUATE KNOWLEDGE BASES... ########################")
         self.evaluateKnowledgeBases(datasetLocation)
-        print("######################## ... FINISHED ########################")
 
-        print("######################## SELECT FEATURES... ########################")
+        benchutils.logInfo("######################## SELECT FEATURES... ########################")
         outputDir = self.selectFeatures(datasetLocation)
-        print("######################## ... FINISHED ########################")
+        benchutils.logInfo("######################## ... FINISHED ########################")
 
-        print("######################## EVALUATE BIOMARKERS... ########################")
+        benchutils.logInfo("######################## EVALUATE BIOMARKERS... ########################")
         dataPath = os.path.dirname(datasetLocation)
         self.evaluateBiomarkers(dataPath, mappedLocation, outputDir)
-        print("######################## ... FINISHED ########################")
+        benchutils.logInfo("######################## ... FINISHED ########################")
+        benchutils.logInfo("Comprior is done!")
+        benchutils.logInfo("Please find all results at " + benchutils.getConfigValue("General", "resultsDir") + benchutils.getConfigValue("General", "outputDir_name"))
+        benchutils.logInfo("An explanation on the output folder and file structure can be found at https://comprior.readthedocs.io/en/latest/outputstructure.html#results")
 
 if __name__ == '__main__':
+
     # parse input params
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, help='User-specific config file that overwrites parts of the original config file.')
 
-
     args = parser.parse_args()
+
     pipeline = Pipeline(args.config)
     pipeline.executePipeline()

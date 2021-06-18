@@ -1,5 +1,5 @@
-How-Tos
-=======
+Extending Comprior - How-Tos
+============================
 
 Add New Preprocessing Functionality
 ***********************************

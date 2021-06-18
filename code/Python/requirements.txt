@@ -3,7 +3,6 @@ numpy
 sphinx == 1.7.9
 sklearn #for feature selection
 mlxtend #for feature selection
-json
 
 bioservices >= 1.7.11 #for querying knowledge bases
 opentargets #for querying OpenTargets

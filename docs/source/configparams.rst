@@ -18,6 +18,7 @@ General
 * **preprocessing** - where to put preprocessed data sets (recommended not to changed)
 * **crossVal_preprocessing** - where to put preprocessed data sets for cross-validation (recommended not to changed)
 * **outputDir_name** - name of the overall output directory. If that directory already exists, Comprior adds numbering.
+* **log_filename** - name of the log file to which processing information, warnings, etc. are written
 
 R
 ##
@@ -166,12 +167,12 @@ KEGG
 * **outputDir**  - output directory for intermediate results from web service (recommended not to change)
 * **maxNumPathways** (*int*) - specify the maximum number of pathways to retrieve per search term (for performance reasons)
 
-UMLS (needed for DisGeNET)
-############################
+UMLS (needed to transform search terms into CUIs for using DisGeNET)
+####################################################################################
 * **login_uri** - URL of login web service (recommended not to change)
 * **loginservice_uri** - URL of login web service (recommended not to change)
 * **auth_endpoint** - authentication endpoint for API (recommended not to change)
-* **apikey** - API key for accessing UMLS (recommended not to change unless own API key available)
+* **apikey** - API key for accessing UMLS (recommended not to change unless own API key available, register for free at `UMLS <https://uts.nlm.nih.gov/uts/signup-login>`_ to create an own key)
 * **webservice_uri** - URL of UMLS web service (recommended not to change)
 
 DisGeNET
@@ -179,6 +180,7 @@ DisGeNET
 * **associationScore** (*score/gene_dsi/gene_dpi*) - which association score to use for knowledge retrieval: score (overall score), gene_dsi (disease specificity), gene_dpi (disease pleiotropy)
 * **webservice_url** - URL of DisGeNET web service (recommended not to change)
 * **outputDir** - output directory for intermediate results from web service (recommended not to change)
+* **apikey** - API key for accessing DisGeNET (recommended not to change unless own API key is available, register at `DisGeNET <https://www.disgenet.org/signup/>`_ to create your own key)
 
 PathwayCommons
 ##############

@@ -24,9 +24,9 @@ Install and Run Comprior from Source
 
     sudo ./install.sh 2>&1 | tee installout.out
 
-* go grab some healthy snacks, for this might take a while depending on what is already installed on your machine :-)
-* check *installout.out* for any errors
+* go grab some healthy snacks, for this might take a while depending on what is already installed on your machine (a couple of hours in the worst case) :-)
 * check *code/configs/config.ini* if the variables *homePath* (path to Comprior's root directory), *RscriptLocation* (path to your Rscript), and *JavaLocation* (path to your Java location) point to the right locations.
+
 
 2. Usage
 ^^^^^^^^
@@ -42,7 +42,7 @@ Install and Run Comprior from Source
 
         python3 pipeline.py --config ../../configs/exampleconfig.ini
 
-* Check your results in *data/results/example* - see :ref:`outputStructure` for where to find what results.
+* Check your results in *data/results/example* - see :ref:`outputStructure` for where to find what results and :ref:`plotsexplained` for a more detailed explanation on the generated plots.
 
 .. _dockerrun:
 
@@ -54,13 +54,14 @@ Run Comprior in a Docker Container
 
     git clone https://github.com/CPerscheid/Comprior.git
 
-* Via command line, navigate to the *Comprior/code* where the Dockerfile is located and create the image (this might take a while)::
+* Via command line, navigate to *Comprior/* where the Dockerfile is located and create the image **using root privileges** (this might take a while)::
 
-    docker build -t comprior .
+    cd Comprior
+    sudo docker build -t comprior .
 
-* provide the *Comprior/code/comprior_docker* directory as mounting directory (it contains the config file and input data sets), and the config file as parameter to Comprior::
+* provide the **absolute path** of your *Comprior/comprior_docker* directory as mounting directory (it contains the config file and input data sets), and the config file as parameter (note the two dashes there) to Comprior and run it with **root privileges**::
 
-    docker run -it --rm -v /absolute/path/to/Comprior/code/comprior_docker:/home/app/data comprior —-config /home/app/data/dockerexampleconfig.ini
+    sudo docker run -it --rm -v /your/absolute/path/to/Comprior/comprior_docker:/home/app/data comprior —-config /home/app/data/dockerexampleconfig.ini
 
 
 .. _installingJavaMaven:
@@ -102,6 +103,13 @@ Installing Java JDK and Maven on Ubuntu
 
 Troubleshooting
 ***************
+
+::
+
+    mvn: not found
+
+* if the install script keeps saying this although you are sure maven is installed on your device, check if your PATH variable (*echo $PATH*) points to maven's bin directory. Alternatively, you can add the absolute path to your maven installation to the script: *export PATH="$PATH:your/mvn/path"*
+
 
 ::
 
@@ -211,3 +219,12 @@ Troubleshooting
   * if it still fails, try this as well::
 
       brew reinstall openssl
+
+
+::
+
+    configparser.DuplicateOptionError: While reading from '../../configs/config.ini' [line 17]: option 'rscriptlocation' in section 'R' already exists
+
+* If this error occurs, then you probably have adapted *config.ini* before installing Comprior, e.g. by removing or adding a line.
+    * If you are executing **from source**:You can now either update *config.ini* directly or (more sustainable for the future) you can adapt *install.sh* and *install_macos.sh* scripts as they replace the values of parameters *RscriptLocation* and *JavaLocation* and *homePath* based on their line numbers. Update the script to contain the correct line number and then rerun the installation script.
+    * If you are executing **in a Docker container**: You need to adapt the *Dockerfile* and update the line numbers that are used to replace parameters *homePath*, *RscriptLocation*, *JavaLocation*, and *code*. Check if these parameters are still located in the correct line of *config.ini*. If not, update the line numbers given in the sed command that is executed there.

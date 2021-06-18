@@ -44,9 +44,9 @@ COPY code/configs/config.ini /home/app/code/configs/config.ini
 
 #adapt the config file to point to the correct home, R, and Java paths
 RUN sed -i "5s#.*#homePath=$PWD/#" /home/app/code/configs/config.ini
-RUN sed -i "16s#.*#RscriptLocation=Rscript#" /home/app/code/configs/config.ini
-RUN sed -i "19s#.*#code = \${General:homePath}code/Java/#" /home/app/code/configs/config.ini
-RUN sed -i "20s#.*#JavaLocation=java#" /home/app/code/configs/config.ini
+RUN sed -i "17s#.*#RscriptLocation=Rscript#" /home/app/code/configs/config.ini
+RUN sed -i "20s#.*#code = \${General:homePath}code/Java/#" /home/app/code/configs/config.ini
+RUN sed -i "21s#.*#JavaLocation=java#" /home/app/code/configs/config.ini
 
 
 #create the input/output directories

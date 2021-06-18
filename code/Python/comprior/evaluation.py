@@ -7,6 +7,7 @@ import matplotlib as matplots
 import matplotlib.pyplot as plt
 from matplotlib_venn import venn2
 from matplotlib_venn import venn3
+from matplotlib import colors as mcolors
 
 
 class AttributeRemover():
@@ -320,7 +321,7 @@ class ClassificationEvaluator(Evaluator):
         params = [self.intermediateDir,self.output, str(self.evalConfig["topKmin"]), str(self.evalConfig["topKmax"]), str(self.evalConfig["kfold"]) ]
         params.append(classifiers)
         params.append(metrics)
-
+        benchutils.logInfo("INFO: Running classification (" + str(self.evalConfig["kfold"]) +"-fold cross-validation) for " + str(self.evalConfig["topKmin"]) + " to " + str(self.evalConfig["topKmax"]) + "features with classifiers " + classifiers + " for " + self.intermediateDir)
         benchutils.runJavaCommand(self.javaConfig, "/WEKA_Evaluator.jar", params)
 
         for metric in metrics.split(","):
@@ -366,7 +367,7 @@ class RankingsEvaluator(Evaluator):
         sizeOfSets = len(inputFiles)
 
         if sizeOfSets <= 1:
-            print("Cannot compute overlaps as we do not have enough valid files.")
+            benchutils.logWarning("WARNING: Cannot compute overlaps as we do not have enough valid files.")
 
         elif sizeOfSets == 2: #if we have only 2 sets for intersection
             rankings = self.loadRankings(self.input, int(self.evalConfig["topKmax"]), False)
@@ -744,7 +745,7 @@ class AnnotationEvaluator(Evaluator):
         sizeOfSets = len(inputFiles)
 
         if ((sizeOfSets == 0) or (sizeOfSets == 1)):
-            print("Something went wrong - you do not have enough files to compute overlap from!")
+            benchutils.logWarning("WARNING: You do not have enough files to compute overlap from!")
         elif (sizeOfSets == 2):  # if we have only 2 sets for intersection
             methods = self.loadAnnotationFiles(inputDir, inputFiles)
             colors = []
@@ -777,7 +778,6 @@ class AnnotationEvaluator(Evaluator):
                 method = "_".join(file.split("_")[1:-1])  # get method name from filename without ending (format: top5_APPROACH_annotation.txt)
                 colors += "_" + self.methodColors[method]
                 filenames.append(file)
-            print("COLORS: " + colors)
             params.append(colors)
             params.extend(filenames)
             benchutils.runRCommand(self.rConfig, "UpsetDiagramCreation.R", params)
@@ -850,6 +850,8 @@ class DatasetEvaluator(Evaluator):
         """Triggers the actual evaluation/plot generation in R.
            If a second data set for cross-validation was provided, also run the corresponding R script on that data set.
            """
+        benchutils.logInfo("######################## EVALUATE INPUT DATA... ########################")
+
         params = [self.input, self.output, self.separator, "TRUE"]
         params.extend(self.options)
         benchutils.runRCommand(benchutils.getConfig("R"), "DataCharacteristicsPlotting.R", params)
@@ -859,6 +861,8 @@ class DatasetEvaluator(Evaluator):
             params = [crossValidationFile, self.output, self.separator, "TRUE"]
             params.extend(self.options)
             benchutils.runRCommand(benchutils.getConfig("R"), "DataCharacteristicsPlotting.R", params)
+
+        benchutils.logInfo("######################## ... FINISHED ########################")
 
 class KnowledgeBaseEvaluator(Evaluator):
     """Creates plots to evaluate knowledge base coverage.
@@ -884,64 +888,53 @@ class KnowledgeBaseEvaluator(Evaluator):
         self.searchterms = searchterms
         super().__init__(None, output, None)
 
-    def drawBoxPlot(self, stats, colIndex, filename, title, ylabel, colors):
-        """Creates box plot from a data set.
+    def drawCombinedPlot(self, stats, colIndex, filename, title, ylabel1, ylabel2, colors):
+        """Creates combined plot of box and bar plot from a data set.
 
-           :param stats: statistics to plot.
-           :type stats: :class:`pandas.DataFrame`
-           :param colIndex: column index to use as column.
-           :type colIndex: int
-           :param filename: filename for the plot.
-           :type filename: str
-           :param title: title for the plot.
-           :type title: str
-           :param ylabel: label of y axis.
-           :type ylabel: str
-           :param colors: List of colors to use for the different search terms.
-           :type colors: :class:`List` of str
-           """
-        pl = stats.boxplot(by =stats.columns[0], rot = 90, column = stats.columns[colIndex], patch_artist=True, return_type = "both",
-                           boxprops = dict(color="k"), medianprops= dict(color="k"),whiskerprops= dict(color="k"), capprops= dict(color="k"), flierprops= dict(color="k", markeredgecolor="k"))  # fill with color
+            :param stats: statistics to plot.
+            :type stats: :class:`pandas.DataFrame`
+            :param colIndex: column index to use as column.
+            :type colIndex: int
+            :param filename: filename for the plot.
+            :type filename: str
+            :param title: title for the plot.
+            :type title: str
+            :param ylabel1: label of y axis (left side/box plot).
+            :type ylabel1: str
+            :param ylabel2: label of y axis (right side/bar plot).
+            :type ylabel2: str
+            :param colors: List of colors to use for the different search terms.
+            :type colors: :class:`List` of str
+            """
+        fig, ax = plt.subplots()
+        ax2 = ax.twinx()
+
+        df_gb = stats.groupby('search term').count()
+        # create box plot
+        pl = stats.boxplot(ax=ax, by=stats.columns[0], rot=90, column=stats.columns[colIndex], patch_artist=True,
+                           return_type="both",
+                           boxprops=dict(color="k"), medianprops=dict(color="k"), whiskerprops=dict(color="k"),
+                           capprops=dict(color="k"), flierprops=dict(color="k", markeredgecolor="k"))  # fill with color
+
         bplot = pl.iloc[0]
         for patch, color in zip(bplot[1]['boxes'], colors):
             patch.set_facecolor(color)
-        bplot[0].set_ylabel(ylabel)
+
+        bplot[0].set_ylabel(ylabel1)
         bplot[0].set_xlabel("")
         bplot[0].set_title(title)
         bplot[0].figure.texts = []
-        ind = np.arange(1, len(colors)+1)
+        ind = np.arange(1, len(colors) + 1)
         bplot[0].set_xticks(ind)
         bplot[0].set_xticklabels(bplot[0].get_xticklabels())
         plt.gca().autoscale()
 
-        matplots.pyplot.savefig(self.output + filename, bbox_inches = "tight")
-        matplots.pyplot.clf()
+        # create bar plot
+        ax2.bar(range(1, len(df_gb.iloc[:,(colIndex-1)]) +1 ), height=df_gb.iloc[:,(colIndex-1)], align='center', alpha=0.3,
+                       color=colors)
+        ax2.set_ylabel(ylabel2)
 
-
-    def drawBarPlot(self, stats, filename, title, ylabel, colors):
-        """Creates a bar plot from a given data set.
-
-           :param stats: DataFrame from which to draw the bar plot.
-           :type stats: :class:`DataFrame`
-           :param filename: filename for the plot.
-           :type filename: str
-           :param title: title for the plot.
-           :type title: str
-           :param ylabel: label of y axis.
-           :type ylabel: str
-           :param colors: List of colors to use.
-           :type colors: :class:`List` of str
-           """
-        pl = stats.plot.bar(x=stats.index, rot = 90, color = colors)
-        pl.set_ylabel(ylabel)
-        pl.set_xlabel("")
-        pl.set_title(title)
-        pl.figure.texts = []
-        ind = np.arange(stats.shape[0] + 1)
-        pl.set_xticks(ind)
-        pl.set_xticklabels(pl.get_xticklabels())
-
-        matplots.pyplot.savefig(self.output + filename, bbox_inches = "tight")
+        matplots.pyplot.savefig(self.output + filename, bbox_inches="tight")
         matplots.pyplot.clf()
 
     def createKnowledgeBases(self, knowledgebaseList):
@@ -958,6 +951,8 @@ class KnowledgeBaseEvaluator(Evaluator):
         for kb in knowledgebaseList:
             kbs.append(kbfactory.createKnowledgeBase(kb))
         return kbs
+
+
 
     def checkCoverage(self, kb, colors, useIDs):
         """Checks the coverage for a given knowledge base and creates corresponding plots.
@@ -983,16 +978,13 @@ class KnowledgeBaseEvaluator(Evaluator):
         stats.columns = ["search term", "gene", "score"]
         # write to file
         stats.to_csv(self.output + kb.getName() + "_GeneStats.csv", index=False)
-        boxplotfile = kb.getName() + "_GeneScores.pdf"
-        barplotfile = kb.getName() + "_NumberOfGenes.pdf"
-        df_statscounts = stats["search term"].value_counts()
+        combinedplotfile = kb.getName() + "_GeneCoverage.pdf"
+        #df_statscounts = stats["search term"].value_counts()
         if not stats.empty:
-            self.drawBoxPlot(stats, 2, boxplotfile, kb.getName(),
-                         "gene association scores", colors)
-            self.drawBarPlot(df_statscounts, barplotfile, kb.getName(),
-                         "number of genes per search term", colors)
+            self.drawCombinedPlot(stats, 2, combinedplotfile, kb.getName(),
+                         "gene association scores", "number of genes per search term", colors)
         else:
-            print("NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.")
+            benchutils.logWarning("WARNING: No results for search terms, so no plots are generated.")
 
 
     def checkPathwayCoverage(self, kb, colors, useIDs):
@@ -1008,10 +1000,7 @@ class KnowledgeBaseEvaluator(Evaluator):
             #query knowledge base
             pathways = kb.getRelevantPathways([term])
             for pathwayName, value in pathways.items():
-                #numGenes = len(pathway.getNodes())
                 numGenes = value.vcount
-                #pathwayName = pathway.name
-                #evtl. score attribut?
                 if useIDs:
                     stats.append((int(self.searchterms.index(term) + 1), pathwayName, numGenes))
                 else:
@@ -1021,26 +1010,25 @@ class KnowledgeBaseEvaluator(Evaluator):
         df_stats = pd.DataFrame(stats, columns = ["search term", "pathway", "#genes"])
         #write to file
         df_stats.to_csv(self.output + kb.getName() + "_PathwayStats.csv", index = False)
-        boxplotfile = kb.getName() + "_PathwaySizes.pdf"
-        barplotfile = kb.getName() + "_NumberOfPathways.pdf"
-        df_statscounts = df_stats["search term"].value_counts()
+        combinedplotfile = kb.getName() + "_PathwayCoverage.pdf"
 
         if not df_stats.empty:
-            self.drawBoxPlot(df_stats, 2, boxplotfile, kb.getName() + ": Pathway sizes per search term",
-                             "number of genes in pathway", colors)
-            self.drawBarPlot(df_statscounts, barplotfile, kb.getName() + ": Number of pathways per search term",
-                             "number of pathways", colors)
+            self.drawCombinedPlot(df_stats, 2, combinedplotfile, kb.getName(),
+                                  "pathway sizes (#genes)", "number of pathways", colors)
         else:
-            print("NO RESULTS FOR SEARCH TERMS, SO NO PLOTS GENERATED.")
+            benchutils.logWarning("WARNING: No results for search terms, so no plots generated.")
 
     def evaluate(self):
         """Evaluates every given knowledge base and checks how many genes and pathways (and how large they are) are in there for the given search terms.
            Creates corresponding plots.
            """
+
+        benchutils.logInfo("######################## EVALUATE KNOWLEDGE BASES... ########################")
+
         #set colors for every search term
         colors = []
 
-        #check if the individual length of a search term is longer than 20
+        #check if the individual length of a search term is longer than 15
         #map them to IDs then instead to avoid too long axis labels to be plotted
         maxLength = len(max(self.searchterms, key=len))
         useIDs = False
@@ -1056,10 +1044,22 @@ class KnowledgeBaseEvaluator(Evaluator):
             colorPalette = list(plt.get_cmap("Paired").colors)
         else:
             #create color palette with as many colors as search terms from a cyclic colormap
-            cmap = plt.cm.get_cmap("hsv", len(self.searchterms))
+            colorPalette = dict(**mcolors.CSS4_COLORS)
+            lightcolors = {"teal", "indigo", "rebeccapurple", "fuchsia", "silver","olive", "crimson","honeydew", "linen", "seashell", "mistyrose", "snow", "white", "lightgray", "lightgrey",
+                           "whitesmoke", "gainsboro", "peachpuff", "antiquewhite", "bisque", "navajowhite",
+                           "blanchedalmond"
+                           "papayawhip", "moccasin", "wheat", "oldlace", "floralwhite", "cornsilk", "lemonchiffon",
+                           "khaki", "palegoldenrod", "ivory",
+                           "beige", "lightyellow", "lightgoldenrodyellow", "greenyellow", "honeydew", "lightgreen", "lime", "limegreen",
+                           "palegreen", "mintcream", "aquamarine",
+                           "azure", "lightcyan", "paleturquoise", "aqua", "cyan", "powderblue", "lightblue", "skyblue",
+                           "lightskyblue", "aliceblue",
+                           "lightsteelblue", "ghostwhite", "lavender", "thistle", "lavenderblush", "pink", "lightpink"}
+            colorNames = set(colorPalette.keys())
+            colorNames = list(colorNames.difference(lightcolors))
             colorPalette = []
             for i in range(0, len(self.searchterms)):
-                colorPalette.append(cmap(i))
+                colorPalette.append(colorNames[i])
 
         for term in self.searchterms:
             labelColor = random.choice(colorPalette)
@@ -1067,7 +1067,7 @@ class KnowledgeBaseEvaluator(Evaluator):
             colors.append(labelColor)
 
         for kb in self.knowledgebases:
-            print("Draw plots for " + kb.getName() + "...")
+            benchutils.logInfo("##### Draw plots for " + kb.getName() + "...#####")
             if kb.hasPathways():
                 self.checkPathwayCoverage(kb, colors, useIDs)
 
@@ -1075,4 +1075,7 @@ class KnowledgeBaseEvaluator(Evaluator):
 
                 self.checkCoverage(kb, colors, useIDs)
 
-        print("...finished.")
+            benchutils.logInfo("#####...finished.#####")
+
+        benchutils.logInfo("######################## ...FINISHED ########################")
+

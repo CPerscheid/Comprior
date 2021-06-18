@@ -1,6 +1,6 @@
-import os, csv, sys, configparser, operator
+import os, configparser, logging
 import pandas as pd
-import time, subprocess
+import subprocess
 import knowledgebases as kbs
 
 metricScales = {
@@ -16,6 +16,7 @@ metricScales = {
 
 ##### CONFIG #####
 config = None
+LOGGER_NAME = "Comprior"
 
 def loadConfig(path):
     """Loads the config files.
@@ -155,10 +156,76 @@ def cleanupResults():
     removeDirectoryContent(getConfigValue("General", "intermediateDir") + "identifierMappings/")
     removeDirectoryContent(getConfigValue("General", "intermediateDir"))
 
-##### TIME LOGGING #####
+##### LOGGING #####
 
-def createLog():
-    """Create the logging data structure.
+def createLogger(outputPath):
+    """Create a logger for Comprior. Creates two handlers for this logger: one for console output that only contains high-level status update logs and error messages.
+       Warnings and other tracing information is written to an extra log file.
+
+       :param outputPath: absoulte path to where the log file will be stored.
+       :type outputPath: String
+       """
+    FORMAT_STR = '%(asctime)s %(message)s'
+    LOG_FILE = outputPath + "/" + LOGGER_NAME + ".log"
+
+    #create logger and set default level to debug
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(FORMAT_STR)
+
+    #add handler to write log to file at custom level
+    fh = logging.FileHandler(LOG_FILE)
+    fh.name = 'File Logger'
+    fh.level = logging.DEBUG
+    fh.formatter = formatter
+    LOGGER.addHandler(fh)
+
+    #add handler to write log to console output at custom level
+    ch = logging.StreamHandler()
+    ch.name = 'Console Logger'
+    ch.level = logging.WARNING
+    ch.formatter = formatter
+    LOGGER.addHandler(ch)
+
+def logDebug(message):
+    """Write a log at debug level.
+
+       :param message: the log message to print.
+       :type message: String
+       """
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.debug(message)
+
+def logInfo(message):
+    """Write a log at info level.
+
+       :param message: the log message to print.
+       :type message: String
+       """
+    #we do want to have the status updates in our console output but not the warnings, but info level is lower than warning level
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.critical(message)
+
+def logWarning(message):
+    """Write a log at warning level.
+
+       :param message: the log message to print.
+       :type message: String
+       """
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.warning(message)
+
+def logError(message):
+    """Write a log at error level.
+
+       :param message: the log message to print.
+       :type message: String
+       """
+    LOGGER = logging.getLogger(LOGGER_NAME)
+    LOGGER.error(message)
+
+def createTimeLog():
+    """Create the data structure for tracing runtimes of feature selection approaches.
 
        :return: the logging data structure.
        :rtype: :class:`pandas.DataFrame`
@@ -166,8 +233,8 @@ def createLog():
 
     return pd.DataFrame(columns = ["Description", "Start", "End", "Duration"])
 
-def flushLog(timeLogs, outputFilePath):
-    """Write the whole log to a file.
+def flushTimeLog(timeLogs, outputFilePath):
+    """Write the whole log (of runtimes) to a file.
 
        :param timeLogs: the logs in a DataFrame.
        :type timeLogs: :class:`pandas.DataFrame`
@@ -176,8 +243,8 @@ def flushLog(timeLogs, outputFilePath):
        """
     timeLogs.to_csv(outputFilePath, index = False, sep = "\t")
 
-def log(timeLogs, start, end, message):
-    """Write a log entry and add it to the log data structure.
+def logRuntime(timeLogs, start, end, message):
+    """Write a runtime log entry and add it to the runtime log data structure.
 
        :param timeLogs: logs to which the new entry should be added
        :type timeLogs: :class:`pandas.DataFrame`
@@ -208,9 +275,21 @@ def runRCommand(rConfig, scriptName, params):
        """
     args = [rConfig["RscriptLocation"], scriptName]
     args.extend(params)
-    print(args)
-    p = subprocess.Popen(args, cwd=rConfig["code"])
-    p.wait()
+    logDebug("DEBUG: Invoking R script with command: " + " ".join(args))
+    p = subprocess.Popen(args, cwd=rConfig["code"], stdout=subprocess.PIPE, stderr = subprocess.PIPE)
+    out, err = p.communicate()
+    err = err.decode("utf-8")
+    out = out.decode("utf-8")
+    #make sure only the important messages are shown in the console output
+    if (err != ""):
+        if (("halt" in err) or ("Error" in err)):
+            logWarning("WARNING: Something went wrong in this R script: " + err)
+        else:
+            logDebug(err)
+
+    if (out != ""):
+        logDebug(out)
+
 
 def runJavaCommand(javaConfig, scriptName, params):
     """Run external Java code.
@@ -224,10 +303,20 @@ def runJavaCommand(javaConfig, scriptName, params):
        """
     args = [javaConfig["JavaLocation"], "-jar", javaConfig["code"] + scriptName]
     args.extend(params)
-    print(args)
+    logDebug("DEBUG: Invoking Java code with command: " + " ".join(args))
 
-    p = subprocess.Popen(args, cwd=javaConfig["code"])
-    p.wait()
+    p = subprocess.Popen(args, cwd=javaConfig["code"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    err = err.decode("utf-8")
+    out = out.decode("utf-8")
+    if (err != ""):
+        if (("halt" in err) or ("Error" in err)):
+            logWarning("WARNING: Something went wrong in this R script: " + err)
+        else:
+            logDebug(err)
+
+    if (out != ""):
+        logDebug(out)
 
 
 def mapIdentifiers(itemList, originalFormat, desiredFormat):

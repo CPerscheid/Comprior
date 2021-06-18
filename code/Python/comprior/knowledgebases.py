@@ -1,16 +1,31 @@
 from abc import abstractmethod
 import math
 from opentargets import OpenTargetsClient
-from bioservices import KEGG, REST
+import contextlib, sys
 import pandas as pd
 import benchutils as util
+import logging
 import time, requests, json
 from datetime import datetime
 from lxml.html import fromstring
-import pypath.core.network as network
-import pypath.core.entity as entity
-import pypath.internals.input_formats as input_formats
 
+@contextlib.contextmanager
+def suppress_stdout(suppress=True):
+    std_ref = sys.stdout
+    if suppress:
+        sys.stdout = open('/dev/null', 'w')
+        yield
+    sys.stdout = std_ref
+
+
+with suppress_stdout():
+    from bioservices import KEGG, REST
+    import pypath.core.network as network
+    import pypath.core.entity as entity
+    import pypath.internals.input_formats as input_formats
+logging.disable(0)
+
+WARNING_NOTHING_RETRIEVED_MESSAGE = "WARNING: No prior knowledge retrieved from {kb} for {lbl} - continue with empty set. This could be because there actually is no related information available in the knowledge base. If this message occurs with a HTTP status code >=500, there is probably a connection issue on server side. Consider retrying later."
 
 ############################### WEB SERVICES ###############################
 
@@ -22,7 +37,12 @@ class ENRICHR(REST):
        """
     def __init__(self):
         self.config = util.getConfig("Enrichr")
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
         super().__init__("ENRICHR", url=self.config["webservice_uri"])
+        logging.getLogger("bioservices:ENRICHR").setLevel(logging.ERROR)
+        logging.disable(0)
+
 
     def addlist(self, geneList):
         """Queries EnrichR to annotate a given list of genes.
@@ -85,7 +105,6 @@ class ENRICHR(REST):
 
         response = self.http_get("enrich", params = params)
         res = pd.DataFrame.from_dict(list(response.values())[0])
-
         if not res.empty:
             res.columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
             res = res[["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value",
@@ -94,8 +113,8 @@ class ENRICHR(REST):
             #create empty dataframe if we did not receive any results
             res = pd.DataFrame(columns=["Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value",
                  "Old p-value", "Old adjusted p-value"])
-        return res
 
+        return res
 
 class UMLS_AUTH(REST):
     """Singleton class.
@@ -123,7 +142,12 @@ class UMLS_AUTH(REST):
             self.tgt_timestamp = None
             self.tgt = None
             self.service = self.config["loginservice_uri"]
+            #temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+            logging.disable(50)
             super().__init__("UMLS_AUTH", url=self.config["login_uri"])
+            logging.getLogger("bioservices:UMLS_AUTH").setLevel(logging.ERROR)
+            logging.disable(0)
+
 
         def get_tgt(self):
             """Get a ticket-granting ticket (tgt) from the authentication service.
@@ -190,7 +214,12 @@ class UMLS(REST):
     def __init__(self):
         self.config = util.getConfig("UMLS")
         self.auth = UMLS_AUTH()
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
         super().__init__("UMLS", url=self.config["webservice_uri"])
+        logging.getLogger("bioservices:UMLS").setLevel(logging.ERROR)
+        logging.disable(0)
+
 
     def getCUIs(self, labels):
         """Get CUIs for the given labels.
@@ -208,6 +237,18 @@ class UMLS(REST):
             query = "/search/current?string=" + label + "&searchType=exact"
 
             response = self.http_get(query, params = params)
+            if response is None:
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="DisGeNET", lbl=" ,".join(labels)))
+                continue
+
+            # check if 500 is returned
+            if isinstance(response, int):
+                if response >= 500:
+                    util.logWarning("WARNING: Error code " + str(response) + " returned from DisGeNET for " + " ,".join(labels))
+                else:
+                    util.logDebug("DEBUG: Code " + str(response) + " returned from DisGeNET for " + " ,".join(labels))
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="DisGeNET", lbl=" ,".join(labels)))
+                continue
 
             #get CUIs out of response
             results = response["result"]["results"]
@@ -227,7 +268,11 @@ class DISGENET(REST):
        """
     def __init__(self):
         self.umls = UMLS()
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
         super().__init__("DisGeNET", url=util.config["DisGeNET"]["webservice_url"])
+        logging.getLogger("bioservices:DisGeNET").setLevel(logging.ERROR)
+        logging.disable(0)
 
     def getVersion(self):
         """Get the current version of the DisGeNET API endpoint.
@@ -248,19 +293,30 @@ class DISGENET(REST):
            :rtype: :class:`pandas.DataFrame`
            """
         cuis = self.umls.getCUIs(labels)
-
         cui_string = ""
         cui_string += "%2C".join(cuis)
+        #add the api key for DisGeNET
+        api_key = util.getConfigValue("DisGeNET", "apikey")
+        authentication = {"Authorization": "Bearer %s" % api_key}
         requestString = "/gda/disease/" + cui_string
         ret = None
+        self.TIMEOUT = 30
         #retry query until we have to wait too long. DisGeNET sometimes seems to be quite slow
         while self.TIMEOUT < 250 and ret == None:
-            print("Trying to connect to DisGeNET...")
-            ret = self.http_get(requestString)
+            util.logDebug("DEBUG: Trying to connect to DisGeNET. Timeout set to " + str(self.TIMEOUT))
+            #disable timout warnings to be printed to the command line
+            logging.disable(100)
+            ret = self.http_get(requestString, headers = authentication)
+            logging.disable(0)
             self.TIMEOUT += 30
 
         #check if 500 is returned
         if isinstance(ret, int):
+            if ret >= 500:
+                util.logWarning("WARNING: Error code " + str(ret) + " returned from DisGeNET for " + " ,".join(labels))
+            else:
+                util.logDebug("DEBUG: Code " + str(ret) + " returned from DisGeNET for " + " ,".join(labels))
+            util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb = "DisGeNET", lbl = " ,".join(labels)))
             return pd.DataFrame(columns=["gene_symbol", util.config["DisGeNET"]["associationScore"]])
 
         # bring the result into a readable format
@@ -268,6 +324,7 @@ class DISGENET(REST):
         try:#if the dataframe is empty, just return an empty dataframe
             reduced_results = results.loc[:, ["gene_symbol", util.config["DisGeNET"]["associationScore"]]]
         except:
+            util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="DisGeNET", lbl=" ,".join(labels)))
             return pd.DataFrame(columns=["gene_symbol", util.config["DisGeNET"]["associationScore"]])
 
         reduced_results.columns = ["gene_symbol", "score"]
@@ -341,7 +398,12 @@ class PATHWAYCOMMONSWS(REST):
     def __init__(self):
         self.easyXMLConversion = False
         self._default_extension = "json"
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
         super().__init__("PathwayCommonsWS", url=util.config["PathwayCommons"]["webservice_url"])
+        logging.getLogger("bioservices:PathwayCommonsWS").setLevel(logging.ERROR)
+        logging.disable(0)
+
 
     _valid_direction = ["BOTHSTREAM", "DOWNSTREAM", "UPSTREAM"]
     def getVersion(self):
@@ -426,10 +488,10 @@ class PATHWAYCOMMONSWS(REST):
             url = "search.json?q=%s"  % q
 
         params = {}
-        if page>0:
+        if page>=0:
             params['page'] = page
         else:
-            self.logging.warning("page should be >=0")
+            util.logWarning("WARNING: PathwayCommons search result page should be >=0")
 
         if datasource:
             params['datasource'] = datasource
@@ -529,7 +591,7 @@ class KnowledgeBaseFactory():#singleton class
             if knowledgebase == "gConvert":
                 return Gconvert()
 
-            print("The listed knowledge base is not available. See the documentation for available knowledge bases.")
+            util.logError("ERROR: The listed knowledge base is not available. See the documentation for available knowledge bases.")
             exit()
 
     instance = None
@@ -668,7 +730,7 @@ class Enrichr(KnowledgeBase):
         # second, order by combined score in descending order
         # see also this best practices recommendation: https://www.researchgate.net/post/Enrichr_what_value_of_combined_score_is_significant
         final_terms = response[(response["Adjusted p-value"] < 0.05)]
-        final_terms.sort_values(by = "Combined score", ascending = False, inplace = True)
+        final_terms = final_terms.sort_values(by = "Combined score", ascending = False)
 
         final_terms.to_csv(outputFile, sep = "\t", index = False)
 
@@ -927,7 +989,9 @@ class OpenTargets(KnowledgeBase):
        :type hasPathwayInformation: bool
        """
     def __init__(self):
+        logging.disable(50)
         super().__init__("OpenTargets", util.getConfig("OpenTargets"), OpenTargetsClient(), True, False)
+        logging.disable(0)
 
     def getAssociations(self, labels):
         """Get all relevant information for a given set of labels, sorted by their association scores in descending order.
@@ -944,12 +1008,19 @@ class OpenTargets(KnowledgeBase):
         for term in labels:
             try:
                 a_for_disease = self.webservice.get_associations_for_disease(term)
-            except:
-                print("SEEMS SOME ERROR OCCURED FOR " + term)
+            except :
+                util.logWarning("WARNING: " + sys.exc_info()[0])
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb = "OpenTargets", lbl = term))
                 continue
             #check if an error code was returned
             if isinstance(a_for_disease, int):
-                print("ERROR: " + str(a_for_disease) + " RETURNED.")
+                if a_for_disease >= 500:
+                    util.logWarning(
+                        "WARNING: Error code " + str(a_for_disease) + " returned from OpenTargets for " + " ,".join(labels))
+                else:
+                    util.logDebug("DEBUG: Code " + str(a_for_disease) + " returned from OpenTargets for " + " ,".join(labels))
+
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="OpenTargets", lbl=term))
                 continue
             geneIDs = list()
             assocscores = list()
@@ -1028,7 +1099,7 @@ class Kegg(KnowledgeBase):
        :param config: configuration parameter of the knowledge base as specified in the config file.
        :type config: dict
        :param webservice: web service querying implementation.
-       :type webservice: :class:`opentargets.OpenTargetsClient`
+       :type webservice: :class:`bioservices.KEGG`
        :param hasGeneInformation: true if the knowledge base provides gene association information, false otherwise
        :type hasGeneInformation: bool
        :param hasPathwayInformation: true if the knowledge base also provides pathway information, false otherwise
@@ -1039,7 +1110,13 @@ class Kegg(KnowledgeBase):
 
     def __init__(self, pathwayparser):
         self.pathwayparser = pathwayparser
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
         super().__init__("KEGG", util.getConfig("KEGG"), KEGG(), True, True)
+        logging.getLogger("bioservices:KEGG").setLevel(logging.ERROR)
+        logging.getLogger("bioservices:keggparser").setLevel(logging.ERROR)
+        logging.disable(0)
+
 
     def getPathwayNames(self, labels):
         """Retrieve all pathway names related to the given labels, e.g. disease names.
@@ -1052,11 +1129,12 @@ class Kegg(KnowledgeBase):
 
         pathways = []
         for label in labels:
-            pathwayListString = self.webservice.find("pathway", "\"" + label + "\"")
+            with suppress_stdout():
+                pathwayListString = self.webservice.find("pathway", "\"" + label + "\"")
             # pathway are returned in the form path:pathwayid\tdescription\n
             if pathwayListString == "\n" or isinstance(pathwayListString, int):
                 pathwayList = []
-                #print("EMPTY PATHWAYS:" + str(pathwayListString))
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb= "KEGG", lbl = label))
             else:
                 pathwayList = pathwayListString.split("\n")[:-1]
             count = 0
@@ -1110,14 +1188,17 @@ class Kegg(KnowledgeBase):
            :rtype: :class:`pandas.DataFrame`
            """
         pathways = self.getRelevantPathways(labels)
-        overallCount = len(pathways)
+        genePathwayCounts = {}
         occurrenceCounts = {}
         for pathway in pathways.values():
-            nodes = pathway.nodes
             interactions = pathway.interactions_by_nodes
             reduced_interactions = {}
             #update interactions to only store the interactions counts
             for entity in interactions.keys():
+                if entity.label in genePathwayCounts.keys():  # add pathway count
+                    genePathwayCounts[entity.label] += 1
+                else:
+                    genePathwayCounts[entity.label] = 1
                 reduced_interactions[entity.label] = len(interactions[entity])
             #make dataframe from count
             interactions_df = pd.DataFrame.from_dict(reduced_interactions, orient = 'index')
@@ -1135,7 +1216,7 @@ class Kegg(KnowledgeBase):
         scores = list()
         for geneID in occurrenceCounts.keys():
             genes.append(geneID)
-            score = occurrenceCounts[geneID] / overallCount
+            score = occurrenceCounts[geneID] / genePathwayCounts[geneID]
             scores.append(score)
 
         geneScores = pd.DataFrame({"gene_symbol": genes, "score": scores})
@@ -1162,11 +1243,12 @@ class Kegg(KnowledgeBase):
         pathways = []
         pathway_graphs = {}
         for label in labels:
-            pathwayListString = self.webservice.find("pathway", "\"" + label + "\"")
+            with suppress_stdout():
+                pathwayListString = self.webservice.find("pathway", "\"" + label + "\"")
             # pathway are returned in the form path:pathwayid\tdescription\n
             if ((pathwayListString == "\n") or (isinstance(pathwayListString, int)) or (pathwayListString is None)):
                 pathwayList = []
-                #print("EMPTY PATHWAYS:" + str(pathwayListString))
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb = "KEGG", lbl = label))
             else:
                 pathwayList = pathwayListString.split("\n")[:-1]
             count = 0
@@ -1224,7 +1306,14 @@ class Disgenet(KnowledgeBase):
 
         #check if error code was returned
         if isinstance(assocs, int):
-            print("ERROR " + str(assocs) + " RETURNED FOR LABELS: " + ", ".join(labels))
+            if assocs >= 500:
+                util.logWarning(
+                    "WARNING: Error code " + str(assocs) + " returned from DisGeNET for " + " ,".join(labels))
+            else:
+                util.logDebug(
+                    "DEBUG: Code " + str(assocs) + " returned from DisGeNET for " + " ,".join(labels))
+
+            util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="DisGeNET", lbl=", ".join(labels)))
             return pd.DataFrame(columns = ["gene_symbol", "score"])
 
         # extract only the genes from the results
@@ -1248,7 +1337,7 @@ class Disgenet(KnowledgeBase):
         # check if an error code was returned
         # check if error code was returned
         if isinstance(assocs, int):
-            print("ERROR " + str(assocs) + " RETURNED FOR LABELS: " + ", ".join(labels))
+            util.logWarning("WARNING: " + str(assocs) + " RETURNED FOR LABELS: " + ", ".join(labels))
             return pd.DataFrame(columns = ["gene_symbol", "score"])
 
         if assocs.empty:
@@ -1301,14 +1390,17 @@ class Pathwaycommons(KnowledgeBase):
            """
 
         pathways = self.getRelevantPathways(labels)
-        overallCount = len(pathways)
+        genePathwayCounts = {} #stores the number of pathways a gene participates in
         occurrenceCounts = {}
         for pathway in pathways.values():
-            nodes = pathway.nodes
             interactions = pathway.interactions_by_nodes
             reduced_interactions = {}
             # update interactions to only store the interactions counts
             for entity in interactions.keys():
+                if entity.label in genePathwayCounts.keys(): #add pathway count
+                    genePathwayCounts[entity.label] += 1
+                else:
+                    genePathwayCounts[entity.label] = 1
                 reduced_interactions[entity.label] = len(interactions[entity])
             # make dataframe from count
             interactions_df = pd.DataFrame.from_dict(reduced_interactions, orient='index')
@@ -1326,7 +1418,8 @@ class Pathwaycommons(KnowledgeBase):
         scores = list()
         for geneID in occurrenceCounts.keys():
             genes.append(geneID)
-            score = occurrenceCounts[geneID] / overallCount
+            #normalize the sum of percentile scores by the number of pathways containing that gene
+            score = occurrenceCounts[geneID] / genePathwayCounts[geneID]
             scores.append(score)
 
         geneScores = pd.DataFrame({"gene_symbol": genes, "score": scores})
@@ -1377,7 +1470,19 @@ class Pathwaycommons(KnowledgeBase):
         for term in labels:
             pathwayIDs = self.webservice.search(term, organism="homo sapiens", type="pathway")
             # if no error code was returned
-            if (pathwayIDs is None) or isinstance(pathwayIDs, int):
+            if (pathwayIDs is None):
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="PathwayCommons", lbl=term))
+                continue
+
+            if isinstance(pathwayIDs, int):
+                if pathwayIDs >= 500:
+                    util.logWarning(
+                        "WARNING: Error code " + str(pathwayIDs) + " returned from PathwayCommons for " + " ,".join(labels))
+                else:
+                    util.logDebug(
+                        "DEBUG: Code " + str(pathwayIDs) + " returned from PathwayCommons for " + " ,".join(labels))
+
+                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="PathwayCommons", lbl=term))
                 continue
 
             numHits = pathwayIDs["numHits"]
@@ -1388,7 +1493,21 @@ class Pathwaycommons(KnowledgeBase):
                     pathwayIDs = self.webservice.search(term, page=i, organism="homo sapiens", type="pathway")
 
                     #if no error code was returned
-                    if (pathwayIDs is None) or isinstance(pathwayIDs, int):
+                    if (pathwayIDs is None):
+                        util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="PathwayCommons", lbl=term))
+                        continue
+
+                    if isinstance(pathwayIDs, int):
+                        if pathwayIDs >= 500:
+                            util.logWarning(
+                                "WARNING: Error code " + str(
+                                    pathwayIDs) + " returned from PathwayCommons for " + " ,".join(labels))
+                        else:
+                            util.logDebug(
+                                "DEBUG: Code " + str(pathwayIDs) + " returned from PathwayCommons for " + " ,".join(
+                                    labels))
+
+                        util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="PathwayCommons", lbl = term))
                         continue
 
                     items = pathwayIDs["searchHit"]
@@ -1403,8 +1522,10 @@ class Pathwaycommons(KnowledgeBase):
             pathway_sif = self.webservice.get(id, frmt = "SIF")
             #if server does not return an error code and the pathway has a sif version
             if (pathway_sif is None):
+                util.logInfo(
+                    "No SIF could be returned from PathwayCommons for pathway " + id + ". This is likely if that pathway does not contain genes as nodes. It would have been filtered either way.")
                 continue
-
+            logging.disable(50)
             if not isinstance(pathway_sif, int) and not (pathway_sif.text == ""):
                 #only load the pathway if the maxNumPathways count is not reached yet
                 if count <= int(self.config["maxNumPathways"]):
@@ -1432,6 +1553,8 @@ class Pathwaycommons(KnowledgeBase):
 
                 else:
                     break
+
+                logging.disable(0)
             else:
                 continue
 
@@ -1493,12 +1616,13 @@ class KEGGPathwayParser(PathwayParser):
            :return: pathway in the internally used format..
            :rtype: :class:`pypath.Network`
            """
-
+        logging.disable(50)
         #create gene IDs first
         geneIds = {}
         for entry in kgml_pathway["entries"]:
             if entry["type"] == "gene":
                 # select first of the gene names in the list to be the alias
+
                 node = entity.Entity(entry["gene_names"].split(", ")[0].strip("..."))
                 geneIds[entry["id"]]= node
 
@@ -1519,5 +1643,7 @@ class KEGGPathwayParser(PathwayParser):
 
         pathway = network.Network()
         pathway.load(input)
+        logging.disable(0)
 
         return pathway
+

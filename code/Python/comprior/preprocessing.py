@@ -222,7 +222,7 @@ class MetaDataPreprocessor(Preprocessor):
                 diseaseCode = diseaseCodes[sample][self.diseaseColumn]
             except:
                 diseaseCode = "NotAvailable"
-                print("No classLabel code found for sample " + str(sample) + ". Assign class NotAvailable.")
+                benchutils.logWarning("WARNING: No classLabel code found for sample " + str(sample) + ". Assign class NotAvailable.")
             diseaseColumn.append(diseaseCode)
 
         df.insert(0, column="classLabel", value=diseaseColumn)

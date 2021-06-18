@@ -21,8 +21,8 @@ sed -i '' "5s#.*#homePath=$PWD/#" code/configs/config.ini
 
 #Rscript
 RSCRIPTHOME=$(which Rscript)
-sed -i '' "16s#.*#RscriptLocation=$RSCRIPTHOME/#" code/configs/config.ini
+sed -i '' "17s#.*#RscriptLocation=$RSCRIPTHOME/#" code/configs/config.ini
 
 #Java
 JAVAHOME=$(which java)
-sed -i '' "20s#.*#JavaLocation=$JAVAHOME/#" code/configs/config.ini
+sed -i '' "21s#.*#JavaLocation=$JAVAHOME/#" code/configs/config.ini

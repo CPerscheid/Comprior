@@ -1,24 +1,20 @@
 import abc
 import time, random
 import pandas as pd
-import itertools
 import os
 import numpy as np
 import benchutils as utils
 import knowledgebases
-from sklearn.feature_selection import SelectKBest, f_classif, SelectFromModel
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression, Lasso
-from sklearn.svm import LinearSVC, SVC
+from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_selection import RFE, VarianceThreshold
 from sklearn import preprocessing
-import pypath.core.network as network
-import pypath.core.entity as entity
 
 
 class FeatureSelectorFactory():
@@ -60,7 +56,7 @@ class FeatureSelectorFactory():
             elif len(parts) == 3:
                 return self.createCombinedSelector(parts[0], parts[1], parts[2])
 
-            print("The provided selector name does not correspond to the expected format. "
+            utils.logError("ERROR: The provided selector name does not correspond to the expected format. "
                   "A selector name should consist of one or more keywords separated by _. "
                   "The first keyword is the actual approach (e.g. weighted, or a traditional approach), "
                   "the second keyword corresponds to a knowledge base to use (e.g. KEGG),"
@@ -101,7 +97,7 @@ class FeatureSelectorFactory():
                 return LassoSelector()
             if selectorName == "RandomForest":
                 return RandomForestSelector()
-            print("The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
+            utils.logError("ERROR: The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
             exit()
 
         def createIntegrativeSelector(self, selectorName, kb):
@@ -129,7 +125,7 @@ class FeatureSelectorFactory():
                 return LassoPenalty(knowledgebase)
             if selectorName == "KBonly":
                 return KbSelector(knowledgebase)
-            print("The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
+            utils.logError("ERROR: The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
             exit()
 
         def createCombinedSelector(self, selectorName, trad, kb):
@@ -159,7 +155,7 @@ class FeatureSelectorFactory():
             if selectorName == "Weighted":
                 return KBweightedSelector(knowledgebase, tradSelector)
 
-            print("The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
+            utils.logError("ERROR: The listed selector " + selectorName + " is not available. See the documentation for available selectors. Stop execution.")
             exit()
 
     instance = None
@@ -195,7 +191,7 @@ class FeatureSelector:
         self.dataset = None
         self.loggingDir = None
         self.dataConfig = utils.getConfig("Dataset")
-        self.setTimeLogs(utils.createLog())
+        self.setTimeLogs(utils.createTimeLog())
         self.enableLogFlush()
         self.name = name
         super().__init__()
@@ -351,7 +347,7 @@ class PythonSelector(FeatureSelector):
            :return: absolute path to the output ranking file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         filename = self.getName() + ".csv"
         outputFile = self.output + filename
@@ -363,11 +359,11 @@ class PythonSelector(FeatureSelector):
         self.prepareOutput(outputFile, data, selector)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished ########################")
+        utils.logInfo("######################## " + self.getName() + " finished ########################")
         return outputFile
 
     def prepareInput(self):
@@ -383,7 +379,7 @@ class PythonSelector(FeatureSelector):
         le = preprocessing.LabelEncoder()
         numeric_labels = le.fit_transform(labels)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Input Preparation")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Input Preparation")
 
         return data, numeric_labels
 
@@ -404,7 +400,7 @@ class PythonSelector(FeatureSelector):
         self.writeRankingToFile(ranking, outputFile)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Output Preparation")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Output Preparation")
 
 class RSelector(FeatureSelector,metaclass=abc.ABCMeta):
     """Selector class for invoking R code for feature selection.
@@ -437,18 +433,18 @@ class RSelector(FeatureSelector,metaclass=abc.ABCMeta):
            :return: absolute path to the result file containing the ranking.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         filename = self.getName() + ".csv"
         outputFile = self.output + filename
         params = self.createParams(outputFile)
         utils.runRCommand(self.rConfig, self.scriptName , params)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished ########################")
+        utils.logInfo("######################## " + self.getName() + " finished ########################")
 
         return filename
 
@@ -480,18 +476,18 @@ class JavaSelector(FeatureSelector):
            :return: absolute path to the result file containing the ranking.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         filename = self.name + ".csv"
         params = self.createParams()
         utils.runJavaCommand(self.javaConfig, "/WEKA_FeatureSelector.jar", params)
         output_filepath = self.output + filename
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished ########################")
+        utils.logInfo("######################## " + self.getName() + " finished ########################")
         return output_filepath
 
 ############################### PRIOR KNOWLEDGE SELECTORS ###############################
@@ -595,7 +591,7 @@ class CombiningSelector(PriorKnowledgeSelector):
         start = time.time()
         externalGenes = self.knowledgebase.getRelevantGenes(self.getSearchTerms())
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Getting External Genes")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Getting External Genes")
 
         return externalGenes
 
@@ -659,7 +655,7 @@ class NetworkSelector(PriorKnowledgeSelector):
             if len(existingGenes) > 0:
                 filtered_pathways[pathwayName] = pathways[pathwayName]
             else:
-                print("No genes of pathway " + pathwayName + " found in dataset. Pathway will not be considered")
+                utils.logWarning("WARNING: No genes of pathway " + pathwayName + " found in dataset. Pathway will not be considered")
 
         return filtered_pathways
 
@@ -673,11 +669,11 @@ class NetworkSelector(PriorKnowledgeSelector):
            :returns: absolute path to the pathway ranking.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         overallstart = time.time()
         pathways = self.knowledgebase.getRelevantPathways(self.getSearchTerms())
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, overallstart, end, "Get Pathways")
+        self.timeLogs = utils.logRuntime(self.timeLogs, overallstart, end, "Get Pathways")
 
         #filter pathways to only those that contain at least one gene from the data set
         pathways = self.filterPathways(pathways)
@@ -687,7 +683,7 @@ class NetworkSelector(PriorKnowledgeSelector):
         self.writeRankingToFile(pathwayRanking, outputFile)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Pathway Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Pathway Selection")
 
         pathwayNames = pathwayRanking["attributeName"]
 
@@ -696,7 +692,7 @@ class NetworkSelector(PriorKnowledgeSelector):
         fileprefix = os.path.splitext(self.input)[0]
         mapped_filepath = self.writeMappedFile(mapped_data, fileprefix)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Mapping")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Mapping")
 
         #if crossvalidation is enabled, we also have to map the crossvalidation file
         if (utils.getConfigBoolean("Evaluation", "enableCrossEvaluation")):
@@ -713,14 +709,14 @@ class NetworkSelector(PriorKnowledgeSelector):
             crossval_mapped_filepath = self.writeMappedFile(mapped_crossValData, crossvalFileprefix)
 
             end = time.time()
-            self.timeLogs = utils.log(self.timeLogs, start, end, "CrossValidation Feature Mapping")
+            self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "CrossValidation Feature Mapping")
 
         overallend = time.time()
-        self.timeLogs = utils.log(self.timeLogs, overallstart, overallend, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, overallstart, overallend, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished ########################")
+        utils.logInfo("######################## " + self.getName() + " finished ########################")
         return outputFile
 
 ############################### FILTER ###############################
@@ -738,7 +734,7 @@ class RandomSelector(FeatureSelector):
            :returns: absolute path to the ranking file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         filename = self.getName() + ".csv"
         outFilename = self.output + filename
@@ -758,11 +754,11 @@ class RandomSelector(FeatureSelector):
                 line = "\"" + header[i] + "\"\t\"0.0000\"\n"
                 outfile.write(line)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished ########################")
+        utils.logInfo("######################## " + self.getName() + " finished ########################")
 
         return outFilename
 
@@ -789,7 +785,7 @@ class AnovaSelector(PythonSelector):
         selector.fit_transform(data, labels)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "ANOVA")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "ANOVA")
         return selector
 
 class Variance2Selector(PythonSelector):
@@ -816,7 +812,7 @@ class Variance2Selector(PythonSelector):
         self.writeRankingToFile(ranking, outputFile)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Output Preparation")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Output Preparation")
 
     def runSelector(self, data, labels):
         """Runs the actual variance-based feature selector of scikit-learn.
@@ -833,7 +829,7 @@ class Variance2Selector(PythonSelector):
         selector.fit_transform(data)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Variance_p")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Variance_p")
 
         return selector
 
@@ -954,7 +950,7 @@ class KbSelector(PriorKnowledgeSelector):
            :returns: absolute path to the resulting ranking file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         outputFile = self.output + self.getName() + ".csv"
 
@@ -968,7 +964,7 @@ class KbSelector(PriorKnowledgeSelector):
         kb_start = time.time()
         associatedGenes = self.knowledgebase.getGeneScores(self.getSearchTerms())
         kb_end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, kb_start, kb_end, "Getting External Gene Scores")
+        self.timeLogs = utils.logRuntime(self.timeLogs, kb_start, kb_end, "Getting External Gene Scores")
 
         # assign association score to all genes in data
         updated_ranking = ranking.apply(self.updateScores, axis = 1, newGeneScores = associatedGenes)
@@ -978,11 +974,11 @@ class KbSelector(PriorKnowledgeSelector):
         #save final rankings to file
         self.writeRankingToFile(updated_ranking, outputFile)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished. ########################")
+        utils.logInfo("######################## " + self.getName() + " finished. ########################")
         return outputFile
 
 class KBweightedSelector(CombiningSelector):
@@ -1040,7 +1036,7 @@ class KBweightedSelector(CombiningSelector):
         statisticalRankings = pd.read_csv(statsRankings, index_col = 0, sep = "\t", engine = "python")
         self.timeLogs = pd.concat([self.timeLogs, self.tradSelector.getTimeLogs()])
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Statistical Ranking")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Statistical Ranking")
 
         return statisticalRankings
 
@@ -1067,7 +1063,7 @@ class KBweightedSelector(CombiningSelector):
                 geneScores[gene] = gene_entry.iloc[0, 1]
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "External Ranking")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "External Ranking")
         return geneScores
 
     def combineRankings(self, externalRankings, statisticalRankings):
@@ -1102,7 +1098,7 @@ class KBweightedSelector(CombiningSelector):
         #reorder genes based on new score
         combinedRankings = combinedRankings.sort_values('score', ascending=False)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Ranking Combination")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Ranking Combination")
         return combinedRankings
 
     def selectFeatures(self):
@@ -1112,7 +1108,7 @@ class KBweightedSelector(CombiningSelector):
            :returns: absolute path to final output file containing the ranking.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         intermediateDir = utils.getConfigValue("General",
                                                       "intermediateDir") + self.getName() + "/"
@@ -1134,11 +1130,11 @@ class KBweightedSelector(CombiningSelector):
         #note: here the gene ids are the index, so write it to file
         self.writeRankingToFile(combinedRankings, outputFile, True)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished. ########################")
+        utils.logInfo("######################## " + self.getName() + " finished. ########################")
         return outputFile
 
 class LassoPenalty(PriorKnowledgeSelector, RSelector):
@@ -1198,7 +1194,7 @@ class LassoPenalty(PriorKnowledgeSelector, RSelector):
         scores_df.to_csv(scores_filename, index=True)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "External Ranking")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "External Ranking")
         return scores_filename
 
 
@@ -1296,7 +1292,7 @@ class WrapperSelector(PythonSelector):
         ranking = ranking.sort_values('score', ascending=False)
         self.writeRankingToFile(ranking, outputFile)
         end = time.time()
-        self.timeLogs = utils.log(start, end, "Prepare Output")
+        self.timeLogs = utils.logRuntime(start, end, "Prepare Output")
 
 
     def runSelector(self, data, labels):
@@ -1324,7 +1320,7 @@ class WrapperSelector(PythonSelector):
         data = scaled_data
         self.selector = self.selector.fit(data, labels)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Wrapper Selector")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Wrapper Selector")
 
         return self.selector
 
@@ -1370,7 +1366,7 @@ class RandomForestSelector(PythonSelector):
         self.writeRankingToFile(ranking, outputFile)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Prepare Output")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Prepare Output")
 
     def runSelector(self, data, labels):
         """Runs the actual feature selection using scikit-learn's RandomForest classifier.
@@ -1390,7 +1386,7 @@ class RandomForestSelector(PythonSelector):
         clf.fit(data, labels)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Random Forest")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Random Forest")
 
         return clf
 
@@ -1419,7 +1415,7 @@ class LassoSelector(PythonSelector):
         self.writeRankingToFile(ranking, outputFile)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Prepare Output")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Prepare Output")
 
     def runSelector(self, data, labels):
         """Runs the actual Lasso feature selector using scikit-learn.
@@ -1439,7 +1435,7 @@ class LassoSelector(PythonSelector):
         clf.fit(data, labels)
 
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Lasso")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Lasso")
 
         return clf
 
@@ -1464,7 +1460,7 @@ class PreFilterSelector(CombiningSelector):
            :returns: absolute path to rankings file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
 
         intermediateOutput = utils.getConfigValue("General",
                                                       "intermediateDir") + self.getName() + "/"
@@ -1472,7 +1468,7 @@ class PreFilterSelector(CombiningSelector):
         start = time.time()
         externalGenes = self.knowledgebase.getRelevantGenes(self.getSearchTerms())
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Getting Relevant Genes")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Getting Relevant Genes")
 
         outputFilename = self.output + self.getName() + ".csv"
 
@@ -1498,11 +1494,11 @@ class PreFilterSelector(CombiningSelector):
         #rename ranking file so that we can recognize it in the output files
         os.rename(rankingFile, outputFilename)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
 
-        print("######################## " + self.getName() + " finished. ########################")
+        utils.logInfo("######################## " + self.getName() + " finished. ########################")
         return outputFilename
 
 class PostFilterSelector(CombiningSelector):
@@ -1523,7 +1519,7 @@ class PostFilterSelector(CombiningSelector):
            :returns: absolute path to rankings file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         intermediateOutput = utils.getConfigValue("General",
                                                     "intermediateDir") + self.getName() + "/"
@@ -1539,7 +1535,7 @@ class PostFilterSelector(CombiningSelector):
         #filter ranking by genes from knowledge base
         externalGenes = self.knowledgebase.getRelevantGenes(self.getSearchTerms())
         kb_end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, kb_start, kb_end, "Getting Relevant Genes")
+        self.timeLogs = utils.logRuntime(self.timeLogs, kb_start, kb_end, "Getting Relevant Genes")
 
         #filter externalGenes by genes available in the rankings
         dataGenes = set(ranking["attributeName"])
@@ -1547,11 +1543,11 @@ class PostFilterSelector(CombiningSelector):
         filteredRanking = ranking[ranking["attributeName"].isin(sharedGenes)]
         self.writeRankingToFile(filteredRanking, outputFile)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() +".csv")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() +".csv")
 
-        print("######################## " + self.getName() + " finished. ########################")
+        utils.logInfo("######################## " + self.getName() + " finished. ########################")
         return outputFile
 
 class ExtensionSelector(CombiningSelector):
@@ -1573,7 +1569,7 @@ class ExtensionSelector(CombiningSelector):
            :returns: absolute path to rankings file.
            :rtype: str
            """
-        print("######################## " + self.getName() + "... ########################")
+        utils.logInfo("######################## " + self.getName() + "... ########################")
         start = time.time()
         intermediateOutput = utils.getConfigValue("General",
                                                       "intermediateDir") + self.getName() + "/"
@@ -1589,7 +1585,7 @@ class ExtensionSelector(CombiningSelector):
         kb_start = time.time()
         ext_ranking = self.knowledgebase.getGeneScores(self.getSearchTerms())
         kb_end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, kb_start, kb_end, "Getting External Gene Scores")
+        self.timeLogs = utils.logRuntime(self.timeLogs, kb_start, kb_end, "Getting External Gene Scores")
 
         #select top k genes from ext_ranking
         #topK = int(utils.getConfigValue("Evaluation", "topKmax"))
@@ -1643,10 +1639,10 @@ class ExtensionSelector(CombiningSelector):
             gene_entry["score"] = random.uniform(pre_score, post_score)
         self.writeRankingToFile(interleaved_ranking, outputFile)
         end = time.time()
-        self.timeLogs = utils.log(self.timeLogs, start, end, "Feature Selection")
+        self.timeLogs = utils.logRuntime(self.timeLogs, start, end, "Feature Selection")
         if self.enableLogFlush:
-            utils.flushLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
-        print("######################## " + self.getName() + " finished. ########################")
+            utils.flushTimeLog(self.timeLogs, self.loggingDir + self.getName() + ".csv")
+        utils.logInfo("######################## " + self.getName() + " finished. ########################")
 
         return outputFile
 
@@ -1902,8 +1898,8 @@ class CORGSActivityMapper(FeatureMapper):
             pathwaygenes = self.getPathwayGenes(pathway, genes)
             if (len(pathwaygenes) == 0):
                 # if none of the genes in the pathway are in the data, just set the pathwayscore to 0
-                print(
-                    "No genes of pathway " + pathwayname + " found in dataset for feature mapping. Assign activity score of 0.0 to all samples.")
+                utils.logWarning(
+                    "WARNING: No genes of pathway " + pathwayname + " found in dataset for feature mapping. Assign activity score of 0.0 to all samples.")
                 corgs_activities = [0.0] * len(samples)
                 continue
 
@@ -2028,7 +2024,7 @@ class PathwayActivityMapper(FeatureMapper):
             pathwayscores = []
             if (len(pathwaygenes) == 0):
                 # if none of the genes in the pathway are in the data, just set the pathwayscore to 0
-                print("No genes of pathway " + pathwayname + " found in dataset. Assign activity score of 0.0 to all samples.")
+                utils.logWarning("WARNING: No genes of pathway " + pathwayname + " found in dataset. Assign activity score of 0.0 to all samples.")
                 pathwayscores = [0.0] * len(samples)
             else:
                 for sample in samples:

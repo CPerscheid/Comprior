@@ -32,10 +32,12 @@ Retrieving Relevant Genes from Pathway Information
 * Comprior retrieves relevant genes from a set of pathways by selecting all their member genes and removing duplications
 
 
+.. _pathwayGeneAssocs:
+
 Gene Association Score Computation from Network Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Comprior computes a gene association score :math:`s_i` for a gene :math:`i` from the sum of its degree percentile rank :math:`pr_i` for every pathway (= pathway genes are ranked by their number of in- and outgoing edges), normalized by the overall number of pathways retrieved: :math:`\frac{\sum_{n=1}^{|P|} pr_{n,i} if i \in p_n}{|P|}`
+* Comprior computes a gene association score :math:`s_i` for a gene :math:`i` from the sum of its degree percentile rank :math:`pr_{n,i}` (= pathway genes are ranked by their number of in- and outgoing edges) for every pathway :math:`n`, normalized by :math:`P_i` (=the overall number of pathways containing gene :math:`i`): :math:`\frac{\sum_{n=1}^{|P_i|} pr_{n,i} if i \in p_n}{|P_i|}`
 * this way, hub genes with a lot of interactions receive a higher score than genes at the outside rim of a pathway, becoming even more important if they have many interactions across multiple pathways
 
 `PathwayCommons <http://www.pathwaycommons.org/>`_

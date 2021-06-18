@@ -90,6 +90,7 @@ public class AttributeSelector {
         long dt = end - begin;
 
         LOGGER.info("" + dt + "," + this.selectionMethod);
+        System.out.println("" + dt + "," + this.selectionMethod);
     }
 
     /**
