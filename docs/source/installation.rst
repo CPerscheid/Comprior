@@ -228,3 +228,9 @@ Troubleshooting
 * If this error occurs, then you probably have adapted *config.ini* before installing Comprior, e.g. by removing or adding a line.
     * If you are executing **from source**:You can now either update *config.ini* directly or (more sustainable for the future) you can adapt *install.sh* and *install_macos.sh* scripts as they replace the values of parameters *RscriptLocation* and *JavaLocation* and *homePath* based on their line numbers. Update the script to contain the correct line number and then rerun the installation script.
     * If you are executing **in a Docker container**: You need to adapt the *Dockerfile* and update the line numbers that are used to replace parameters *homePath*, *RscriptLocation*, *JavaLocation*, and *code*. Check if these parameters are still located in the correct line of *config.ini*. If not, update the line numbers given in the sed command that is executed there.
+
+::
+
+    FileNotFoundError: [Errno 2] No such file or directory: '/my abs path/Comprior/data/input/TCGA-SCANB/BRCA_TP_expressions_normalized.csv'
+
+* If this error occurs when executing Comprior in a Docker container, you likely specified the absolute path to your input file in the config file. Make sure that you provide a path relative from your input directory: *input = ${General:inputDir}TCGA-SCANB/BRCA_TP_expressions_normalized.csv*. Docker containers have their own file structure, and the mounted directory you provide when running Comprior in a Docker container will be resolved to */home/app/data/* automatically. As such, if you provide an absolute path to your input files, Comprior will not be able to find it as this path does not exist (but instead it will exist at: */home/app/data/input/TCGA-SCANB/BRCA_TP_expressions_normalized.csv*).

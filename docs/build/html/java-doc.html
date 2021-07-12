@@ -98,12 +98,13 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Folder Structure  - Where to find what Files (In- and Output)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="knowledgebases.html">Knowledge Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Java Code Documentation</a><ul>
@@ -496,6 +497,7 @@ public class AttributeSelector <span class="p">{</span>
         long dt <span class="o">=</span> end <span class="o">-</span> begin<span class="p">;</span>
 
         LOGGER.info<span class="p">(</span><span class="s">&quot;&quot;</span> <span class="o">+</span> dt <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> this.selectionMethod<span class="p">);</span>
+        System.out.println<span class="p">(</span><span class="s">&quot;&quot;</span> <span class="o">+</span> dt <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> this.selectionMethod<span class="p">);</span>
     <span class="p">}</span>
 
     <span class="o">/**</span>
@@ -639,8 +641,6 @@ public class WEKA_Evaluator <span class="p">{</span>
      <span class="o">*/</span>
     public static void main<span class="p">(</span>String<span class="p">[]</span> <span class="kp">args</span><span class="p">)</span> <span class="p">{</span>
 
-        System.out.println<span class="p">(</span><span class="s">&quot;In WEKA-Evaluator&quot;</span><span class="p">);</span>
-
         <span class="o">//</span>get reduced data set locations
         File folder <span class="o">=</span> new File<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span>
         <span class="o">//</span>the input path should only contain directories <span class="o">-</span> one <span class="kr">for</span> each method
@@ -654,7 +654,6 @@ public class WEKA_Evaluator <span class="p">{</span>
         String<span class="p">[]</span> metrics <span class="o">=</span> metricParams.split<span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
 
         <span class="kr">for</span> <span class="p">(</span>File methodDir <span class="o">:</span> listOfDirs<span class="p">)</span> <span class="p">{</span>
-            System.out.print<span class="p">(</span>methodDir.getAbsolutePath<span class="p">());</span>
 
             classifyAndEvaluate<span class="p">(</span>methodDir.getName<span class="p">(),</span> methodDir.getAbsolutePath<span class="p">(),</span> new File<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">1</span><span class="p">],</span> methodDir.getName<span class="p">())</span><span class="m">.</span>getAbsolutePath<span class="p">(),</span>
                         Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">2</span><span class="p">]),</span> Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">3</span><span class="p">]),</span>  Integer.parseInt<span class="p">(</span><span class="kp">args</span><span class="p">[</span><span class="m">4</span><span class="p">]),</span> classifiers<span class="p">,</span> metrics<span class="p">);</span>
@@ -676,11 +675,17 @@ public class WEKA_Evaluator <span class="p">{</span>
      <span class="o">*</span> <span class="o">@</span>param evalMetrics a <span class="kt">list</span> of metric names compute <span class="kr">for</span> the classification results.
      <span class="o">*/</span>
     private static void classifyAndEvaluate<span class="p">(</span>String selectionMethod<span class="p">,</span> String reducedDatasetLocation<span class="p">,</span> String resultLocation<span class="p">,</span> int topKmin<span class="p">,</span> int topKmax<span class="p">,</span> int numFolds<span class="p">,</span> String<span class="p">[]</span> classifiers<span class="p">,</span> String<span class="p">[]</span> evalMetrics<span class="p">)</span> <span class="p">{</span>
-        LOGGER.info<span class="p">(</span>Integer.toString<span class="p">(</span>Array.getLength<span class="p">(</span>evalMetrics<span class="p">)));</span>
-        LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
-        LOGGER.info<span class="p">(</span>selectionMethod<span class="p">);</span>
-        LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
-        LOGGER.info<span class="p">(</span>resultLocation<span class="p">);</span>
+        System.out.println<span class="p">(</span>Integer.toString<span class="p">(</span>Array.getLength<span class="p">(</span>evalMetrics<span class="p">)));</span>
+        System.out.println<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        System.out.println<span class="p">(</span>selectionMethod<span class="p">);</span>
+        System.out.println<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        System.out.println<span class="p">(</span>resultLocation<span class="p">);</span>
+
+        <span class="o">//</span>LOGGER.info<span class="p">(</span>Integer.toString<span class="p">(</span>Array.getLength<span class="p">(</span>evalMetrics<span class="p">)));</span>
+        <span class="o">//</span>LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        <span class="o">//</span>LOGGER.info<span class="p">(</span>selectionMethod<span class="p">);</span>
+        <span class="o">//</span>LOGGER.info<span class="p">(</span>reducedDatasetLocation<span class="p">);</span>
+        <span class="o">//</span>LOGGER.info<span class="p">(</span>resultLocation<span class="p">);</span>
 
         HashMap<span class="o">&lt;</span>String<span class="p">,</span> CSVWriter<span class="o">&gt;</span> writers <span class="o">=</span> new HashMap<span class="o">&lt;</span>String<span class="p">,</span> CSVWriter<span class="o">&gt;</span><span class="p">();</span>
         try <span class="p">{</span>
@@ -728,7 +733,8 @@ public class WEKA_Evaluator <span class="p">{</span>
                         classifierNames <span class="o">=</span> <span class="p">(</span>String<span class="p">[])</span> ArrayUtils.addAll<span class="p">(</span>classifierNames<span class="p">,</span> <span class="s">&quot;RF&quot;</span><span class="p">);</span>
                         <span class="kr">break</span><span class="p">;</span>
                     default<span class="o">:</span>
-                        LOGGER.info<span class="p">(</span>method <span class="o">+</span> <span class="s">&quot; is no valid classifier/analysis module. Do nothing.&quot;</span><span class="p">);</span>
+                        System.out.println<span class="p">(</span>method <span class="o">+</span> <span class="s">&quot; is no valid classifier/analysis module. Do nothing.&quot;</span><span class="p">);</span>
+                        <span class="o">//</span>LOGGER.info<span class="p">(</span>method <span class="o">+</span> <span class="s">&quot; is no valid classifier/analysis module. Do nothing.&quot;</span><span class="p">);</span>
                         continue<span class="p">;</span>
                 <span class="p">}</span>
 
@@ -754,8 +760,10 @@ public class WEKA_Evaluator <span class="p">{</span>
                 String datasetFile <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
                 <span class="o">//</span>get the file with k <span class="kr">in</span> its name and load its content
                 datasetFile <span class="o">=</span> reducedDatasetLocation <span class="o">+</span> <span class="s">&quot;/top&quot;</span> <span class="o">+</span> String.valueOf<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;features_&quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.csv&quot;</span><span class="p">;</span>
-                LOGGER.info<span class="p">(</span><span class="s">&quot;###################################&quot;</span><span class="p">);</span>
-                LOGGER.info<span class="p">(</span>datasetFile<span class="p">);</span>
+                System.out.println<span class="p">(</span><span class="s">&quot;###################################&quot;</span><span class="p">);</span>
+                System.out.println<span class="p">(</span>datasetFile<span class="p">);</span>
+                <span class="o">//</span>LOGGER.info<span class="p">(</span><span class="s">&quot;###################################&quot;</span><span class="p">);</span>
+                <span class="o">//</span>LOGGER.info<span class="p">(</span>datasetFile<span class="p">);</span>
                 <span class="kr">if</span> <span class="p">(</span>new File<span class="p">(</span>datasetFile<span class="p">)</span><span class="m">.i</span>sFile<span class="p">()){</span>
                     DataLoader dl <span class="o">=</span> new DataLoader<span class="p">(</span>datasetFile<span class="p">,</span> <span class="s">&quot;\t&quot;</span><span class="p">);</span>
                     Instances data <span class="o">=</span> dl.getData<span class="p">();</span>
@@ -763,8 +771,9 @@ public class WEKA_Evaluator <span class="p">{</span>
                     data.setClassIndex<span class="p">(</span><span class="m">0</span><span class="p">);</span>
                     Analyzer ce <span class="o">=</span> new Analyzer<span class="p">(</span>data<span class="p">);</span>
 
+                    System.out.println<span class="p">(</span><span class="s">&quot;: Starting classification evaluation with models &quot;</span> <span class="o">+</span> Arrays.toString<span class="p">(</span>classifierNames<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
 
-                    LOGGER.info<span class="p">(</span><span class="s">&quot;: Starting classification evaluation with models &quot;</span> <span class="o">+</span> Arrays.toString<span class="p">(</span>classifierNames<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
+                    <span class="o">//</span>LOGGER.info<span class="p">(</span><span class="s">&quot;: Starting classification evaluation with models &quot;</span> <span class="o">+</span> Arrays.toString<span class="p">(</span>classifierNames<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
 
                     HashMap<span class="o">&lt;</span>String<span class="p">,</span> String<span class="o">&gt;</span> results <span class="o">=</span> ce.trainAndEvaluateWithTopKAttributes<span class="p">(</span>k<span class="p">,</span> numFolds<span class="p">,</span> classifierObjects<span class="p">,</span> evalMetrics<span class="p">);</span>
                     <span class="kr">for</span> <span class="p">(</span>String metric <span class="o">:</span> writers.keySet<span class="p">())</span> <span class="p">{</span>
@@ -776,10 +785,12 @@ public class WEKA_Evaluator <span class="p">{</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
                 <span class="kr">else</span> <span class="p">{</span>
-                    LOGGER.info<span class="p">(</span><span class="s">&quot;No rankings found for k = &quot;</span> <span class="o">+</span> Integer.toString<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;. Stop classification for &quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">);</span>
+                    System.out.println<span class="p">(</span><span class="s">&quot;No rankings found for k = &quot;</span> <span class="o">+</span> Integer.toString<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;. Stop classification for &quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">);</span>
+                    <span class="o">//</span>LOGGER.info<span class="p">(</span><span class="s">&quot;No rankings found for k = &quot;</span> <span class="o">+</span> Integer.toString<span class="p">(</span>k<span class="p">)</span> <span class="o">+</span> <span class="s">&quot;. Stop classification for &quot;</span> <span class="o">+</span> selectionMethod <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">);</span>
                     <span class="kr">break</span><span class="p">;</span>
                 <span class="p">}</span>
-                LOGGER.info<span class="p">(</span><span class="s">&quot;: Finished classification evaluation with models &quot;</span> <span class="o">+</span>  Arrays.toString<span class="p">(</span>classifiers<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
+                System.out.println<span class="p">(</span><span class="s">&quot;: Finished classification evaluation with models &quot;</span> <span class="o">+</span>  Arrays.toString<span class="p">(</span>classifiers<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
+                <span class="o">//</span>LOGGER.info<span class="p">(</span><span class="s">&quot;: Finished classification evaluation with models &quot;</span> <span class="o">+</span>  Arrays.toString<span class="p">(</span>classifiers<span class="p">)</span> <span class="o">+</span> <span class="s">&quot; with k of &quot;</span> <span class="o">+</span> k <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> datasetFile <span class="o">+</span> <span class="s">&quot;]&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="o">//</span>close all open file writers

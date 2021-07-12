@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Output Folder Structure - Where to find what Files &mdash; Comprior  documentation</title>
+  <title>Folder Structure - Where to find what Files (In- and Output) &mdash; Comprior  documentation</title>
   
 
   
@@ -98,9 +98,10 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Output Folder Structure  - Where to find what Files</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Folder Structure  - Where to find what Files (In- and Output)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#input">input/</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#intermediate">intermediate/</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#results">results/</a></li>
@@ -108,7 +109,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="knowledgebases.html">Knowledge Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
@@ -161,7 +162,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Output Folder Structure  - Where to find what Files</li>
+      <li>Folder Structure  - Where to find what Files (In- and Output)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -180,8 +181,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="output-folder-structure-where-to-find-what-files">
-<span id="outputstructure"></span><h1>Output Folder Structure  - Where to find what Files<a class="headerlink" href="#output-folder-structure-where-to-find-what-files" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="folder-structure-where-to-find-what-files-in-and-output">
+<span id="outputstructure"></span><h1>Folder Structure  - Where to find what Files (In- and Output)<a class="headerlink" href="#folder-structure-where-to-find-what-files-in-and-output" title="Permalink to this headline">¶</a></h1>
 <p>Unless the paths are not adapted/overwritten in <em>config.ini</em>, Comprior builds up the following folder infrastructure during processing:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data
  ├── input
@@ -222,7 +223,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><strong>dataset/</strong>: preprocessed input data (currently metadata added to one file)</li>
-<li><strong>crossvalidation/</strong>: contains preprocessed dataset for crossvalidation (e.g. mapped to the right identifier or pathway features)</li>
+<li><strong>crossvalidation/</strong>: contains preprocessed dataset for cross-validation (e.g. mapped to the right identifier or pathway features)</li>
 <li><strong>externalKnowledge/</strong>: one sub-folder per knowledge base that is queried with query results</li>
 </ul>
 </div></blockquote>

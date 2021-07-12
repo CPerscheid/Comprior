@@ -11,6 +11,7 @@ Welcome to Comprior's documentation!
    :caption: Contents:
 
    installation
+   usecases
    inputdata
    configparams
    outputstructure

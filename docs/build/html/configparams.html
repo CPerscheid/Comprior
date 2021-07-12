@@ -49,7 +49,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Output Folder Structure - Where to find what Files" href="outputstructure.html" />
+    <link rel="next" title="Folder Structure - Where to find what Files (In- and Output)" href="outputstructure.html" />
     <link rel="prev" title="Input Data Sets" href="inputdata.html" /> 
 </head>
 
@@ -98,6 +98,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration Parameters</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#general">General</a></li>
@@ -114,17 +115,17 @@
 <li class="toctree-l2"><a class="reference internal" href="#enrichr">Enrichr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opentargets">OpenTargets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#kegg">KEGG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#umls-needed-for-disgenet">UMLS (needed for DisGeNET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#umls-needed-to-transform-search-terms-into-cuis-for-using-disgenet">UMLS (needed to transform search terms into CUIs for using DisGeNET)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#disgenet">DisGeNET</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pathwaycommons">PathwayCommons</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#biomart">BiomaRt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gconvert">gConvert</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Folder Structure  - Where to find what Files (In- and Output)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="knowledgebases.html">Knowledge Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
@@ -213,6 +214,7 @@ In the following, we provide brief explanations for the existing parameters and 
 <li><strong>preprocessing</strong> - where to put preprocessed data sets (recommended not to changed)</li>
 <li><strong>crossVal_preprocessing</strong> - where to put preprocessed data sets for cross-validation (recommended not to changed)</li>
 <li><strong>outputDir_name</strong> - name of the overall output directory. If that directory already exists, Comprior adds numbering.</li>
+<li><strong>log_filename</strong> - name of the log file to which processing information, warnings, etc. are written</li>
 </ul>
 </div>
 <div class="section" id="r">
@@ -431,13 +433,13 @@ In the following, we provide brief explanations for the existing parameters and 
 <li><strong>maxNumPathways</strong> (<em>int</em>) - specify the maximum number of pathways to retrieve per search term (for performance reasons)</li>
 </ul>
 </div>
-<div class="section" id="umls-needed-for-disgenet">
-<h2>UMLS (needed for DisGeNET)<a class="headerlink" href="#umls-needed-for-disgenet" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="umls-needed-to-transform-search-terms-into-cuis-for-using-disgenet">
+<h2>UMLS (needed to transform search terms into CUIs for using DisGeNET)<a class="headerlink" href="#umls-needed-to-transform-search-terms-into-cuis-for-using-disgenet" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><strong>login_uri</strong> - URL of login web service (recommended not to change)</li>
 <li><strong>loginservice_uri</strong> - URL of login web service (recommended not to change)</li>
 <li><strong>auth_endpoint</strong> - authentication endpoint for API (recommended not to change)</li>
-<li><strong>apikey</strong> - API key for accessing UMLS (recommended not to change unless own API key available)</li>
+<li><strong>apikey</strong> - API key for accessing UMLS (recommended not to change unless own API key available, register for free at <a class="reference external" href="https://uts.nlm.nih.gov/uts/signup-login">UMLS</a> to create an own key)</li>
 <li><strong>webservice_uri</strong> - URL of UMLS web service (recommended not to change)</li>
 </ul>
 </div>
@@ -447,6 +449,7 @@ In the following, we provide brief explanations for the existing parameters and 
 <li><strong>associationScore</strong> (<em>score/gene_dsi/gene_dpi</em>) - which association score to use for knowledge retrieval: score (overall score), gene_dsi (disease specificity), gene_dpi (disease pleiotropy)</li>
 <li><strong>webservice_url</strong> - URL of DisGeNET web service (recommended not to change)</li>
 <li><strong>outputDir</strong> - output directory for intermediate results from web service (recommended not to change)</li>
+<li><strong>apikey</strong> - API key for accessing DisGeNET (recommended not to change unless own API key is available, register at <a class="reference external" href="https://www.disgenet.org/signup/">DisGeNET</a> to create your own key)</li>
 </ul>
 </div>
 <div class="section" id="pathwaycommons">
@@ -478,7 +481,7 @@ In the following, we provide brief explanations for the existing parameters and 
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="outputstructure.html" class="btn btn-neutral float-right" title="Output Folder Structure - Where to find what Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="outputstructure.html" class="btn btn-neutral float-right" title="Folder Structure - Where to find what Files (In- and Output)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="inputdata.html" class="btn btn-neutral float-left" title="Input Data Sets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

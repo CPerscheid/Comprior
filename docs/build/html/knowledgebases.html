@@ -50,7 +50,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Prior Knowledge Approaches" href="priorknowledge.html" />
-    <link rel="prev" title="Output Folder Structure - Where to find what Files" href="outputstructure.html" /> 
+    <link rel="prev" title="Folder Structure - Where to find what Files (In- and Output)" href="outputstructure.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -98,9 +98,10 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Folder Structure  - Where to find what Files (In- and Output)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Knowledge Bases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">DisGeNET</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">OpenTargets</a></li>
@@ -113,7 +114,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
@@ -220,9 +221,9 @@
 </ul>
 </div>
 <div class="section" id="gene-association-score-computation-from-network-information">
-<h3>Gene Association Score Computation from Network Information<a class="headerlink" href="#gene-association-score-computation-from-network-information" title="Permalink to this headline">¶</a></h3>
+<span id="pathwaygeneassocs"></span><h3>Gene Association Score Computation from Network Information<a class="headerlink" href="#gene-association-score-computation-from-network-information" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Comprior computes a gene association score <span class="math notranslate nohighlight">\(s_i\)</span> for a gene <span class="math notranslate nohighlight">\(i\)</span> from the sum of its degree percentile rank <span class="math notranslate nohighlight">\(pr_i\)</span> for every pathway (= pathway genes are ranked by their number of in- and outgoing edges), normalized by the overall number of pathways retrieved: <span class="math notranslate nohighlight">\(\frac{\sum_{n=1}^{|P|} pr_{n,i} if i \in p_n}{|P|}\)</span></li>
+<li>Comprior computes a gene association score <span class="math notranslate nohighlight">\(s_i\)</span> for a gene <span class="math notranslate nohighlight">\(i\)</span> from the sum of its degree percentile rank <span class="math notranslate nohighlight">\(pr_{n,i}\)</span> (= pathway genes are ranked by their number of in- and outgoing edges) for every pathway <span class="math notranslate nohighlight">\(n\)</span>, normalized by <span class="math notranslate nohighlight">\(P_i\)</span> (=the overall number of pathways containing gene <span class="math notranslate nohighlight">\(i\)</span>): <span class="math notranslate nohighlight">\(\frac{\sum_{n=1}^{|P_i|} pr_{n,i} if i \in p_n}{|P_i|}\)</span></li>
 <li>this way, hub genes with a lot of interactions receive a higher score than genes at the outside rim of a pathway, becoming even more important if they have many interactions across multiple pathways</li>
 </ul>
 </div>
@@ -244,7 +245,7 @@
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="priorknowledge.html" class="btn btn-neutral float-right" title="Prior Knowledge Approaches" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="outputstructure.html" class="btn btn-neutral float-left" title="Output Folder Structure - Where to find what Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="outputstructure.html" class="btn btn-neutral float-left" title="Folder Structure - Where to find what Files (In- and Output)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

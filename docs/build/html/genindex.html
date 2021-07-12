@@ -97,12 +97,13 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configparams.html">Configuration Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputstructure.html">Folder Structure  - Where to find what Files (In- and Output)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="knowledgebases.html">Knowledge Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="java-doc.html">Java Code Documentation</a></li>
@@ -300,7 +301,7 @@
 </li>
       <li><a href="comprior.html#evaluation.KnowledgeBaseEvaluator.createKnowledgeBases">createKnowledgeBases() (evaluation.KnowledgeBaseEvaluator method)</a>
 </li>
-      <li><a href="comprior.html#benchutils.createLog">createLog() (in module benchutils)</a>
+      <li><a href="comprior.html#benchutils.createLogger">createLogger() (in module benchutils)</a>
 </li>
       <li><a href="comprior.html#benchutils.createOrClearDirectory">createOrClearDirectory() (in module benchutils)</a>
 </li>
@@ -323,6 +324,8 @@
 </li>
       </ul></li>
       <li><a href="comprior.html#featureselection.WrapperSelector.createSelector">createSelector() (featureselection.WrapperSelector method)</a>
+</li>
+      <li><a href="comprior.html#benchutils.createTimeLog">createTimeLog() (in module benchutils)</a>
 </li>
       <li><a href="comprior.html#evaluation.CrossEvaluator">CrossEvaluator (class in evaluation)</a>
 </li>
@@ -360,14 +363,10 @@
 </li>
       <li><a href="comprior.html#knowledgebases.Enrichr.downloadEnrichedTerms">downloadEnrichedTerms() (knowledgebases.Enrichr method)</a>
 </li>
-      <li><a href="comprior.html#evaluation.KnowledgeBaseEvaluator.drawBarPlot">drawBarPlot() (evaluation.KnowledgeBaseEvaluator method)</a>
+      <li><a href="comprior.html#evaluation.RankingsEvaluator.drawBoxPlot">drawBoxPlot() (evaluation.RankingsEvaluator method)</a>
 </li>
-      <li><a href="comprior.html#evaluation.KnowledgeBaseEvaluator.drawBoxPlot">drawBoxPlot() (evaluation.KnowledgeBaseEvaluator method)</a>
-
-      <ul>
-        <li><a href="comprior.html#evaluation.RankingsEvaluator.drawBoxPlot">(evaluation.RankingsEvaluator method)</a>
+      <li><a href="comprior.html#evaluation.KnowledgeBaseEvaluator.drawCombinedPlot">drawCombinedPlot() (evaluation.KnowledgeBaseEvaluator method)</a>
 </li>
-      </ul></li>
       <li><a href="comprior.html#evaluation.ClassificationEvaluator.drawLinePlot">drawLinePlot() (evaluation.ClassificationEvaluator method)</a>
 </li>
   </ul></td>
@@ -442,7 +441,7 @@
 </li>
       <li><a href="comprior.html#preprocessing.FilterPreprocessor">FilterPreprocessor (class in preprocessing)</a>
 </li>
-      <li><a href="comprior.html#benchutils.flushLog">flushLog() (in module benchutils)</a>
+      <li><a href="comprior.html#benchutils.flushTimeLog">flushTimeLog() (in module benchutils)</a>
 </li>
       <li><a href="r-doc.html#directive-FS_LassoPenalty.R">FS_LassoPenalty.R (directive)</a>
 </li>
@@ -678,19 +677,27 @@
         <li><a href="comprior.html#pipeline.Pipeline.loadConfig">(pipeline.Pipeline method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="java-doc.html#de.hpi.bmg.DataLoader.loadData(String)">loadData(String) (Java method)</a>
 </li>
       <li><a href="comprior.html#evaluation.RankingsEvaluator.loadGeneRanks">loadGeneRanks() (evaluation.RankingsEvaluator method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="comprior.html#benchutils.loadRanking">loadRanking() (in module benchutils)</a>
 </li>
       <li><a href="comprior.html#evaluation.Evaluator.loadRankings">loadRankings() (evaluation.Evaluator method)</a>
 </li>
       <li><a href="comprior.html#evaluation.AttributeRemover.loadTopKRankings">loadTopKRankings() (evaluation.AttributeRemover method)</a>
 </li>
-      <li><a href="comprior.html#benchutils.log">log() (in module benchutils)</a>
+      <li><a href="comprior.html#benchutils.logDebug">logDebug() (in module benchutils)</a>
+</li>
+      <li><a href="comprior.html#benchutils.logError">logError() (in module benchutils)</a>
+</li>
+      <li><a href="comprior.html#benchutils.logInfo">logInfo() (in module benchutils)</a>
+</li>
+      <li><a href="comprior.html#benchutils.logRuntime">logRuntime() (in module benchutils)</a>
+</li>
+      <li><a href="comprior.html#benchutils.logWarning">logWarning() (in module benchutils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -943,6 +950,8 @@
       <li><a href="comprior.html#featureselection.FeatureSelector.setTimeLogs">setTimeLogs() (featureselection.FeatureSelector method)</a>
 </li>
       <li><a href="java-doc.html#de.hpi.bmg.DataLoader.sourceFile">sourceFile (Java field)</a>
+</li>
+      <li><a href="comprior.html#knowledgebases.suppress_stdout">suppress_stdout() (in module knowledgebases)</a>
 </li>
       <li><a href="comprior.html#featureselection.SVMRFESelector">SVMRFESelector (class in featureselection)</a>
 </li>

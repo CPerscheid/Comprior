@@ -96,12 +96,13 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecases.html">Example Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../inputdata.html">Input Data Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configparams.html">Configuration Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../outputstructure.html">Output Folder Structure  - Where to find what Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputstructure.html">Folder Structure  - Where to find what Files (In- and Output)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../knowledgebases.html">Knowledge Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../priorknowledge.html">Prior Knowledge Approaches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../howtos.html">How-Tos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howtos.html">Extending Comprior - How-Tos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../comprior.html">Python Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../r-doc.html">R Code Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../java-doc.html">Java Code Documentation</a></li>
@@ -172,9 +173,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for benchutils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">csv</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">configparser</span><span class="o">,</span> <span class="nn">operator</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">configparser</span><span class="o">,</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">knowledgebases</span> <span class="k">as</span> <span class="nn">kbs</span>
 
 <span class="n">metricScales</span> <span class="o">=</span> <span class="p">{</span>
@@ -190,6 +191,7 @@
 
 <span class="c1">##### CONFIG #####</span>
 <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">LOGGER_NAME</span> <span class="o">=</span> <span class="s2">&quot;Comprior&quot;</span>
 
 <div class="viewcode-block" id="loadConfig"><a class="viewcode-back" href="../comprior.html#benchutils.loadConfig">[docs]</a><span class="k">def</span> <span class="nf">loadConfig</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads the config files.</span>
@@ -329,10 +331,76 @@
     <span class="n">removeDirectoryContent</span><span class="p">(</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediateDir&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;identifierMappings/&quot;</span><span class="p">)</span>
     <span class="n">removeDirectoryContent</span><span class="p">(</span><span class="n">getConfigValue</span><span class="p">(</span><span class="s2">&quot;General&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediateDir&quot;</span><span class="p">))</span></div>
 
-<span class="c1">##### TIME LOGGING #####</span>
+<span class="c1">##### LOGGING #####</span>
 
-<div class="viewcode-block" id="createLog"><a class="viewcode-back" href="../comprior.html#benchutils.createLog">[docs]</a><span class="k">def</span> <span class="nf">createLog</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Create the logging data structure.</span>
+<div class="viewcode-block" id="createLogger"><a class="viewcode-back" href="../comprior.html#benchutils.createLogger">[docs]</a><span class="k">def</span> <span class="nf">createLogger</span><span class="p">(</span><span class="n">outputPath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a logger for Comprior. Creates two handlers for this logger: one for console output that only contains high-level status update logs and error messages.</span>
+<span class="sd">       Warnings and other tracing information is written to an extra log file.</span>
+
+<span class="sd">       :param outputPath: absoulte path to where the log file will be stored.</span>
+<span class="sd">       :type outputPath: String</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">FORMAT_STR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+    <span class="n">LOG_FILE</span> <span class="o">=</span> <span class="n">outputPath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">LOGGER_NAME</span> <span class="o">+</span> <span class="s2">&quot;.log&quot;</span>
+
+    <span class="c1">#create logger and set default level to debug</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">FORMAT_STR</span><span class="p">)</span>
+
+    <span class="c1">#add handler to write log to file at custom level</span>
+    <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">LOG_FILE</span><span class="p">)</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;File Logger&#39;</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">formatter</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+
+    <span class="c1">#add handler to write log to console output at custom level</span>
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Console Logger&#39;</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">formatter</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logDebug"><a class="viewcode-back" href="../comprior.html#benchutils.logDebug">[docs]</a><span class="k">def</span> <span class="nf">logDebug</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a log at debug level.</span>
+
+<span class="sd">       :param message: the log message to print.</span>
+<span class="sd">       :type message: String</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logInfo"><a class="viewcode-back" href="../comprior.html#benchutils.logInfo">[docs]</a><span class="k">def</span> <span class="nf">logInfo</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a log at info level.</span>
+
+<span class="sd">       :param message: the log message to print.</span>
+<span class="sd">       :type message: String</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="c1">#we do want to have the status updates in our console output but not the warnings, but info level is lower than warning level</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logWarning"><a class="viewcode-back" href="../comprior.html#benchutils.logWarning">[docs]</a><span class="k">def</span> <span class="nf">logWarning</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a log at warning level.</span>
+
+<span class="sd">       :param message: the log message to print.</span>
+<span class="sd">       :type message: String</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logError"><a class="viewcode-back" href="../comprior.html#benchutils.logError">[docs]</a><span class="k">def</span> <span class="nf">logError</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a log at error level.</span>
+
+<span class="sd">       :param message: the log message to print.</span>
+<span class="sd">       :type message: String</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="createTimeLog"><a class="viewcode-back" href="../comprior.html#benchutils.createTimeLog">[docs]</a><span class="k">def</span> <span class="nf">createTimeLog</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Create the data structure for tracing runtimes of feature selection approaches.</span>
 
 <span class="sd">       :return: the logging data structure.</span>
 <span class="sd">       :rtype: :class:`pandas.DataFrame`</span>
@@ -340,8 +408,8 @@
 
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="s2">&quot;Duration&quot;</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="flushLog"><a class="viewcode-back" href="../comprior.html#benchutils.flushLog">[docs]</a><span class="k">def</span> <span class="nf">flushLog</span><span class="p">(</span><span class="n">timeLogs</span><span class="p">,</span> <span class="n">outputFilePath</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write the whole log to a file.</span>
+<div class="viewcode-block" id="flushTimeLog"><a class="viewcode-back" href="../comprior.html#benchutils.flushTimeLog">[docs]</a><span class="k">def</span> <span class="nf">flushTimeLog</span><span class="p">(</span><span class="n">timeLogs</span><span class="p">,</span> <span class="n">outputFilePath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write the whole log (of runtimes) to a file.</span>
 
 <span class="sd">       :param timeLogs: the logs in a DataFrame.</span>
 <span class="sd">       :type timeLogs: :class:`pandas.DataFrame`</span>
@@ -350,8 +418,8 @@
 <span class="sd">       &quot;&quot;&quot;</span>
     <span class="n">timeLogs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFilePath</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="log"><a class="viewcode-back" href="../comprior.html#benchutils.log">[docs]</a><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">timeLogs</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write a log entry and add it to the log data structure.</span>
+<div class="viewcode-block" id="logRuntime"><a class="viewcode-back" href="../comprior.html#benchutils.logRuntime">[docs]</a><span class="k">def</span> <span class="nf">logRuntime</span><span class="p">(</span><span class="n">timeLogs</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a runtime log entry and add it to the runtime log data structure.</span>
 
 <span class="sd">       :param timeLogs: logs to which the new entry should be added</span>
 <span class="sd">       :type timeLogs: :class:`pandas.DataFrame`</span>
@@ -382,9 +450,21 @@
 <span class="sd">       &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">rConfig</span><span class="p">[</span><span class="s2">&quot;RscriptLocation&quot;</span><span class="p">],</span> <span class="n">scriptName</span><span class="p">]</span>
     <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">rConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+    <span class="n">logDebug</span><span class="p">(</span><span class="s2">&quot;DEBUG: Invoking R script with command: &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">rConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="c1">#make sure only the important messages are shown in the console output</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;halt&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">)):</span>
+            <span class="n">logWarning</span><span class="p">(</span><span class="s2">&quot;WARNING: Something went wrong in this R script: &quot;</span> <span class="o">+</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logDebug</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">logDebug</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="runJavaCommand"><a class="viewcode-back" href="../comprior.html#benchutils.runJavaCommand">[docs]</a><span class="k">def</span> <span class="nf">runJavaCommand</span><span class="p">(</span><span class="n">javaConfig</span><span class="p">,</span> <span class="n">scriptName</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run external Java code.</span>
@@ -398,10 +478,20 @@
 <span class="sd">       &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">javaConfig</span><span class="p">[</span><span class="s2">&quot;JavaLocation&quot;</span><span class="p">],</span> <span class="s2">&quot;-jar&quot;</span><span class="p">,</span> <span class="n">javaConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">scriptName</span><span class="p">]</span>
     <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">logDebug</span><span class="p">(</span><span class="s2">&quot;DEBUG: Invoking Java code with command: &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
-    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">javaConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">javaConfig</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;halt&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">)):</span>
+            <span class="n">logWarning</span><span class="p">(</span><span class="s2">&quot;WARNING: Something went wrong in this R script: &quot;</span> <span class="o">+</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logDebug</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">logDebug</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="mapIdentifiers"><a class="viewcode-back" href="../comprior.html#benchutils.mapIdentifiers">[docs]</a><span class="k">def</span> <span class="nf">mapIdentifiers</span><span class="p">(</span><span class="n">itemList</span><span class="p">,</span> <span class="n">originalFormat</span><span class="p">,</span> <span class="n">desiredFormat</span><span class="p">):</span>
