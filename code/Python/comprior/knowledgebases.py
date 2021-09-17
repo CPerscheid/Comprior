@@ -1,8 +1,8 @@
 from abc import abstractmethod
 import math
-from opentargets import OpenTargetsClient
 import contextlib, sys
 import pandas as pd
+from ontoma import OnToma
 import benchutils as util
 import logging
 import time, requests, json
@@ -28,6 +28,45 @@ logging.disable(0)
 WARNING_NOTHING_RETRIEVED_MESSAGE = "WARNING: No prior knowledge retrieved from {kb} for {lbl} - continue with empty set. This could be because there actually is no related information available in the knowledge base. If this message occurs with a HTTP status code >=500, there is probably a connection issue on server side. Consider retrying later."
 
 ############################### WEB SERVICES ###############################
+
+class OPENTARGETS(REST):
+    """Queries the OpenTargets web service via its GraphQL interface.
+
+           :param config: configuration parameters for OpenTargets web service (as specified in config file).
+           :type config: dict
+           """
+
+    def __init__(self):
+        self.config = util.getConfig("OpenTargets")
+        # temporarily disable logging to only show errors, otherwise our output will get spammed by bioservice logs (they reset the logging level internally when creating a new instance)
+        logging.disable(50)
+        super().__init__("OPENTARGETS", url=self.config["webservice_uri"])
+        logging.disable(0)
+
+    def query(self, searchTerm, index):
+
+        variables = {"diseaseID": searchTerm, "index": index}
+        # Build query string
+        query_string = """
+        query test($diseaseID: String!, $index: Int!){
+          ## get the disease information for the efoId passed to the query
+          disease(efoId: $diseaseID){
+            ## retrieve the name of the disease 
+            associatedTargets(page:{index: $index, size: 2000}){
+              rows{
+                score
+                target{
+                  approvedSymbol
+                  symbolSynonyms
+                }
+              }
+            }
+          }
+        }
+        """
+        r = requests.post(self.config["webservice_uri"], json={"query": query_string, "variables": variables})
+
+        return r
 
 class ENRICHR(REST):
     """Queries some of the API endpoints of the EnrichR web service (https://maayanlab.cloud/Enrichr/help#api).
@@ -407,36 +446,15 @@ class PATHWAYCOMMONSWS(REST):
 
     _valid_direction = ["BOTHSTREAM", "DOWNSTREAM", "UPSTREAM"]
     def getVersion(self):
-        """Map a list of genes to the desired format.
-
-           :param genes: list of gene names to be mapped
-           :type genes: list of str
-           :return: list of mapped gene names.
-           :rtype: list of str
-           """
         ret = self.http_get("/version")
         return ret
 
     # just a get/set to the default extension
     def _set_default_ext(self, ext):
-        """Map a list of genes to the desired format.
-
-           :param genes: list of gene names to be mapped
-           :type genes: list of str
-           :return: list of mapped gene names.
-           :rtype: list of str
-           """
         self.devtools.check_param_in_list(ext, ["json", "xml"])
         self._default_extension = ext
 
     def _get_default_ext(self):
-        """Map a list of genes to the desired format.
-
-           :param genes: list of gene names to be mapped
-           :type genes: list of str
-           :return: list of mapped gene names.
-           :rtype: list of str
-           """
         return self._default_extension
 
     default_extension = property(_get_default_ext, _set_default_ext,
@@ -990,7 +1008,9 @@ class OpenTargets(KnowledgeBase):
        """
     def __init__(self):
         logging.disable(50)
-        super().__init__("OpenTargets", util.getConfig("OpenTargets"), OpenTargetsClient(), True, False)
+        super().__init__("OpenTargets", util.getConfig("OpenTargets"), OPENTARGETS(), True, False)
+        logging.getLogger("ontoma.interface").setLevel(logging.ERROR)
+        self.ontoma = OnToma(self.config["ontoma_cache"])
         logging.disable(0)
 
     def getAssociations(self, labels):
@@ -1003,36 +1023,67 @@ class OpenTargets(KnowledgeBase):
            :rtype: :class:`pandas.DataFrame`
            """
 
-        cols = ["gene_symbol", "score"]
-        associated_genes = pd.DataFrame(columns=cols)
-        for term in labels:
-            try:
-                a_for_disease = self.webservice.get_associations_for_disease(term)
-            except :
-                util.logWarning("WARNING: " + sys.exc_info()[0])
-                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb = "OpenTargets", lbl = term))
-                continue
-            #check if an error code was returned
-            if isinstance(a_for_disease, int):
-                if a_for_disease >= 500:
-                    util.logWarning(
-                        "WARNING: Error code " + str(a_for_disease) + " returned from OpenTargets for " + " ,".join(labels))
-                else:
-                    util.logDebug("DEBUG: Code " + str(a_for_disease) + " returned from OpenTargets for " + " ,".join(labels))
+        #get EFO IDs for search terms first
+        searchTerms = set()
 
-                util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="OpenTargets", lbl=term))
+        for label in labels:
+            # get a valid disease identifier first
+            result_string = self.ontoma.find_term(label)
+            if not result_string:  # if there is no suitable identifier
                 continue
-            geneIDs = list()
-            assocscores = list()
-            for a in a_for_disease:
-                geneID = a["id"]
-                #the ID is currently attached by an EFO ID - remove it
-                geneID = geneID.split("-")[0]
-                geneIDs.append(geneID)
-                score = a['association_score']['overall']
-                assocscores.append(score)
+            # add term ID to list of search terms. if already in there, do not add the duplicate
+            searchTerms.add(result_string[0].id_ot_schema)
 
-            associated_genes = pd.DataFrame({"gene_symbol": geneIDs, "score": assocscores})
+        #now search (with pagination)
+        largelist = []
+        for term in searchTerms:
+
+            index = 0
+            searchResults = ["dummy"]
+            while len(searchResults) > 0:
+                # get results from webservice (with error handling)
+                try:
+                    results = self.webservice.query(term, index)
+                except :
+                    util.logWarning("WARNING: " + sys.exc_info()[0])
+                    util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb = "OpenTargets", lbl = term))
+                    searchResults = []
+                    continue
+                #check if an error code was returned
+                searchResults = []
+                if not results.ok:
+                    if results.status_code >= 500:
+                        util.logWarning(
+                            "WARNING: Error code " + str(results) + " returned from OpenTargets for " + " ,".join(labels))
+                        util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="OpenTargets", lbl=term))
+                        continue
+                    else:
+                        util.logDebug("DEBUG: Code " + str(results) + " returned from OpenTargets for " + " ,".join(labels))
+
+                        util.logWarning(WARNING_NOTHING_RETRIEVED_MESSAGE.format(kb="OpenTargets", lbl=term))
+                        continue
+
+                # Transform API response into JSON
+                api_response_as_json = json.loads(results.text)
+                searchResults = api_response_as_json["data"]["disease"]["associatedTargets"]["rows"]
+
+                if len(searchResults) > 0:
+                    # Print API response to terminal
+                    # print(searchResults)
+                    index += 1
+                    # iterate on search results
+                    for result in searchResults:
+                        name = result["target"]["approvedSymbol"]
+                        score = result["score"]
+                        synonyms = result["target"]["symbolSynonyms"]
+                        synonyms.append(name)
+                        for synonym in synonyms:
+                            largelist.append([synonym, score])
+
+        #create a dataframe
+        finalscores = pd.DataFrame(largelist, columns=["gene_symbol", "score"])
+        #remove duplicate scores and only keep the highest ones
+        associated_genes = finalscores.groupby(['gene_symbol'], sort=False)['score'].max().reset_index()
 
         #write results into intermediate file
         outputDir = util.getConfigValue("OpenTargets", "outputDir") + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + "/"
@@ -1042,10 +1093,10 @@ class OpenTargets(KnowledgeBase):
         # check if gene ID format from expression data set matches OpenTargets' Ensembl Gene ID format
         desiredIDFormat = util.config["Dataset"]["finalGeneIDFormat"]
         #if desiredIDFormat != "ensembl_gene_id":
-        if desiredIDFormat != "ENSG":
-            outputFile = outputDir + "mapped_" + "ENSG_" + desiredIDFormat + "/" + outputFile
-            util.createDirectory(outputDir + "mapped_" + "ENSG_" + desiredIDFormat + "/")
-            associated_genes = util.mapRanking(associated_genes, "ENSG", desiredIDFormat, outputFile)
+        if desiredIDFormat != "HGNC":
+            outputFile = outputDir + "mapped_" + "HGNC_" + desiredIDFormat + "/" + outputFile
+            util.createDirectory(outputDir + "mapped_" + "HGNC_" + desiredIDFormat + "/")
+            associated_genes = util.mapRanking(associated_genes, "HGNC", desiredIDFormat, outputFile)
 
         #order by score
         associated_genes.sort_values('score', ascending=False, inplace=True)

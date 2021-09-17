@@ -5,7 +5,7 @@ sklearn #for feature selection
 mlxtend #for feature selection
 
 bioservices >= 1.7.11 #for querying knowledge bases
-opentargets #for querying OpenTargets
+ontoma #for querying OpenTargets
 pypath-omnipath #interal pathway representation
 
 

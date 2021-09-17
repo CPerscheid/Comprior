@@ -889,24 +889,8 @@ class KnowledgeBaseEvaluator(Evaluator):
         super().__init__(None, output, None)
 
     def drawCombinedPlot(self, stats, colIndex, filename, title, ylabel1, ylabel2, colors):
-        """Creates combined plot of box and bar plot from a data set.
 
-            :param stats: statistics to plot.
-            :type stats: :class:`pandas.DataFrame`
-            :param colIndex: column index to use as column.
-            :type colIndex: int
-            :param filename: filename for the plot.
-            :type filename: str
-            :param title: title for the plot.
-            :type title: str
-            :param ylabel1: label of y axis (left side/box plot).
-            :type ylabel1: str
-            :param ylabel2: label of y axis (right side/bar plot).
-            :type ylabel2: str
-            :param colors: List of colors to use for the different search terms.
-            :type colors: :class:`List` of str
-            """
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(8, 6))
         ax2 = ax.twinx()
 
         df_gb = stats.groupby('search term').count()
@@ -952,8 +936,6 @@ class KnowledgeBaseEvaluator(Evaluator):
             kbs.append(kbfactory.createKnowledgeBase(kb))
         return kbs
 
-
-
     def checkCoverage(self, kb, colors, useIDs):
         """Checks the coverage for a given knowledge base and creates corresponding plots.
 
@@ -970,6 +952,7 @@ class KnowledgeBaseEvaluator(Evaluator):
                 geneSet.insert(0, "search term", [int(self.searchterms.index(term) + 1)] * len(geneSet.index), True)
             else:
                 geneSet.insert(0, "search term", [term] * len(geneSet.index), True)
+
             if stats.empty:
                 stats = geneSet
             else:
